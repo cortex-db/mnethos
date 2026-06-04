@@ -10,9 +10,10 @@ use crate::apply_tunable_parameters::ApplyTunableParameters;
 use crate::changed_files::ChangedFiles;
 use crate::dto::ToolsOverview;
 use crate::hooks::{
-    CompactionHandler, DoomLoopDetector, PendingTodosHandler, TitleGenerationHandler,
-    TracingHandler,
+    CompactionHandler, DoomLoopDetector, MemoryObserver, PendingTodosHandler, RetrievalObserver,
+    TitleGenerationHandler, TracingHandler,
 };
+use crate::memory_context::MemoryContext;
 use crate::init_conversation_metrics::InitConversationMetrics;
 use crate::orch::Orchestrator;
 use crate::services::{AgentRegistry, CustomInstructionsService, ProviderAuthService};
@@ -134,6 +135,13 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeAp
         .add_user_prompt(conversation)
         .await?;
 
+        // Insert the Mnethos memory-recall context as its OWN separate block.
+        // Deliberately independent of SystemPrompt above: it never modifies
+        // forgecode's initial context (`system_messages`), and runs before
+        // `Orchestrator::run()` so the addition is not discarded. No-op until
+        // recall is implemented.
+        let conversation = MemoryContext::new().apply(conversation);
+
         // Detect and render externally changed files notification
         let conversation = ChangedFiles::new(services.clone(), agent.clone())
             .update_file_stats(conversation)
@@ -155,12 +163,21 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeAp
                 .clone()
                 .and(title_handler.clone())
                 .and(PendingTodosHandler::new())
+                .and(MemoryObserver::new())
         } else {
-            tracing_handler.clone().and(title_handler.clone())
+            tracing_handler
+                .clone()
+                .and(title_handler.clone())
+                .and(MemoryObserver::new())
         };
 
         let hook = Hook::default()
-            .on_start(tracing_handler.clone().and(title_handler))
+            .on_start(
+                tracing_handler
+                    .clone()
+                    .and(title_handler)
+                    .and(RetrievalObserver::new()),
+            )
             .on_request(tracing_handler.clone().and(DoomLoopDetector::default()))
             .on_response(
                 tracing_handler

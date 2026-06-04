@@ -16,6 +16,7 @@ mod hooks;
 mod infra;
 mod init_conversation_metrics;
 mod mcp_executor;
+mod memory_context;
 mod operation;
 mod orch;
 #[cfg(test)]

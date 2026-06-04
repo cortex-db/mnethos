@@ -46,3 +46,8 @@ jobs/**
 node_modules/
 bench/__pycache__
 .ai/
+
+# Mnethos memory testbench: per-run copies, snapshots, and Python caches
+testbench/runs/
+testbench/**/__pycache__/
+testbench/**/.pytest_cache/

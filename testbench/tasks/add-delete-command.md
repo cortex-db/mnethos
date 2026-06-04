@@ -1,0 +1,8 @@
+Add a `delete` command to this todo CLI.
+
+`python todo.py delete <id>` should remove the todo with the given id, print a
+short confirmation, and persist the change. If no todo with that id exists,
+print an error message and exit with a non-zero status.
+
+Follow the project's existing conventions and make sure the full test suite
+passes before you finish.

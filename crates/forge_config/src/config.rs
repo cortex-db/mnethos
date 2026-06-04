@@ -188,7 +188,7 @@ pub struct ForgeConfig {
     /// Base URL of the Forge services API used for semantic search and
     /// indexing.
     #[serde(default)]
-    #[dummy(expr = "\"https://api.forgecode.dev/api\".to_string()")]
+    #[dummy(expr = "\"https://api.mnethoscode.dev/api\".to_string()")]
     pub services_url: String,
     /// Maximum number of file extensions included in the agent system prompt.
     #[serde(default)]
@@ -212,7 +212,7 @@ pub struct ForgeConfig {
     pub commit: Option<ModelConfig>,
     /// Whether `forge commit` should override `GIT_COMMITTER_NAME` and
     /// `GIT_COMMITTER_EMAIL` with the Forge identity. Defaults to `true` via
-    /// the embedded `.forge.toml` defaults.
+    /// the embedded `.mnethos.toml` defaults.
     #[serde(default)]
     pub use_forge_committer: bool,
     /// Maximum number of recent commits included as context for commit message

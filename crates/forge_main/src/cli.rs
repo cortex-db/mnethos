@@ -636,7 +636,7 @@ pub enum ConfigCommand {
     /// Print the path to the global config file.
     Path,
 
-    /// Migrate the legacy ~/forge directory to ~/.forge.
+    /// Migrate the legacy ~/forge directory to ~/.mnethos.
     Migrate,
 }
 

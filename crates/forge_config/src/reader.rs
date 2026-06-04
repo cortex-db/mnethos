@@ -41,31 +41,31 @@ pub struct ConfigReader {
 
 impl ConfigReader {
     /// Returns the path to the legacy JSON config file
-    /// (`~/.forge/.config.json`).
+    /// (`~/.mnethos/.config.json`).
     pub fn config_legacy_path() -> PathBuf {
         Self::base_path().join(".config.json")
     }
 
     /// Returns the path to the primary TOML config file
-    /// (`~/.forge/.forge.toml`).
+    /// (`~/.mnethos/.mnethos.toml`).
     pub fn config_path() -> PathBuf {
-        Self::base_path().join(".forge.toml")
+        Self::base_path().join(".mnethos.toml")
     }
 
     /// Returns the base directory for all Forge config files.
     ///
     /// Resolution order:
-    /// 1. `FORGE_CONFIG` environment variable, if set.
+    /// 1. `MNETHOS_CONFIG` environment variable, if set.
     /// 2. `~/forge` (legacy path), if that directory exists, so users who have
     ///    not yet run `forge config migrate` continue to read from their
     ///    existing directory without disruption.
-    /// 3. `~/.forge` as the default path.
+    /// 3. `~/.mnethos` as the default path.
     pub fn base_path() -> PathBuf {
         BASE_PATH.clone()
     }
 
     fn resolve_base_path() -> PathBuf {
-        if let Ok(path) = std::env::var("FORGE_CONFIG") {
+        if let Ok(path) = std::env::var("MNETHOS_CONFIG") {
             return PathBuf::from(path);
         }
 
@@ -73,14 +73,14 @@ impl ConfigReader {
         let path = base.join("forge");
 
         // Prefer ~/forge (legacy) when it exists so existing users are not
-        // disrupted; fall back to ~/.forge as the default.
+        // disrupted; fall back to ~/.mnethos as the default.
         if path.exists() {
             tracing::info!("Using legacy path");
             return path;
         }
 
         tracing::info!("Using new path");
-        base.join(".forge")
+        base.join(".mnethos")
     }
 
     /// Adds the provided TOML string as a config source without touching the
@@ -93,17 +93,17 @@ impl ConfigReader {
         self
     }
 
-    /// Adds the embedded default config (`../.forge.toml`) as a source.
+    /// Adds the embedded default config (`../.mnethos.toml`) as a source.
     pub fn read_defaults(self) -> Self {
-        let defaults = include_str!("../.forge.toml");
+        let defaults = include_str!("../.mnethos.toml");
 
         self.read_toml(defaults)
     }
 
-    /// Adds `FORGE_`-prefixed environment variables as a config source.
+    /// Adds `MNETHOS_`-prefixed environment variables as a config source.
     pub fn read_env(mut self) -> Self {
         self.builder = self.builder.add_source(
-            config::Environment::with_prefix("FORGE")
+            config::Environment::with_prefix("MNETHOS")
                 .prefix_separator("_")
                 .separator("__")
                 .try_parsing(true)
@@ -130,7 +130,7 @@ impl ConfigReader {
         Ok(config.try_deserialize::<ForgeConfig>()?)
     }
 
-    /// Adds `~/.forge/.forge.toml` as a config source, silently skipping if
+    /// Adds `~/.mnethos/.mnethos.toml` as a config source, silently skipping if
     /// absent.
     pub fn read_global(mut self) -> Self {
         let path = Self::config_path();
@@ -140,7 +140,7 @@ impl ConfigReader {
         self
     }
 
-    /// Reads `~/.forge/.config.json` (legacy format) and adds it as a source,
+    /// Reads `~/.mnethos/.config.json` (legacy format) and adds it as a source,
     /// silently skipping errors.
     pub fn read_legacy(self) -> Self {
         let content = LegacyConfig::read(&Self::config_legacy_path());
@@ -205,7 +205,7 @@ mod tests {
 
     #[test]
     fn test_base_path_uses_forge_config_env_var() {
-        let _guard = EnvGuard::set(&[("FORGE_CONFIG", "/custom/forge/dir")]);
+        let _guard = EnvGuard::set(&[("MNETHOS_CONFIG", "/custom/forge/dir")]);
         let actual = ConfigReader::resolve_base_path();
         let expected = PathBuf::from("/custom/forge/dir");
         assert_eq!(actual, expected);
@@ -213,17 +213,17 @@ mod tests {
 
     #[test]
     fn test_base_path_falls_back_to_home_dir_when_env_var_absent() {
-        // Hold the env mutex and ensure FORGE_CONFIG is absent so this test
+        // Hold the env mutex and ensure MNETHOS_CONFIG is absent so this test
         // cannot race with test_base_path_uses_forge_config_env_var.
-        let _guard = EnvGuard::set_and_remove(&[], &["FORGE_CONFIG"]);
+        let _guard = EnvGuard::set_and_remove(&[], &["MNETHOS_CONFIG"]);
 
         let actual = ConfigReader::resolve_base_path();
-        // Without FORGE_CONFIG set the path must be either "forge" (legacy,
-        // preferred when ~/forge exists) or ".forge" (default new path).
+        // Without MNETHOS_CONFIG set the path must be either "forge" (legacy,
+        // preferred when ~/forge exists) or ".mnethos" (default new path).
         let name = actual.file_name().unwrap();
         assert!(
-            name == "forge" || name == ".forge",
-            "Expected base_path to end with 'forge' or '.forge', got: {:?}",
+            name == "forge" || name == ".mnethos",
+            "Expected base_path to end with 'forge' or '.mnethos', got: {:?}",
             name
         );
     }
@@ -264,7 +264,7 @@ mod tests {
             })
         );
 
-        // Default values from .forge.toml must be retained, not reset to zero
+        // Default values from .mnethos.toml must be retained, not reset to zero
         assert_eq!(actual.max_parallel_file_reads, 64);
         assert_eq!(actual.max_read_lines, 2000);
         assert_eq!(actual.tool_timeout_secs, 300);
@@ -275,8 +275,8 @@ mod tests {
     #[test]
     fn test_read_session_from_env_vars() {
         let _guard = EnvGuard::set(&[
-            ("FORGE_SESSION__PROVIDER_ID", "fake-provider"),
-            ("FORGE_SESSION__MODEL_ID", "fake-model"),
+            ("MNETHOS_SESSION__PROVIDER_ID", "fake-provider"),
+            ("MNETHOS_SESSION__MODEL_ID", "fake-model"),
         ]);
 
         let actual = ConfigReader::default()

@@ -30,18 +30,18 @@ function _forge_action_default() {
             # Case-insensitive comparison using :l (lowercase) modifier
             if [[ "${command_type:l}" == "custom" ]]; then
                 # Generate conversation ID if needed (don't track previous for auto-generation)
-                if [[ -z "$_FORGE_CONVERSATION_ID" ]]; then
-                    local new_id=$($_FORGE_BIN conversation new)
+                if [[ -z "$_MNETHOS_CONVERSATION_ID" ]]; then
+                    local new_id=$($_MNETHOS_BIN conversation new)
                     # Use helper but don't track previous for auto-generation
-                    _FORGE_CONVERSATION_ID="$new_id"
+                    _MNETHOS_CONVERSATION_ID="$new_id"
                 fi
                 
                 echo
                 # Execute custom command with execute subcommand
                 if [[ -n "$input_text" ]]; then
-                    _forge_exec cmd execute --cid "$_FORGE_CONVERSATION_ID" "$user_action" "$input_text"
+                    _forge_exec cmd execute --cid "$_MNETHOS_CONVERSATION_ID" "$user_action" "$input_text"
                 else
-                    _forge_exec cmd execute --cid "$_FORGE_CONVERSATION_ID" "$user_action"
+                    _forge_exec cmd execute --cid "$_MNETHOS_CONVERSATION_ID" "$user_action"
                 fi
                 return 0
             fi
@@ -58,28 +58,28 @@ function _forge_action_default() {
             fi
             echo
             # Set the agent in the local variable
-            _FORGE_ACTIVE_AGENT="$user_action"
-            _forge_log info "\033[1;37m${_FORGE_ACTIVE_AGENT:u}\033[0m \033[90mis now the active agent\033[0m"
+            _MNETHOS_ACTIVE_AGENT="$user_action"
+            _forge_log info "\033[1;37m${_MNETHOS_ACTIVE_AGENT:u}\033[0m \033[90mis now the active agent\033[0m"
         fi
         return 0
     fi
     
     # Generate conversation ID if needed (don't track previous for auto-generation)
-    if [[ -z "$_FORGE_CONVERSATION_ID" ]]; then
-        local new_id=$($_FORGE_BIN conversation new)
+    if [[ -z "$_MNETHOS_CONVERSATION_ID" ]]; then
+        local new_id=$($_MNETHOS_BIN conversation new)
         # Use direct assignment here - no previous to track for auto-generation
-        _FORGE_CONVERSATION_ID="$new_id"
+        _MNETHOS_CONVERSATION_ID="$new_id"
     fi
     
     echo
     
     # Only set the agent if user explicitly specified one
     if [[ -n "$user_action" ]]; then
-        _FORGE_ACTIVE_AGENT="$user_action"
+        _MNETHOS_ACTIVE_AGENT="$user_action"
     fi
     
     # Execute the forge command directly with proper escaping
-    _forge_exec_interactive -p "$input_text" --cid "$_FORGE_CONVERSATION_ID"
+    _forge_exec_interactive -p "$input_text" --cid "$_MNETHOS_CONVERSATION_ID"
     
     # Start background sync job if enabled and not already running
     _forge_start_background_sync

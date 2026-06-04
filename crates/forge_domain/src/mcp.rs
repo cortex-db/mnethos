@@ -82,7 +82,7 @@ pub struct McpStdioServer {
     pub env: BTreeMap<String, String>,
 
     /// Timeout in seconds for tool calls to this MCP server
-    /// If not specified, uses the default FORGE_MCP_TIMEOUT or 300 seconds
+    /// If not specified, uses the default MNETHOS_MCP_TIMEOUT or 300 seconds
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timeout: Option<u64>,
 
@@ -104,7 +104,7 @@ pub struct McpHttpServer {
     pub headers: BTreeMap<String, String>,
 
     /// Timeout in seconds for HTTP requests to this MCP server
-    /// If not specified, uses the default FORGE_MCP_TIMEOUT or 300 seconds
+    /// If not specified, uses the default MNETHOS_MCP_TIMEOUT or 300 seconds
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timeout: Option<u64>,
 

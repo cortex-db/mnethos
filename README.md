@@ -1,4 +1,4 @@
-<h1 align="center">⚒️ Forge: AI-Enhanced Terminal Development Environment</h1>
+<h1 align="center">⚒️ Mnethos: AI-Enhanced Terminal Development Environment</h1>
 <p align="center">A comprehensive coding agent that integrates AI capabilities with your development environment</p>
 
 <p align="center"><code>curl -fsSL https://forgecode.dev/cli | sh</code></p>
@@ -8,7 +8,7 @@
 [![Discord](https://img.shields.io/discord/1044859667798568962?style=for-the-badge&cacheSeconds=120&logo=discord)](https://discord.gg/kRZBPpkgwq)
 [![CLA assistant](https://cla-assistant.io/readme/badge/tailcallhq/forgecode?style=for-the-badge)](https://cla-assistant.io/tailcallhq/forgecode)
 
-![Code-Forge Demo](https://assets.antinomy.ai/images/forge_demo_2x.gif)
+![Mnethos Demo](https://assets.antinomy.ai/images/forge_demo_2x.gif)
 
 ---
 
@@ -17,8 +17,8 @@
 
 - [Quickstart](#quickstart)
 - [Usage Examples](#usage-examples)
-- [Why Forge?](#why-forge)
-- [How Forge Works: Three Modes](#how-forge-works-three-modes)
+- [Why Mnethos?](#why-mnethos)
+- [How Mnethos Works: Three Modes](#how-mnethos-works-three-modes)
   - [Interactive Mode (TUI)](#interactive-mode-tui)
   - [One-Shot CLI Mode](#one-shot-cli-mode)
   - [ZSH Plugin Mode (`:` prefix)](#zsh-plugin-mode--prefix)
@@ -39,7 +39,7 @@
   - [Provider Configuration](#provider-configuration)
     - [Managing Provider Credentials](#managing-provider-credentials)
     - [Deprecated: Environment Variables](#deprecated-environment-variables)
-  - [forge.yaml Configuration Options](#forgeyaml-configuration-options)
+  - [mnethos.yaml Configuration Options](#forgeyaml-configuration-options)
   - [Environment Variables](#environment-variables)
   - [MCP Configuration](#mcp-configuration)
   - [Example Use Cases](#example-use-cases)
@@ -54,26 +54,26 @@
 
 ## Quickstart
 
-To get started with Forge, run the command below:
+To get started with Mnethos, run the command below:
 
 ```bash
 curl -fsSL https://forgecode.dev/cli | sh
 ```
 
-On first run, Forge will guide you through setting up your AI provider credentials using the interactive login flow. Alternatively, you can configure providers beforehand:
+On first run, Mnethos will guide you through setting up your AI provider credentials using the interactive login flow. Alternatively, you can configure providers beforehand:
 
 ```bash
 # Configure your provider credentials interactively
-forge provider login
+mnethos provider login
 
-# Then start Forge
-forge
+# Then start Mnethos
+mnethos
 ```
-That's it! Forge is now ready to assist you with your development tasks.
+That's it! Mnethos is now ready to assist you with your development tasks.
 
 ## Usage Examples
 
-Forge can be used in different ways depending on your needs. Here are some common usage patterns:
+Mnethos can be used in different ways depending on your needs. Here are some common usage patterns:
 
 <details>
 <summary><strong>Code Understanding</strong></summary>
@@ -82,7 +82,7 @@ Forge can be used in different ways depending on your needs. Here are some commo
 > Can you explain how the authentication system works in this codebase?
 ```
 
-Forge will analyze your project's structure, identify authentication-related files, and provide a detailed explanation of the authentication flow, including the relationships between different components.
+Mnethos will analyze your project's structure, identify authentication-related files, and provide a detailed explanation of the authentication flow, including the relationships between different components.
 
 </details>
 
@@ -93,7 +93,7 @@ Forge will analyze your project's structure, identify authentication-related fil
 > I need to add a dark mode toggle to our React application. How should I approach this?
 ```
 
-Forge will suggest the best approach based on your current codebase, explain the steps needed, and even scaffold the necessary components and styles for you.
+Mnethos will suggest the best approach based on your current codebase, explain the steps needed, and even scaffold the necessary components and styles for you.
 
 </details>
 
@@ -104,7 +104,7 @@ Forge will suggest the best approach based on your current codebase, explain the
 > I'm getting this error: "TypeError: Cannot read property 'map' of undefined". What might be causing it?
 ```
 
-Forge will analyze the error, suggest potential causes based on your code, and propose different solutions to fix the issue.
+Mnethos will analyze the error, suggest potential causes based on your code, and propose different solutions to fix the issue.
 
 </details>
 
@@ -115,7 +115,7 @@ Forge will analyze the error, suggest potential causes based on your code, and p
 > Please review the code in src/components/UserProfile.js and suggest improvements
 ```
 
-Forge will analyze the code, identify potential issues, and suggest improvements for readability, performance, security, and maintainability.
+Mnethos will analyze the code, identify potential issues, and suggest improvements for readability, performance, security, and maintainability.
 
 </details>
 
@@ -126,7 +126,7 @@ Forge will analyze the code, identify potential issues, and suggest improvements
 > I want to integrate GraphQL into this Express application. Can you explain how to get started?
 ```
 
-Forge will provide a tailored tutorial on integrating GraphQL with Express, using your specific project structure as context.
+Mnethos will provide a tailored tutorial on integrating GraphQL with Express, using your specific project structure as context.
 
 </details>
 
@@ -137,7 +137,7 @@ Forge will provide a tailored tutorial on integrating GraphQL with Express, usin
 > I need to design a database schema for a blog with users, posts, comments, and categories
 ```
 
-Forge will suggest an appropriate schema design, including tables/collections, relationships, indexes, and constraints based on your project's existing database technology.
+Mnethos will suggest an appropriate schema design, including tables/collections, relationships, indexes, and constraints based on your project's existing database technology.
 
 </details>
 
@@ -148,7 +148,7 @@ Forge will suggest an appropriate schema design, including tables/collections, r
 > Help me refactor this class-based component to use React Hooks
 ```
 
-Forge can help modernize your codebase by walking you through refactoring steps and implementing them with your approval.
+Mnethos can help modernize your codebase by walking you through refactoring steps and implementing them with your approval.
 
 </details>
 
@@ -159,13 +159,13 @@ Forge can help modernize your codebase by walking you through refactoring steps 
 > I need to merge branch 'feature/user-profile' into main but there are conflicts
 ```
 
-Forge can guide you through resolving git conflicts, explaining the differences and suggesting the best way to reconcile them.
+Mnethos can guide you through resolving git conflicts, explaining the differences and suggesting the best way to reconcile them.
 
 </details>
 
-## Why Forge?
+## Why Mnethos?
 
-Forge is designed for developers who want to enhance their workflow with AI assistance while maintaining full control over their development environment.
+Mnethos is designed for developers who want to enhance their workflow with AI assistance while maintaining full control over their development environment.
 
 - **Zero configuration** - Just add your API key and you're ready to go
 - **Seamless integration** - Works right in your terminal, where you already work
@@ -173,47 +173,47 @@ Forge is designed for developers who want to enhance their workflow with AI assi
 - **Secure by design** - Restricted shell mode limits file system access and prevents unintended changes
 - **Open-source** - Transparent, extensible, and community-driven
 
-Forge helps you code faster, solve complex problems, and learn new technologies without leaving your terminal.
+Mnethos helps you code faster, solve complex problems, and learn new technologies without leaving your terminal.
 
 ---
 
-## How Forge Works: Three Modes
+## How Mnethos Works: Three Modes
 
-Forge has three distinct ways to use it. Understanding this distinction upfront will save you confusion.
+Mnethos has three distinct ways to use it. Understanding this distinction upfront will save you confusion.
 
 ### Interactive Mode (TUI)
 
-Running `forge` with no arguments starts the interactive terminal UI, a persistent session where you type prompts and the AI responds in a conversational loop. This is the primary way to do multi-step work.
+Running `mnethos` with no arguments starts the interactive terminal UI, a persistent session where you type prompts and the AI responds in a conversational loop. This is the primary way to do multi-step work.
 
 ```bash
-forge                              # Start a new interactive session
-forge conversation resume <id>     # Resume a specific saved conversation in interactive mode
-forge --conversation-id <id>       # Same: resume conversation by ID
-forge --agent <agent-id>           # Start interactive session with a specific agent
-forge -C /path/to/project          # Start in a specific directory
-forge --sandbox experiment-name    # Create an isolated git worktree + branch, then start there
+mnethos                              # Start a new interactive session
+mnethos conversation resume <id>     # Resume a specific saved conversation in interactive mode
+mnethos --conversation-id <id>       # Same: resume conversation by ID
+mnethos --agent <agent-id>           # Start interactive session with a specific agent
+mnethos -C /path/to/project          # Start in a specific directory
+mnethos --sandbox experiment-name    # Create an isolated git worktree + branch, then start there
 ```
 
-Once inside interactive mode, type your prompt and press Enter. Forge reads files, writes patches, runs commands, and maintains context across the whole session.
+Once inside interactive mode, type your prompt and press Enter. Mnethos reads files, writes patches, runs commands, and maintains context across the whole session.
 
 ### One-Shot CLI Mode
 
-Pass `-p` (or `--prompt`) to run a single prompt and exit. Forge does the work and returns to your shell. Useful for scripts, piping output, or quick tasks.
+Pass `-p` (or `--prompt`) to run a single prompt and exit. Mnethos does the work and returns to your shell. Useful for scripts, piping output, or quick tasks.
 
 ```bash
-forge -p "Explain the purpose of src/main.rs"
-forge -p "Add error handling to the parse() function in lib.rs"
-echo "What does this do?" | forge    # Pipe input as the prompt
-forge commit                         # Generate an AI commit message and commit (exits when done)
-forge commit --preview               # Generate commit message, print it, then exit
-forge suggest "find large log files" # Translate natural language to a shell command, then exit
+mnethos -p "Explain the purpose of src/main.rs"
+mnethos -p "Add error handling to the parse() function in lib.rs"
+echo "What does this do?" | mnethos    # Pipe input as the prompt
+mnethos commit                         # Generate an AI commit message and commit (exits when done)
+mnethos commit --preview               # Generate commit message, print it, then exit
+mnethos suggest "find large log files" # Translate natural language to a shell command, then exit
 ```
 
-> **Note:** `forge conversation resume <id>` opens the interactive TUI. It does **not** just print a message and exit. If you run it and see the cursor waiting, you are inside the interactive session. Type your prompt or press `Ctrl+C` to exit.
+> **Note:** `mnethos conversation resume <id>` opens the interactive TUI. It does **not** just print a message and exit. If you run it and see the cursor waiting, you are inside the interactive session. Type your prompt or press `Ctrl+C` to exit.
 
 ### ZSH Plugin Mode (`:` prefix)
 
-Install the ZSH plugin once with `forge setup`, then use `:` commands directly at your shell prompt without ever typing `forge`. This is the fastest mode for day-to-day development: send prompts, switch conversations, commit, and suggest commands without leaving your shell.
+Install the ZSH plugin once with `mnethos setup`, then use `:` commands directly at your shell prompt without ever typing `mnethos`. This is the fastest mode for day-to-day development: send prompts, switch conversations, commit, and suggest commands without leaving your shell.
 
 ```zsh
 : refactor the auth module      # Send a prompt to the active agent
@@ -228,23 +228,23 @@ See the full [ZSH Plugin reference below](#zsh-plugin-the--prefix-system) for al
 
 ## ZSH Plugin: The `:` Prefix System
 
-When you install the ZSH plugin (`forge setup`), you get a `:` prefix command system at your shell prompt. This is the fastest way to use Forge during normal development; you never leave your shell.
+When you install the ZSH plugin (`mnethos setup`), you get a `:` prefix command system at your shell prompt. This is the fastest way to use Mnethos during normal development; you never leave your shell.
 
-**How it works:** Lines starting with `:` are intercepted before the shell sees them and routed to Forge. Everything else runs normally.
+**How it works:** Lines starting with `:` are intercepted before the shell sees them and routed to Mnethos. Everything else runs normally.
 
 ```zsh
 : <prompt>         # Send a prompt to the active agent
-:sage <prompt>     # Send a prompt to a specific agent by name (sage, muse, forge, or any custom agent)
+:sage <prompt>     # Send a prompt to a specific agent by name (sage, muse, mnethos, or any custom agent)
 :agent <name>      # Switch the active agent; opens interactive picker if no name given
 ```
 
 ### Agents
 
-Forge ships with three built-in agents, each with a different role:
+Mnethos ships with three built-in agents, each with a different role:
 
 | Agent | Alias | Purpose | Modifies files? |
 |---|---|---|---|
-| `forge` | (default) | Implementation: builds features, fixes bugs, and runs tests | Yes |
+| `mnethos` | (default) | Implementation: builds features, fixes bugs, and runs tests | Yes |
 | `sage` | `:ask` | Research: maps architecture, traces data flow, and reads code | No |
 | `muse` | `:plan` | Planning: analyzes structure and writes implementation plans to `plans/` | No |
 
@@ -270,7 +270,7 @@ Type `@` in a prompt, then press Tab to fuzzy-search and select files. The path 
 
 ### Conversation Management
 
-Forge saves every conversation. You can switch between them like switching directories.
+Mnethos saves every conversation. You can switch between them like switching directories.
 
 ```zsh
 :new                      # Start a fresh conversation (saves current for :conversation -)
@@ -307,7 +307,7 @@ Forge saves every conversation. You can switch between them like switching direc
 
 ### Session & Configuration
 
-Some commands change settings for the current session only. Others persist to your config file (`~/forge/.forge.toml`). The distinction matters:
+Some commands change settings for the current session only. Others persist to your config file (`~/mnethos/.mnethos.toml`). The distinction matters:
 
 ```zsh
 # Session-only (reset when you close the terminal; not saved to config)
@@ -333,7 +333,7 @@ Some commands change settings for the current session only. Others persist to yo
 
 ### Skills
 
-Skills are reusable workflows the AI can invoke as tools. Forge ships three built-in skills:
+Skills are reusable workflows the AI can invoke as tools. Mnethos ships three built-in skills:
 
 - **`create-skill`**: scaffold a new custom skill
 - **`execute-plan`**: execute a plan file from `plans/`
@@ -345,19 +345,19 @@ Use `:skill` to list available skills. The AI invokes them automatically when re
 
 | Location | Path | Scope |
 |---|---|---|
-| Project-local | `.forge/skills/<name>/SKILL.md` | This project only |
-| Global | `~/forge/skills/<name>/SKILL.md` | All projects |
+| Project-local | `.mnethos/skills/<name>/SKILL.md` | This project only |
+| Global | `~/mnethos/skills/<name>/SKILL.md` | All projects |
 | Built-in | Embedded in binary | Always available |
 
 Project-local skills override global ones, which override built-in ones. To scaffold a new skill, ask: `: create a new skill`.
 
 ### Customizing Agent Behavior
 
-**`AGENTS.md`:** Create this file in your project root (or `~/forge/AGENTS.md` globally) to give all agents persistent instructions such as coding conventions, commit message style, and things to avoid. Forge reads it automatically at the start of every conversation.
+**`AGENTS.md`:** Create this file in your project root (or `~/mnethos/AGENTS.md` globally) to give all agents persistent instructions such as coding conventions, commit message style, and things to avoid. Mnethos reads it automatically at the start of every conversation.
 
-**Custom agents:** Place a `.md` file with YAML front-matter in `.forge/agents/` (project) or `~/forge/agents/` (global) to define additional agents with their own models, tools, and system prompts. Project-local agents override global ones. The built-in agent files in `crates/forge_repo/src/agents/` are good examples of the format.
+**Custom agents:** Place a `.md` file with YAML front-matter in `.mnethos/agents/` (project) or `~/mnethos/agents/` (global) to define additional agents with their own models, tools, and system prompts. Project-local agents override global ones. The built-in agent files in `crates/forge_repo/src/agents/` are good examples of the format.
 
-**Custom commands:** Place YAML files in `.forge/commands/` (project) or `~/forge/commands/` (global) to define shortcut commands available via `:commandname`. Commands can also be defined inline in `forge.yaml` under the `commands:` key.
+**Custom commands:** Place YAML files in `.mnethos/commands/` (project) or `~/mnethos/commands/` (global) to define shortcut commands available via `:commandname`. Commands can also be defined inline in `mnethos.yaml` under the `commands:` key.
 
 ### Semantic Search (Workspace)
 
@@ -368,7 +368,7 @@ Project-local skills override global ones, which override built-in ones. To scaf
 :workspace-info           # Show workspace details
 ```
 
-After running `:sync`, the AI can search your codebase by meaning rather than exact text matches. Indexing sends file content to the workspace server, which defaults to `https://api.forgecode.dev`. Set `FORGE_WORKSPACE_SERVER_URL` to override this if self-hosting.
+After running `:sync`, the AI can search your codebase by meaning rather than exact text matches. Indexing sends file content to the workspace server, which defaults to `https://api.mnethoscode.dev`. Set `FORGE_WORKSPACE_SERVER_URL` to override this if self-hosting.
 
 ### Quick Reference: All `:` Commands
 
@@ -410,7 +410,7 @@ After running `:sync`, the AI can search your codebase by meaning rather than ex
 
 ## Command-Line Options
 
-Here's a quick reference of Forge's command-line options:
+Here's a quick reference of Mnethos's command-line options:
 
 | Option                              | Description                                                              |
 | ----------------------------------- | ------------------------------------------------------------------------ |
@@ -429,65 +429,65 @@ Here's a quick reference of Forge's command-line options:
 
 ```bash
 # Conversations
-forge conversation list                  # List all saved conversations
-forge conversation resume <id>           # Resume a conversation in interactive mode
-forge conversation new                   # Create a new conversation ID (prints it)
-forge conversation dump <id>             # Export conversation as JSON
-forge conversation compact <id>          # Compact conversation context
-forge conversation retry <id>            # Retry last message
-forge conversation clone <id>            # Clone a conversation
-forge conversation rename <id> <name>    # Rename a conversation
-forge conversation delete <id>           # Delete a conversation permanently
-forge conversation info <id>             # Show conversation details
-forge conversation stats <id>            # Show token usage statistics
-forge conversation show <id>             # Show last assistant message
+mnethos conversation list                  # List all saved conversations
+mnethos conversation resume <id>           # Resume a conversation in interactive mode
+mnethos conversation new                   # Create a new conversation ID (prints it)
+mnethos conversation dump <id>             # Export conversation as JSON
+mnethos conversation compact <id>          # Compact conversation context
+mnethos conversation retry <id>            # Retry last message
+mnethos conversation clone <id>            # Clone a conversation
+mnethos conversation rename <id> <name>    # Rename a conversation
+mnethos conversation delete <id>           # Delete a conversation permanently
+mnethos conversation info <id>             # Show conversation details
+mnethos conversation stats <id>            # Show token usage statistics
+mnethos conversation show <id>             # Show last assistant message
 
 # Commits
-forge commit                             # Generate AI commit message and commit
-forge commit --preview                   # Generate commit message only (prints it)
-forge commit fix the auth bug            # Pass extra context for the commit message
+mnethos commit                             # Generate AI commit message and commit
+mnethos commit --preview                   # Generate commit message only (prints it)
+mnethos commit fix the auth bug            # Pass extra context for the commit message
 
 # Shell command suggestion
-forge suggest "list files by size"       # Translate description to a shell command
+mnethos suggest "list files by size"       # Translate description to a shell command
 
 # Providers
-forge provider login                     # Add or update provider credentials (interactive)
-forge provider logout                    # Remove provider credentials
-forge list provider                      # List supported providers
+mnethos provider login                     # Add or update provider credentials (interactive)
+mnethos provider logout                    # Remove provider credentials
+mnethos list provider                      # List supported providers
 
 # Models & agents
-forge list model                         # List available models
-forge list agent                         # List available agents
+mnethos list model                         # List available models
+mnethos list agent                         # List available agents
 
 # Workspace / semantic search
-forge workspace sync                     # Index current directory for semantic search
-forge workspace init                     # Initialize workspace
-forge workspace status                   # Show indexing status
-forge workspace query <text>             # Query the semantic index
+mnethos workspace sync                     # Index current directory for semantic search
+mnethos workspace init                     # Initialize workspace
+mnethos workspace status                   # Show indexing status
+mnethos workspace query <text>             # Query the semantic index
 
 # MCP servers
-forge mcp list                           # List configured MCP servers
-forge mcp import                         # Add a server from JSON
-forge mcp show                           # Show server configuration
-forge mcp remove                         # Remove a server
-forge mcp reload                         # Reload all servers and rebuild caches
+mnethos mcp list                           # List configured MCP servers
+mnethos mcp import                         # Add a server from JSON
+mnethos mcp show                           # Show server configuration
+mnethos mcp remove                         # Remove a server
+mnethos mcp reload                         # Reload all servers and rebuild caches
 
 # Other
-forge info                               # Show config, active model, environment
-forge list tool --agent <id>             # List tools for a specific agent
-forge doctor                             # Run shell environment diagnostics
-forge update                             # Update forge to the latest version
-forge setup                              # Install ZSH plugin (updates .zshrc)
+mnethos info                               # Show config, active model, environment
+mnethos list tool --agent <id>             # List tools for a specific agent
+mnethos doctor                             # Run shell environment diagnostics
+mnethos update                             # Update mnethos to the latest version
+mnethos setup                              # Install ZSH plugin (updates .zshrc)
 ```
 
 ## Advanced Configuration
 
 ### Provider Configuration
 
-Forge supports multiple AI providers. The recommended way to configure providers is using the interactive login command:
+Mnethos supports multiple AI providers. The recommended way to configure providers is using the interactive login command:
 
 ```bash
-forge provider login
+mnethos provider login
 ```
 
 This will:
@@ -499,20 +499,20 @@ This will:
 
 ```bash
 # Login to a provider (add or update credentials)
-forge provider login
+mnethos provider login
 
 # Remove provider credentials
-forge provider logout
+mnethos provider logout
 
 # List supported providers
-forge provider list
+mnethos provider list
 ```
 
 #### Deprecated: Environment Variables
 
-> **⚠️ DEPRECATED**: Using `.env` files for provider configuration is deprecated and will be removed in a future version. Please use `forge provider login` instead.
+> **⚠️ DEPRECATED**: Using `.env` files for provider configuration is deprecated and will be removed in a future version. Please use `mnethos provider login` instead.
 
-For backward compatibility, Forge still supports environment variables. On first run, any credentials found in environment variables will be automatically migrated to file-based storage.
+For backward compatibility, Mnethos still supports environment variables. On first run, any credentials found in environment variables will be automatically migrated to file-based storage.
 
 <details>
 <summary><strong>Legacy Environment Variable Setup (Deprecated)</strong></summary>
@@ -579,7 +579,7 @@ IO_INTELLIGENCE_API_KEY=<your_io_intelligence_api_key>
 ```
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 model: meta-llama/Llama-3.3-70B-Instruct
 ```
 
@@ -594,7 +594,7 @@ OPENAI_API_KEY=<your_openai_api_key>
 ```
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 model: o3-mini-high
 ```
 
@@ -609,7 +609,7 @@ ANTHROPIC_API_KEY=<your_anthropic_api_key>
 ```
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 model: claude-3.7-sonnet
 ```
 
@@ -633,10 +633,10 @@ model: claude-3.7-sonnet
    gcloud auth print-access-token
    ```
 
-3. **Use the token when logging in via Forge**:
+3. **Use the token when logging in via Mnethos**:
 
    ```bash
-   forge provider login
+   mnethos provider login
    # Select Google Vertex AI and enter your credentials
    ```
 
@@ -650,7 +650,7 @@ VERTEX_AI_AUTH_TOKEN=<your_auth_token>
 ```
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 model: google/gemini-2.5-pro
 ```
 
@@ -658,7 +658,7 @@ model: google/gemini-2.5-pro
 - Claude models: `claude-sonnet-4@20250514`
 - Gemini models: `gemini-2.5-pro`, `gemini-2.0-flash`
 
-Use the `/model` command in Forge CLI to see all available models.
+Use the `/model` command in Mnethos CLI to see all available models.
 
 </details>
 
@@ -672,7 +672,7 @@ OPENAI_URL=<your_provider_url>
 ```
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 model: <provider-specific-model>
 ```
 
@@ -688,7 +688,7 @@ OPENAI_URL=https://api.groq.com/openai/v1
 ```
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 model: deepseek-r1-distill-llama-70b
 ```
 
@@ -697,7 +697,7 @@ model: deepseek-r1-distill-llama-70b
 <details>
 <summary><strong>Amazon Bedrock</strong></summary>
 
-To use Amazon Bedrock models with Forge, you'll need to first set up the [Bedrock Access Gateway](https://github.com/aws-samples/bedrock-access-gateway):
+To use Amazon Bedrock models with Mnethos, you'll need to first set up the [Bedrock Access Gateway](https://github.com/aws-samples/bedrock-access-gateway):
 
 1. **Set up Bedrock Access Gateway**:
 
@@ -706,10 +706,10 @@ To use Amazon Bedrock models with Forge, you'll need to first set up the [Bedroc
    - Deploy the CloudFormation stack
    - Note your API Base URL from the CloudFormation outputs
 
-2. **Configure in Forge**:
+2. **Configure in Mnethos**:
 
    ```bash
-   forge provider login
+   mnethos provider login
    # Select OpenAI-compatible provider and enter your Bedrock Gateway details
    ```
 
@@ -722,14 +722,14 @@ OPENAI_URL=<your_bedrock_gateway_base_url>
 ```
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 model: anthropic.claude-3-opus
 ```
 
 </details>
 
 <details>
-<summary><strong>ForgeCode Services</strong></summary>
+<summary><strong>Mnethos Services</strong></summary>
 
 ```bash
 # .env
@@ -737,7 +737,7 @@ FORGE_API_KEY=<your_forge_api_key>
 ```
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 model: claude-3.7-sonnet
 ```
 
@@ -747,16 +747,16 @@ model: claude-3.7-sonnet
 
 ---
 
-### forge.yaml Configuration Options
+### mnethos.yaml Configuration Options
 
 ### Environment Variables
 
-Forge supports several environment variables for advanced configuration and fine-tuning. These can be set in your `.env` file or system environment.
+Mnethos supports several environment variables for advanced configuration and fine-tuning. These can be set in your `.env` file or system environment.
 
 <details>
 <summary><strong>Retry Configuration</strong></summary>
 
-Control how Forge handles retry logic for failed requests:
+Control how Mnethos handles retry logic for failed requests:
 
 ```bash
 # .env
@@ -804,8 +804,8 @@ Override default API endpoints and provider/model settings:
 
 ```bash
 # .env
-FORGE_API_URL=https://api.forgecode.dev  # Custom Forge API URL (default: https://api.forgecode.dev)
-FORGE_WORKSPACE_SERVER_URL=http://localhost:8080  # URL for the indexing server (default: https://api.forgecode.dev/)
+FORGE_API_URL=https://api.mnethoscode.dev  # Custom Mnethos API URL (default: https://api.mnethoscode.dev)
+FORGE_WORKSPACE_SERVER_URL=http://localhost:8080  # URL for the indexing server (default: https://api.mnethoscode.dev/)
 ```
 
 </details>
@@ -832,17 +832,17 @@ Configure the ZSH plugin behavior:
 
 ```bash
 # .env
-FORGE_BIN=forge                    # Command to use for forge operations (default: "forge")
+FORGE_BIN=mnethos                    # Command to use for mnethos operations (default: "mnethos")
 ```
 
-The `FORGE_BIN` environment variable allows you to customize the command used by the ZSH plugin when transforming `:` prefixed commands. If not set, it defaults to `"forge"`.
+The `FORGE_BIN` environment variable allows you to customize the command used by the ZSH plugin when transforming `:` prefixed commands. If not set, it defaults to `"mnethos"`.
 
 </details>
 
 <details>
 <summary><strong>Display Configuration</strong></summary>
 
-Configure display options for the Forge UI and ZSH theme:
+Configure display options for the Mnethos UI and ZSH theme:
 
 ```bash
 # .env
@@ -863,10 +863,10 @@ System-level environment variables (usually set automatically):
 
 ```bash
 # .env
-FORGE_CONFIG=/custom/config/dir        # Base directory for all Forge config files (default: ~/.forge)
+FORGE_CONFIG=/custom/config/dir        # Base directory for all Mnethos config files (default: ~/.mnethos)
 FORGE_MAX_SEARCH_RESULT_BYTES=10240   # Maximum bytes for search results (default: 10240 - 10 KB)
-FORGE_HISTORY_FILE=/path/to/history    # Custom path for Forge history file (default: uses system default location)
-FORGE_BANNER="Your custom banner text" # Custom banner text to display on startup (default: Forge ASCII art)
+FORGE_HISTORY_FILE=/path/to/history    # Custom path for Mnethos history file (default: uses system default location)
+FORGE_BANNER="Your custom banner text" # Custom banner text to display on startup (default: Mnethos ASCII art)
 FORGE_MAX_CONVERSATIONS=100            # Maximum number of conversations to show in list (default: 100)
 FORGE_MAX_LINE_LENGTH=2000             # Maximum characters per line for file read operations (default: 2000)
 FORGE_STDOUT_MAX_LINE_LENGTH=2000      # Maximum characters per line for shell output (default: 2000)
@@ -896,15 +896,15 @@ Configure logging verbosity and output:
 
 ```bash
 # .env
-FORGE_LOG=forge=info                  # Log filter level (default: forge=debug when tracking disabled, forge=info when tracking enabled)
+FORGE_LOG=mnethos=info                  # Log filter level (default: mnethos=debug when tracking disabled, mnethos=info when tracking enabled)
 ```
 
-The `FORGE_LOG` variable controls the logging level for Forge's internal operations using the standard tracing filter syntax. Common values:
-- `forge=error` - Only errors
-- `forge=warn` - Warnings and errors
-- `forge=info` - Informational messages (default when tracking enabled)
-- `forge=debug` - Debug information (default when tracking disabled)
-- `forge=trace` - Detailed tracing
+The `FORGE_LOG` variable controls the logging level for Mnethos's internal operations using the standard tracing filter syntax. Common values:
+- `mnethos=error` - Only errors
+- `mnethos=warn` - Warnings and errors
+- `mnethos=info` - Informational messages (default when tracking enabled)
+- `mnethos=debug` - Debug information (default when tracking disabled)
+- `mnethos=trace` - Detailed tracing
 
 </details>
 
@@ -922,7 +922,7 @@ The `FORGE_TRACKER` variable controls whether tracking enrichment metadata is in
 
 </details>
 
-The `forge.yaml` file supports several advanced configuration options that let you customize Forge's behavior.
+The `mnethos.yaml` file supports several advanced configuration options that let you customize Mnethos's behavior.
 
 <details>
 <summary><strong>Custom Rules</strong></summary>
@@ -930,7 +930,7 @@ The `forge.yaml` file supports several advanced configuration options that let y
 Add your own guidelines that all agents should follow when generating responses.
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 custom_rules: |
   1. Always add comprehensive error handling to any code you write.
   2. Include unit tests for all new functions.
@@ -945,7 +945,7 @@ custom_rules: |
 Define custom commands as shortcuts for repetitive prompts:
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 commands:
   - name: "refactor"
     description: "Refactor selected code"
@@ -960,7 +960,7 @@ commands:
 Specify the default AI model to use for all agents in the workflow.
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 model: "claude-3.7-sonnet"
 ```
 
@@ -969,10 +969,10 @@ model: "claude-3.7-sonnet"
 <details>
 <summary><strong>Max Walker Depth</strong></summary>
 
-Control how deeply Forge traverses your project directory structure when gathering context.
+Control how deeply Mnethos traverses your project directory structure when gathering context.
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 max_walker_depth: 3 # Limit directory traversal to 3 levels deep
 ```
 
@@ -984,7 +984,7 @@ max_walker_depth: 3 # Limit directory traversal to 3 levels deep
 Adjust the creativity and randomness in AI responses. Lower values (0.0-0.3) produce more focused, deterministic outputs, while higher values (0.7-2.0) generate more diverse and creative results.
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 temperature: 0.7 # Balanced creativity and focus
 ```
 
@@ -992,10 +992,10 @@ temperature: 0.7 # Balanced creativity and focus
 <details>
 <summary><strong>Tool Max Failure Limit</strong></summary>
 
-Control how many times a tool can fail before Forge forces completion to prevent infinite retry loops. This helps avoid situations where an agent gets stuck repeatedly trying the same failing operation.
+Control how many times a tool can fail before Mnethos forces completion to prevent infinite retry loops. This helps avoid situations where an agent gets stuck repeatedly trying the same failing operation.
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 max_tool_failure_per_turn: 3 # Allow up to 3 failures per tool before forcing completion
 ```
 
@@ -1009,11 +1009,11 @@ Set to a higher value if you want more retry attempts, or lower if you want fast
 Limit the maximum number of requests an agent can make in a single conversation turn. This prevents runaway conversations and helps control API usage and costs.
 
 ```yaml
-# forge.yaml
+# mnethos.yaml
 max_requests_per_turn: 50 # Allow up to 50 requests per turn
 ```
 
-When this limit is reached, Forge will:
+When this limit is reached, Mnethos will:
 
 - Ask you if you wish to continue
 - If you respond with 'Yes', it will continue the conversation
@@ -1034,19 +1034,19 @@ Configure MCP servers using the CLI:
 
 ```bash
 # List all MCP servers
-forge mcp list
+mnethos mcp list
 
 # Import a server from JSON
-forge mcp import
+mnethos mcp import
 
 # Show server configuration details
-forge mcp show
+mnethos mcp show
 
 # Remove a server
-forge mcp remove
+mnethos mcp remove
 
 # Reload servers and rebuild caches
-forge mcp reload
+mnethos mcp reload
 ```
 
 Or manually create a `.mcp.json` file with the following structure:
@@ -1069,7 +1069,7 @@ Or manually create a `.mcp.json` file with the following structure:
 MCP configurations are read from two locations (project-local takes precedence):
 
 1. **Project-local:** `.mcp.json` in your project directory
-2. **Global:** `~/forge/.mcp.json`
+2. **Global:** `~/mnethos/.mcp.json`
 
 ### Example Use Cases
 
@@ -1108,7 +1108,7 @@ nix run github:tailcallhq/forgecode # for latest dev branch
 
 ## Community
 
-Join our vibrant Discord community to connect with other Forge users and contributors, get help with your projects, share ideas, and provide feedback!
+Join our vibrant Discord community to connect with other Mnethos users and contributors, get help with your projects, share ideas, and provide feedback!
 
 [![Discord](https://img.shields.io/discord/1044859667798568962?style=for-the-badge&cacheSeconds=120&logo=discord)](https://discord.gg/kRZBPpkgwq)
 
@@ -1116,7 +1116,7 @@ Join our vibrant Discord community to connect with other Forge users and contrib
 
 ## Support Us
 
-Your support drives Forge's continued evolution! By starring our GitHub repository, you:
+Your support drives Mnethos's continued evolution! By starring our GitHub repository, you:
 
 - Help others discover this powerful tool 🔍
 - Motivate our development team 💪

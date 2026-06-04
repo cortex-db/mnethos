@@ -297,19 +297,19 @@ Write the description to a temporary file and use GitHub CLI to create the PR:
 
 **Step 1: Write description to temp file**
 ```bash
-# Write the generated description to .forge/FORGE_PR_DESCRIPTION.md
+# Write the generated description to .mnethos/MNETHOS_PR_DESCRIPTION.md
 ```
 
-Use the `write` tool to create `.forge/FORGE_PR_DESCRIPTION.md` with the generated description content.
+Use the `write` tool to create `.mnethos/MNETHOS_PR_DESCRIPTION.md` with the generated description content.
 
 **Step 2: Create PR using the temp file**
 ```bash
-gh pr create --title "[Change Type]: [One-line summary]" --body-file .forge/FORGE_PR_DESCRIPTION.md
+gh pr create --title "[Change Type]: [One-line summary]" --body-file .mnethos/MNETHOS_PR_DESCRIPTION.md
 ```
 
 The `gh` CLI is pre-installed and authenticated - use it directly without prompting for confirmation.
 
-**Note:** The temp file `.forge/FORGE_PR_DESCRIPTION.md` can not be left in place and should be deleted after PR creation. It's in `.forge/` directory which is typically gitignored.
+**Note:** The temp file `.mnethos/MNETHOS_PR_DESCRIPTION.md` can not be left in place and should be deleted after PR creation. It's in `.mnethos/` directory which is typically gitignored.
 
 ### 6. Confirm
 

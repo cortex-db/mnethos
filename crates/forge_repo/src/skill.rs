@@ -14,7 +14,7 @@ use serde::Deserialize;
 /// 1. Built-in skills (embedded in the application)
 /// 2. Global custom skills (from ~/forge/skills/ directory)
 /// 3. Agents skills (from ~/.agents/skills/ directory)
-/// 4. Project-local skills (from .forge/skills/ directory in current working
+/// 4. Project-local skills (from .mnethos/skills/ directory in current working
 ///    directory)
 ///
 /// ## Skill Precedence
@@ -29,7 +29,7 @@ use serde::Deserialize;
 /// - **Built-in skills**: Embedded in application binary
 /// - **Global skills**: `~/forge/skills/<skill-name>/SKILL.md`
 /// - **Agents skills**: `~/.agents/skills/<skill-name>/SKILL.md`
-/// - **CWD skills**: `./.forge/skills/<skill-name>/SKILL.md` (relative to
+/// - **CWD skills**: `./.mnethos/skills/<skill-name>/SKILL.md` (relative to
 ///   current working directory)
 ///
 /// Missing directories are handled gracefully and don't prevent loading from

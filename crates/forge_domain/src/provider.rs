@@ -64,7 +64,7 @@ impl ProviderId {
     pub const OPENAI_RESPONSES_COMPATIBLE: ProviderId =
         ProviderId(Cow::Borrowed("openai_responses_compatible"));
     pub const ANTHROPIC_COMPATIBLE: ProviderId = ProviderId(Cow::Borrowed("anthropic_compatible"));
-    pub const FORGE_SERVICES: ProviderId = ProviderId(Cow::Borrowed("forge_services"));
+    pub const MNETHOS_SERVICES: ProviderId = ProviderId(Cow::Borrowed("forge_services"));
     pub const IO_INTELLIGENCE: ProviderId = ProviderId(Cow::Borrowed("io_intelligence"));
     pub const BEDROCK: ProviderId = ProviderId(Cow::Borrowed("bedrock"));
     pub const MINIMAX: ProviderId = ProviderId(Cow::Borrowed("minimax"));
@@ -105,7 +105,7 @@ impl ProviderId {
             ProviderId::OPENAI_COMPATIBLE,
             ProviderId::OPENAI_RESPONSES_COMPATIBLE,
             ProviderId::ANTHROPIC_COMPATIBLE,
-            ProviderId::FORGE_SERVICES,
+            ProviderId::MNETHOS_SERVICES,
             ProviderId::IO_INTELLIGENCE,
             ProviderId::BEDROCK,
             ProviderId::MINIMAX,
@@ -193,7 +193,7 @@ impl std::str::FromStr for ProviderId {
             "openai_compatible" => ProviderId::OPENAI_COMPATIBLE,
             "openai_responses_compatible" => ProviderId::OPENAI_RESPONSES_COMPATIBLE,
             "anthropic_compatible" => ProviderId::ANTHROPIC_COMPATIBLE,
-            "forge_services" => ProviderId::FORGE_SERVICES,
+            "forge_services" => ProviderId::MNETHOS_SERVICES,
             "io_intelligence" => ProviderId::IO_INTELLIGENCE,
             "minimax" => ProviderId::MINIMAX,
             "codex" => ProviderId::CODEX,

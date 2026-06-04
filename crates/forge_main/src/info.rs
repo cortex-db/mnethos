@@ -384,7 +384,7 @@ impl From<&ForgeConfig> for Info {
 
         info = info
             .add_title("API CONFIGURATION")
-            .add_key_value("ForgeCode Service URL", config.services_url.to_string())
+            .add_key_value("Mnethos Service URL", config.services_url.to_string())
             .add_title("TOOL CONFIGURATION")
             .add_key_value("Tool Timeout", format!("{}s", config.tool_timeout_secs))
             .add_key_value(
@@ -627,7 +627,7 @@ impl From<&ForgeCommandManager> for Info {
         info = info
             .add_title("KEYBOARD SHORTCUTS")
             .add_key_value("<CTRL+C>", "Interrupt current operation")
-            .add_key_value("<CTRL+D>", "Quit Forge interactive shell")
+            .add_key_value("<CTRL+D>", "Quit Mnethos interactive shell")
             .add_key_value(multiline_shortcut, "Insert new line (multiline input)");
 
         info
@@ -644,7 +644,7 @@ impl From<&UserUsage> for Info {
             info = info.add_key_value(
                 "Subscription",
                 format!(
-                    "{} [Upgrade https://app.forgecode.dev/app/billing]",
+                    "{} [Upgrade https://app.mnethoscode.dev/app/billing]",
                     plan.r#type.to_uppercase()
                 ),
             );

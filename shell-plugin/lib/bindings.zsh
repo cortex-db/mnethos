@@ -19,7 +19,7 @@ function forge-bracketed-paste() {
     # This avoids mangling paths pasted into normal shell commands like
     # 'vim /some/path' or 'cat /some/path'.
     if [[ "$BUFFER" == :* ]]; then
-        local formatted=$("$_FORGE_BIN" zsh format --buffer "$BUFFER")
+        local formatted=$("$_MNETHOS_BIN" zsh format --buffer "$BUFFER")
         if [[ -n "$formatted" && "$formatted" != "$BUFFER" ]]; then
             BUFFER="$formatted"
             CURSOR=${#BUFFER}

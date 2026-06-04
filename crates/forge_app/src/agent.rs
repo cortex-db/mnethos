@@ -275,7 +275,7 @@ mod tests {
     /// workflow config.
     ///
     /// CURRENT BEHAVIOR: When agent has compact settings, they override
-    /// workflow settings. This means user's .forge.toml compact settings
+    /// workflow settings. This means user's .mnethos.toml compact settings
     /// are ignored if agent has ANY compact config.
     ///
     /// Note: The apply_config comment says "Agent settings take priority over
@@ -285,7 +285,7 @@ mod tests {
     fn test_compact_agent_settings_take_priority_over_workflow_config() {
         use forge_config::Percentage;
 
-        // Workflow config with custom compact settings (from .forge.toml)
+        // Workflow config with custom compact settings (from .mnethos.toml)
         let workflow_compact = forge_config::Compact::default()
             .retention_window(10_usize)
             .eviction_window(Percentage::new(0.3).unwrap())

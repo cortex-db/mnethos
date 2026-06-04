@@ -16,7 +16,7 @@ fn main() {
     println!("cargo:rustc-env=CARGO_PKG_VERSION={version}");
 
     // Make version available to the application
-    println!("cargo:rustc-env=CARGO_PKG_NAME=forge");
+    println!("cargo:rustc-env=CARGO_PKG_NAME=mnethos");
 
     // Ensure rebuild when environment changes
     println!("cargo:rerun-if-env-changed=APP_VERSION");

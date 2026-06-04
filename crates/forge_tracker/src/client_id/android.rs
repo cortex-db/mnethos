@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use uuid::Uuid;
 
-const CLIENT_ID_FILE: &str = ".forge_client_id";
+const CLIENT_ID_FILE: &str = ".mnethos_client_id";
 
 /// Gets or creates a persistent client ID for Android
 pub fn get_or_create_client_id() -> anyhow::Result<String> {

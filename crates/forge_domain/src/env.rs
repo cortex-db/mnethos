@@ -73,7 +73,7 @@ impl Environment {
     pub fn history_path(&self, custom_path: Option<&PathBuf>) -> PathBuf {
         custom_path
             .cloned()
-            .unwrap_or(self.base_path.join(".forge_history"))
+            .unwrap_or(self.base_path.join(".mnethos_history"))
     }
     pub fn snapshot_path(&self) -> PathBuf {
         self.base_path.join("snapshots")
@@ -91,7 +91,7 @@ impl Environment {
         self.base_path.join("agents")
     }
     pub fn agent_cwd_path(&self) -> PathBuf {
-        self.cwd.join(".forge/agents")
+        self.cwd.join(".mnethos/agents")
     }
 
     pub fn permissions_path(&self) -> PathBuf {
@@ -111,7 +111,7 @@ impl Environment {
     }
 
     pub fn database_path(&self) -> PathBuf {
-        self.base_path.join(".forge.db")
+        self.base_path.join(".mnethos.db")
     }
 
     /// Returns the path to the cache directory
@@ -131,9 +131,9 @@ impl Environment {
         self.home.as_ref().map(|home| home.join(".agents/skills"))
     }
 
-    /// Returns the project-local skills directory path (.forge/skills)
+    /// Returns the project-local skills directory path (.mnethos/skills)
     pub fn local_skills_path(&self) -> PathBuf {
-        self.cwd.join(".forge/skills")
+        self.cwd.join(".mnethos/skills")
     }
 
     /// Returns the global commands directory path (base_path/commands)
@@ -141,9 +141,9 @@ impl Environment {
         self.base_path.join("commands")
     }
 
-    /// Returns the project-local commands directory path (.forge/commands)
+    /// Returns the project-local commands directory path (.mnethos/commands)
     pub fn command_path_local(&self) -> PathBuf {
-        self.cwd.join(".forge/commands")
+        self.cwd.join(".mnethos/commands")
     }
 
     /// Returns the global AGENTS.md path (base_path/AGENTS.md)
@@ -207,7 +207,7 @@ mod tests {
         let fixture = fixture.cwd(PathBuf::from("/current/working/dir"));
 
         let actual = fixture.agent_cwd_path();
-        let expected = PathBuf::from("/current/working/dir/.forge/agents");
+        let expected = PathBuf::from("/current/working/dir/.mnethos/agents");
 
         assert_eq!(actual, expected);
     }
@@ -222,7 +222,7 @@ mod tests {
         let agent_path = fixture.agent_path();
         let agent_cwd_path = fixture.agent_cwd_path();
         let expected_agent_path = PathBuf::from("/completely/different/base/agents");
-        let expected_agent_cwd_path = PathBuf::from("/different/current/dir/.forge/agents");
+        let expected_agent_cwd_path = PathBuf::from("/different/current/dir/.mnethos/agents");
 
         // Verify that agent_path uses base_path
         assert_eq!(agent_path, expected_agent_path);
@@ -237,10 +237,10 @@ mod tests {
     #[test]
     fn test_global_skills_path() {
         let fixture: Environment = Faker.fake();
-        let fixture = fixture.base_path(PathBuf::from("/home/user/.forge"));
+        let fixture = fixture.base_path(PathBuf::from("/home/user/.mnethos"));
 
         let actual = fixture.global_skills_path();
-        let expected = PathBuf::from("/home/user/.forge/skills");
+        let expected = PathBuf::from("/home/user/.mnethos/skills");
 
         assert_eq!(actual, expected);
     }
@@ -274,7 +274,7 @@ mod tests {
         let fixture = fixture.cwd(PathBuf::from("/projects/my-app"));
 
         let actual = fixture.local_skills_path();
-        let expected = PathBuf::from("/projects/my-app/.forge/skills");
+        let expected = PathBuf::from("/projects/my-app/.mnethos/skills");
 
         assert_eq!(actual, expected);
     }
@@ -284,13 +284,13 @@ mod tests {
         let fixture: Environment = Faker.fake();
         let fixture = fixture
             .cwd(PathBuf::from("/projects/my-app"))
-            .base_path(PathBuf::from("/home/user/.forge"));
+            .base_path(PathBuf::from("/home/user/.mnethos"));
 
         let global_path = fixture.global_skills_path();
         let local_path = fixture.local_skills_path();
 
-        let expected_global = PathBuf::from("/home/user/.forge/skills");
-        let expected_local = PathBuf::from("/projects/my-app/.forge/skills");
+        let expected_global = PathBuf::from("/home/user/.mnethos/skills");
+        let expected_local = PathBuf::from("/projects/my-app/.mnethos/skills");
 
         // Verify global path uses base_path
         assert_eq!(global_path, expected_global);
@@ -305,10 +305,10 @@ mod tests {
     #[test]
     fn test_command_path() {
         let fixture: Environment = Faker.fake();
-        let fixture = fixture.base_path(PathBuf::from("/home/user/.forge"));
+        let fixture = fixture.base_path(PathBuf::from("/home/user/.mnethos"));
 
         let actual = fixture.command_path();
-        let expected = PathBuf::from("/home/user/.forge/commands");
+        let expected = PathBuf::from("/home/user/.mnethos/commands");
 
         assert_eq!(actual, expected);
     }
@@ -319,7 +319,7 @@ mod tests {
         let fixture = fixture.cwd(PathBuf::from("/projects/my-app"));
 
         let actual = fixture.command_path_local();
-        let expected = PathBuf::from("/projects/my-app/.forge/commands");
+        let expected = PathBuf::from("/projects/my-app/.mnethos/commands");
 
         assert_eq!(actual, expected);
     }
@@ -329,13 +329,13 @@ mod tests {
         let fixture: Environment = Faker.fake();
         let fixture = fixture
             .cwd(PathBuf::from("/projects/my-app"))
-            .base_path(PathBuf::from("/home/user/.forge"));
+            .base_path(PathBuf::from("/home/user/.mnethos"));
 
         let global_path = fixture.command_path();
         let local_path = fixture.command_path_local();
 
-        let expected_global = PathBuf::from("/home/user/.forge/commands");
-        let expected_local = PathBuf::from("/projects/my-app/.forge/commands");
+        let expected_global = PathBuf::from("/home/user/.mnethos/commands");
+        let expected_local = PathBuf::from("/projects/my-app/.mnethos/commands");
 
         assert_eq!(global_path, expected_global);
         assert_eq!(local_path, expected_local);
@@ -345,10 +345,10 @@ mod tests {
     #[test]
     fn test_global_agents_md_path() {
         let fixture: Environment = Faker.fake();
-        let fixture = fixture.base_path(PathBuf::from("/home/user/.forge"));
+        let fixture = fixture.base_path(PathBuf::from("/home/user/.mnethos"));
 
         let actual = fixture.global_agentsmd_path();
-        let expected = PathBuf::from("/home/user/.forge/AGENTS.md");
+        let expected = PathBuf::from("/home/user/.mnethos/AGENTS.md");
 
         assert_eq!(actual, expected);
     }
@@ -378,10 +378,10 @@ mod tests {
     #[test]
     fn test_provider_config_path() {
         let fixture: Environment = Faker.fake();
-        let fixture = fixture.base_path(PathBuf::from("/home/user/.forge"));
+        let fixture = fixture.base_path(PathBuf::from("/home/user/.mnethos"));
 
         let actual = fixture.provider_config_path();
-        let expected = PathBuf::from("/home/user/.forge/provider.json");
+        let expected = PathBuf::from("/home/user/.mnethos/provider.json");
 
         assert_eq!(actual, expected);
     }

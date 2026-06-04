@@ -831,11 +831,11 @@ impl ToolDescription for ToolCatalog {
     }
 }
 // Cache of all tool names
-static FORGE_TOOLS: LazyLock<HashSet<ToolName>> =
+static MNETHOS_TOOLS: LazyLock<HashSet<ToolName>> =
     LazyLock::new(|| ToolCatalog::iter().map(ToolName::new).collect());
 
 // Case-insensitive lookup map: lowercase tool name -> canonical tool name
-static FORGE_TOOLS_LOWER: LazyLock<HashMap<String, ToolName>> = LazyLock::new(|| {
+static MNETHOS_TOOLS_LOWER: LazyLock<HashMap<String, ToolName>> = LazyLock::new(|| {
     ToolCatalog::iter()
         .map(|tool| {
             let name = ToolName::new(tool.to_string());
@@ -851,7 +851,7 @@ static FORGE_TOOLS_LOWER: LazyLock<HashMap<String, ToolName>> = LazyLock::new(||
 fn normalize_tool_name(name: &ToolName) -> ToolName {
     let trimmed = name.as_str().trim();
     let lower = trimmed.to_lowercase();
-    FORGE_TOOLS_LOWER
+    MNETHOS_TOOLS_LOWER
         .get(&lower)
         .cloned()
         .unwrap_or_else(|| ToolName::new(trimmed))
@@ -902,7 +902,7 @@ impl ToolCatalog {
     }
     pub fn contains(tool_name: &ToolName) -> bool {
         let normalized = normalize_tool_name(tool_name);
-        FORGE_TOOLS.contains(&normalized)
+        MNETHOS_TOOLS.contains(&normalized)
     }
     pub fn should_yield(tool_name: &ToolName) -> bool {
         // Tools that convey that the execution should yield

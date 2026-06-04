@@ -5,18 +5,18 @@
 # Lazy loader for commands cache
 # Loads the commands list only when first needed, avoiding startup cost
 function _forge_get_commands() {
-    if [[ -z "$_FORGE_COMMANDS" ]]; then
-        _FORGE_COMMANDS="$(CLICOLOR_FORCE=0 $_FORGE_BIN list commands --porcelain 2>/dev/null)"
+    if [[ -z "$_MNETHOS_COMMANDS" ]]; then
+        _MNETHOS_COMMANDS="$(CLICOLOR_FORCE=0 $_MNETHOS_BIN list commands --porcelain 2>/dev/null)"
     fi
-    echo "$_FORGE_COMMANDS"
+    echo "$_MNETHOS_COMMANDS"
 }
 
 # Helper function to execute forge commands consistently
 # This ensures proper handling of special characters and consistent output
 function _forge_exec() {
-    local agent_id="${_FORGE_ACTIVE_AGENT:-forge}"
+    local agent_id="${_MNETHOS_ACTIVE_AGENT:-forge}"
     local -a cmd
-    cmd=($_FORGE_BIN --agent "$agent_id")
+    cmd=($_MNETHOS_BIN --agent "$agent_id")
 
     # Expose terminal context arrays as US-separated (\x1F) env vars so that
     # the Rust TerminalContextService can read them via get_env_var.
@@ -24,22 +24,22 @@ function _forge_exec() {
     # can legitimately contain colons (URLs, port mappings, paths, etc.).
     # Use `local -x` so the variables are exported only to the child forge
     # process and do not leak into the caller's shell environment.
-    if [[ "$_FORGE_TERM" == "true" && ${#_FORGE_TERM_COMMANDS} -gt 0 ]]; then
+    if [[ "$_MNETHOS_TERM" == "true" && ${#_MNETHOS_TERM_COMMANDS} -gt 0 ]]; then
         # Join the ring-buffer arrays with the ASCII Unit Separator (\x1F).
         # We use IFS-based joining ("${arr[*]}") rather than ${(j.SEP.)arr} because
         # zsh does NOT expand $'...' ANSI-C escapes inside parameter expansion flags.
         local _old_ifs="$IFS" _sep=$'\x1f'
         IFS="$_sep"
-        local -x _FORGE_TERM_COMMANDS="${_FORGE_TERM_COMMANDS[*]}"
-        local -x _FORGE_TERM_EXIT_CODES="${_FORGE_TERM_EXIT_CODES[*]}"
-        local -x _FORGE_TERM_TIMESTAMPS="${_FORGE_TERM_TIMESTAMPS[*]}"
+        local -x _MNETHOS_TERM_COMMANDS="${_MNETHOS_TERM_COMMANDS[*]}"
+        local -x _MNETHOS_TERM_EXIT_CODES="${_MNETHOS_TERM_EXIT_CODES[*]}"
+        local -x _MNETHOS_TERM_TIMESTAMPS="${_MNETHOS_TERM_TIMESTAMPS[*]}"
         IFS="$_old_ifs"
     fi
 
     cmd+=("$@")
-    [[ -n "$_FORGE_SESSION_MODEL" ]] && local -x FORGE_SESSION__MODEL_ID="$_FORGE_SESSION_MODEL"
-    [[ -n "$_FORGE_SESSION_PROVIDER" ]] && local -x FORGE_SESSION__PROVIDER_ID="$_FORGE_SESSION_PROVIDER"
-    [[ -n "$_FORGE_SESSION_REASONING_EFFORT" ]] && local -x FORGE_REASONING__EFFORT="$_FORGE_SESSION_REASONING_EFFORT"
+    [[ -n "$_MNETHOS_SESSION_MODEL" ]] && local -x MNETHOS_SESSION__MODEL_ID="$_MNETHOS_SESSION_MODEL"
+    [[ -n "$_MNETHOS_SESSION_PROVIDER" ]] && local -x MNETHOS_SESSION__PROVIDER_ID="$_MNETHOS_SESSION_PROVIDER"
+    [[ -n "$_MNETHOS_SESSION_REASONING_EFFORT" ]] && local -x MNETHOS_REASONING__EFFORT="$_MNETHOS_SESSION_REASONING_EFFORT"
     "${cmd[@]}"
 }
 
@@ -50,9 +50,9 @@ function _forge_exec() {
 # library would see a non-tty stdin and return EOF immediately.
 # Do NOT use inside $(...) command substitutions - use _forge_exec instead.
 function _forge_exec_interactive() {
-    local agent_id="${_FORGE_ACTIVE_AGENT:-forge}"
+    local agent_id="${_MNETHOS_ACTIVE_AGENT:-forge}"
     local -a cmd
-    cmd=($_FORGE_BIN --agent "$agent_id")
+    cmd=($_MNETHOS_BIN --agent "$agent_id")
 
     # Expose terminal context arrays as US-separated (\x1F) env vars so that
     # the Rust TerminalContextService can read them via get_env_var.
@@ -61,31 +61,31 @@ function _forge_exec_interactive() {
     # Use `local -x` so the variables are exported only for the duration of
     # this function call (i.e. inherited by the child forge process) and do
     # not leak into the caller's shell environment.
-    if [[ "$_FORGE_TERM" == "true" && ${#_FORGE_TERM_COMMANDS} -gt 0 ]]; then
+    if [[ "$_MNETHOS_TERM" == "true" && ${#_MNETHOS_TERM_COMMANDS} -gt 0 ]]; then
         local _old_ifs="$IFS" _sep=$'\x1f'
         IFS="$_sep"
-        local -x _FORGE_TERM_COMMANDS="${_FORGE_TERM_COMMANDS[*]}"
-        local -x _FORGE_TERM_EXIT_CODES="${_FORGE_TERM_EXIT_CODES[*]}"
-        local -x _FORGE_TERM_TIMESTAMPS="${_FORGE_TERM_TIMESTAMPS[*]}"
+        local -x _MNETHOS_TERM_COMMANDS="${_MNETHOS_TERM_COMMANDS[*]}"
+        local -x _MNETHOS_TERM_EXIT_CODES="${_MNETHOS_TERM_EXIT_CODES[*]}"
+        local -x _MNETHOS_TERM_TIMESTAMPS="${_MNETHOS_TERM_TIMESTAMPS[*]}"
         IFS="$_old_ifs"
     fi
 
     cmd+=("$@")
-    [[ -n "$_FORGE_SESSION_MODEL" ]] && local -x FORGE_SESSION__MODEL_ID="$_FORGE_SESSION_MODEL"
-    [[ -n "$_FORGE_SESSION_PROVIDER" ]] && local -x FORGE_SESSION__PROVIDER_ID="$_FORGE_SESSION_PROVIDER"
-    [[ -n "$_FORGE_SESSION_REASONING_EFFORT" ]] && local -x FORGE_REASONING__EFFORT="$_FORGE_SESSION_REASONING_EFFORT"
+    [[ -n "$_MNETHOS_SESSION_MODEL" ]] && local -x MNETHOS_SESSION__MODEL_ID="$_MNETHOS_SESSION_MODEL"
+    [[ -n "$_MNETHOS_SESSION_PROVIDER" ]] && local -x MNETHOS_SESSION__PROVIDER_ID="$_MNETHOS_SESSION_PROVIDER"
+    [[ -n "$_MNETHOS_SESSION_REASONING_EFFORT" ]] && local -x MNETHOS_REASONING__EFFORT="$_MNETHOS_SESSION_REASONING_EFFORT"
     "${cmd[@]}" </dev/tty >/dev/tty
 }
 
 function _forge_select() {
-    [[ -n "$_FORGE_SESSION_MODEL" ]] && local -x FORGE_SESSION__MODEL_ID="$_FORGE_SESSION_MODEL"
-    [[ -n "$_FORGE_SESSION_PROVIDER" ]] && local -x FORGE_SESSION__PROVIDER_ID="$_FORGE_SESSION_PROVIDER"
-    [[ -n "$_FORGE_SESSION_REASONING_EFFORT" ]] && local -x FORGE_REASONING__EFFORT="$_FORGE_SESSION_REASONING_EFFORT"
-    CLICOLOR_FORCE=0 $_FORGE_BIN select "$@" </dev/tty 2>/dev/tty
+    [[ -n "$_MNETHOS_SESSION_MODEL" ]] && local -x MNETHOS_SESSION__MODEL_ID="$_MNETHOS_SESSION_MODEL"
+    [[ -n "$_MNETHOS_SESSION_PROVIDER" ]] && local -x MNETHOS_SESSION__PROVIDER_ID="$_MNETHOS_SESSION_PROVIDER"
+    [[ -n "$_MNETHOS_SESSION_REASONING_EFFORT" ]] && local -x MNETHOS_REASONING__EFFORT="$_MNETHOS_SESSION_REASONING_EFFORT"
+    CLICOLOR_FORCE=0 $_MNETHOS_BIN select "$@" </dev/tty 2>/dev/tty
 }
 
 function _forge_select_global() {
-    CLICOLOR_FORCE=0 $_FORGE_BIN select "$@" </dev/tty 2>/dev/tty
+    CLICOLOR_FORCE=0 $_MNETHOS_BIN select "$@" </dev/tty 2>/dev/tty
 }
 
 function _forge_select_with_query() {
@@ -186,7 +186,7 @@ function _forge_log() {
 # Returns: 0 if workspace is indexed, 1 otherwise
 function _forge_is_workspace_indexed() {
     local workspace_path="$1"
-    $_FORGE_BIN workspace info "$workspace_path" >/dev/null 2>&1
+    $_MNETHOS_BIN workspace info "$workspace_path" >/dev/null 2>&1
     return $?
 }
 
@@ -194,7 +194,7 @@ function _forge_is_workspace_indexed() {
 # Uses canonical path hash to identify workspace
 function _forge_start_background_sync() {
     # Check if sync is enabled (default to true if not set)
-    local sync_enabled="${FORGE_SYNC_ENABLED:-true}"
+    local sync_enabled="${MNETHOS_SYNC_ENABLED:-true}"
     if [[ "$sync_enabled" != "true" ]]; then
         return 0
     fi
@@ -213,7 +213,7 @@ function _forge_start_background_sync() {
             return 0
         fi
         # Should fail if sync-init or sync --init has not been performed even once
-        $_FORGE_BIN workspace sync "$workspace_path"
+        $_MNETHOS_BIN workspace sync "$workspace_path"
     } &!
 }
 
@@ -226,7 +226,7 @@ function _forge_start_background_update() {
         # Redirect stdin to /dev/null to prevent hanging
         exec >/dev/null 2>&1 </dev/null
         setopt NO_NOTIFY NO_MONITOR
-        $_FORGE_BIN update --no-confirm
+        $_MNETHOS_BIN update --no-confirm
     } &!
 }
 

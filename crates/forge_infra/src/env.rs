@@ -146,7 +146,7 @@ impl EnvironmentInfra for ForgeEnvironmentInfra {
         }
 
         fc.write()?;
-        debug!(config = ?fc, "written .forge.toml");
+        debug!(config = ?fc, "written .mnethos.toml");
 
         // Reset cache so next get_config() re-reads the updated values from disk
         *self.cache.lock().expect("cache mutex poisoned") = None;
@@ -176,15 +176,15 @@ mod tests {
         let fixture_cwd = PathBuf::from("/any/cwd");
         let expected = to_environment(fixture_cwd.clone()).base_path;
 
-        let previous = std::env::var("FORGE_CONFIG").ok();
-        unsafe { std::env::set_var("FORGE_CONFIG", "/custom/config/dir") };
+        let previous = std::env::var("MNETHOS_CONFIG").ok();
+        unsafe { std::env::set_var("MNETHOS_CONFIG", "/custom/config/dir") };
 
         let actual = to_environment(fixture_cwd).base_path;
 
         if let Some(value) = previous {
-            unsafe { std::env::set_var("FORGE_CONFIG", value) };
+            unsafe { std::env::set_var("MNETHOS_CONFIG", value) };
         } else {
-            unsafe { std::env::remove_var("FORGE_CONFIG") };
+            unsafe { std::env::remove_var("MNETHOS_CONFIG") };
         }
 
         assert_eq!(actual, expected);
@@ -193,12 +193,12 @@ mod tests {
     #[test]
     fn test_to_environment_falls_back_to_home_dir_when_env_var_absent() {
         let actual = to_environment(PathBuf::from("/any/cwd"));
-        // Without FORGE_CONFIG the base_path must be either ".forge" (new default)
+        // Without MNETHOS_CONFIG the base_path must be either ".mnethos" (new default)
         // or "forge" (legacy fallback when ~/forge exists on this machine).
         let name = actual.base_path.file_name().unwrap();
         assert!(
-            name == ".forge" || name == "forge",
-            "Expected base_path to end with '.forge' or 'forge', got: {:?}",
+            name == ".mnethos" || name == "forge",
+            "Expected base_path to end with '.mnethos' or 'forge', got: {:?}",
             name
         );
     }

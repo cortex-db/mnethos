@@ -22,17 +22,17 @@ FAIL=0
 
 # Resolve the forge binary (prefer local debug build)
 SCRIPT_DIR="${0:A:h}"
-FORGE_BIN="${FORGE_BIN:-${SCRIPT_DIR}/../target/debug/forge}"
+MNETHOS_BIN="${MNETHOS_BIN:-${SCRIPT_DIR}/../target/debug/forge}"
 
-if [[ ! -x "$FORGE_BIN" ]]; then
-    echo "${RED}forge binary not found at ${FORGE_BIN}${RESET}"
+if [[ ! -x "$MNETHOS_BIN" ]]; then
+    echo "${RED}forge binary not found at ${MNETHOS_BIN}${RESET}"
     echo "Run: cargo build -p forge_main"
     exit 1
 fi
 
 # Wrapper that calls the Rust formatter
 function format() {
-    "$FORGE_BIN" zsh format --buffer "$1"
+    "$MNETHOS_BIN" zsh format --buffer "$1"
 }
 
 # Create temporary files for testing paths with spaces

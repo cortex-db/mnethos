@@ -171,6 +171,7 @@ impl From<forge_config::ProviderEntry> for ProviderConfig {
             Some(forge_config::ProviderTypeEntry::ContextEngine) => {
                 forge_domain::ProviderType::ContextEngine
             }
+            Some(forge_config::ProviderTypeEntry::Memory) => forge_domain::ProviderType::Memory,
             Some(forge_config::ProviderTypeEntry::Llm) | None => forge_domain::ProviderType::Llm,
         };
 

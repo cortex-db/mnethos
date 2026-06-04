@@ -1302,6 +1302,13 @@
     "auth_methods": ["api_key"]
   },
   {
+    "id": "memory",
+    "provider_type": "memory",
+    "url_param_vars": ["MNETHOS_MEMORY_SERVER_URL"],
+    "url": "{{MNETHOS_MEMORY_SERVER_URL}}",
+    "auth_methods": ["api_key"]
+  },
+  {
     "id": "io_intelligence",
     "api_key_vars": "IO_INTELLIGENCE_API_KEY",
     "url_param_vars": [],

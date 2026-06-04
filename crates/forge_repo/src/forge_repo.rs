@@ -46,6 +46,7 @@ pub struct ForgeRepo<F> {
     provider_repository: Arc<ForgeProviderRepository<F>>,
     chat_repository: Arc<ForgeChatRepository<F>>,
     codebase_repo: Arc<ForgeContextEngineRepository<F>>,
+    memory_repo: Arc<crate::memory::ForgeMemoryRepository>,
     agent_repository: Arc<ForgeAgentRepository<F>>,
     skill_repository: Arc<ForgeSkillRepository<F>>,
     validation_repository: Arc<ForgeValidationRepository<F>>,
@@ -79,6 +80,7 @@ impl<
         let chat_repository = Arc::new(ForgeChatRepository::new(infra.clone()));
 
         let codebase_repo = Arc::new(ForgeContextEngineRepository::new(infra.clone()));
+        let memory_repo = Arc::new(crate::memory::ForgeMemoryRepository::new());
         let agent_repository = Arc::new(ForgeAgentRepository::new(infra.clone()));
         let skill_repository = Arc::new(ForgeSkillRepository::new(infra.clone()));
         let validation_repository = Arc::new(ForgeValidationRepository::new(infra.clone()));
@@ -91,6 +93,7 @@ impl<
             provider_repository,
             chat_repository,
             codebase_repo,
+            memory_repo,
             agent_repository,
             skill_repository,
             validation_repository,
@@ -520,6 +523,21 @@ impl<F: StrategyFactory> StrategyFactory for ForgeRepo<F> {
     ) -> anyhow::Result<Self::Strategy> {
         self.infra
             .create_auth_strategy(provider_id, auth_method, required_params)
+    }
+}
+
+#[async_trait::async_trait]
+impl<F: Send + Sync> forge_domain::MemoryWriteRepository for ForgeRepo<F> {
+    async fn create_episode(
+        &self,
+        server_url: &str,
+        auth_token: &forge_domain::ApiKey,
+        session_key: &str,
+        episode: forge_domain::MemoryEpisode,
+    ) -> anyhow::Result<forge_domain::MemoryWriteResult> {
+        self.memory_repo
+            .create_episode(server_url, auth_token, session_key, episode)
+            .await
     }
 }
 

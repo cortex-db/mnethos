@@ -52,14 +52,15 @@ impl ConfigReader {
         Self::base_path().join(".mnethos.toml")
     }
 
-    /// Returns the base directory for all Forge config files.
+    /// Returns the base directory for all Mnethos config files.
     ///
     /// Resolution order:
     /// 1. `MNETHOS_CONFIG` environment variable, if set.
-    /// 2. `~/forge` (legacy path), if that directory exists, so users who have
-    ///    not yet run `forge config migrate` continue to read from their
-    ///    existing directory without disruption.
-    /// 3. `~/.mnethos` as the default path.
+    /// 2. `~/.mnethos` (default).
+    ///
+    /// Mnethos deliberately does NOT fall back to forgecode's legacy `~/forge`
+    /// directory: it keeps its own config, fully separate from any upstream
+    /// forge install.
     pub fn base_path() -> PathBuf {
         BASE_PATH.clone()
     }
@@ -69,18 +70,9 @@ impl ConfigReader {
             return PathBuf::from(path);
         }
 
-        let base = dirs::home_dir().unwrap_or(PathBuf::from("."));
-        let path = base.join("forge");
-
-        // Prefer ~/forge (legacy) when it exists so existing users are not
-        // disrupted; fall back to ~/.mnethos as the default.
-        if path.exists() {
-            tracing::info!("Using legacy path");
-            return path;
-        }
-
-        tracing::info!("Using new path");
-        base.join(".mnethos")
+        dirs::home_dir()
+            .unwrap_or(PathBuf::from("."))
+            .join(".mnethos")
     }
 
     /// Adds the provided TOML string as a config source without touching the

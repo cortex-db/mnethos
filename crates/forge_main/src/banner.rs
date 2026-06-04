@@ -51,11 +51,11 @@ impl fmt::Display for DisplayBox {
 ///
 /// # Environment Variables
 ///
-/// * `FORGE_BANNER` - Optional custom banner text to display instead of the
+/// * `MNETHOS_BANNER` - Optional custom banner text to display instead of the
 ///   default
 pub fn display(cli_mode: bool) -> io::Result<()> {
     // Check for custom banner via environment variable
-    let mut banner = std::env::var("FORGE_BANNER")
+    let mut banner = std::env::var("MNETHOS_BANNER")
         .ok()
         .filter(|s| !s.is_empty())
         .unwrap_or_else(|| BANNER.to_string());

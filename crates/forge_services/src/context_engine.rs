@@ -89,7 +89,7 @@ impl<
         .await
     }
 
-    /// Gets the ForgeCode services credential and extracts workspace auth
+    /// Gets the Mnethos services credential and extracts workspace auth
     /// components
     ///
     /// # Errors
@@ -98,7 +98,7 @@ impl<
     async fn get_workspace_credentials(&self) -> Result<(forge_domain::ApiKey, UserId)> {
         let credential = self
             .infra
-            .get_credential(&ProviderId::FORGE_SERVICES)
+            .get_credential(&ProviderId::MNETHOS_SERVICES)
             .await?
             .context("No authentication credentials found. Please authenticate first.")?;
 
@@ -377,7 +377,7 @@ impl<
     async fn is_authenticated(&self) -> Result<bool> {
         Ok(self
             .infra
-            .get_credential(&ProviderId::FORGE_SERVICES)
+            .get_credential(&ProviderId::MNETHOS_SERVICES)
             .await?
             .is_some())
     }
@@ -398,7 +398,7 @@ impl<
         );
 
         let credential = AuthCredential {
-            id: ProviderId::FORGE_SERVICES,
+            id: ProviderId::MNETHOS_SERVICES,
             auth_details: auth.clone().into(),
             url_params,
         };

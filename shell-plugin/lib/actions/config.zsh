@@ -13,14 +13,14 @@ function _forge_action_agent() {
         local agent_id="$input_text"
         
         # Validate that the agent exists (skip header line)
-        local agent_exists=$($_FORGE_BIN list agents --porcelain 2>/dev/null | tail -n +2 | grep -q "^${agent_id}\b" && echo "true" || echo "false")
+        local agent_exists=$($_MNETHOS_BIN list agents --porcelain 2>/dev/null | tail -n +2 | grep -q "^${agent_id}\b" && echo "true" || echo "false")
         if [[ "$agent_exists" == "false" ]]; then
             _forge_log error "Agent '\033[1m${agent_id}\033[0m' not found"
             return 0
         fi
         
         # Set the agent as active
-        _FORGE_ACTIVE_AGENT="$agent_id"
+        _MNETHOS_ACTIVE_AGENT="$agent_id"
         
         # Print log about agent switching
         _forge_log success "Switched to agent \033[1m${agent_id}\033[0m"
@@ -33,7 +33,7 @@ function _forge_action_agent() {
     agent_id=$(_forge_select_with_query "$input_text" agent)
     
     if [[ -n "$agent_id" ]]; then
-        _FORGE_ACTIVE_AGENT="$agent_id"
+        _MNETHOS_ACTIVE_AGENT="$agent_id"
         _forge_log success "Switched to agent \033[1m${agent_id}\033[0m"
     fi
 }
@@ -110,7 +110,7 @@ function _forge_action_sync_info() {
 }
 
 # Action handler: Select model for the current session only.
-# Sets _FORGE_SESSION_MODEL and _FORGE_SESSION_PROVIDER in the shell environment
+# Sets _MNETHOS_SESSION_MODEL and _MNETHOS_SESSION_PROVIDER in the shell environment
 # so that every subsequent forge invocation uses those values via --model /
 # --provider flags without touching the permanent global configuration.
 function _forge_action_session_model() {
@@ -118,35 +118,35 @@ function _forge_action_session_model() {
     echo
 
     if _forge_select_model_pair "$input_text"; then
-        _FORGE_SESSION_MODEL="${reply[1]}"
-        _FORGE_SESSION_PROVIDER="${reply[2]}"
-        _forge_log success "Session model set to \033[1m${_FORGE_SESSION_MODEL}\033[0m (provider: \033[1m${_FORGE_SESSION_PROVIDER}\033[0m)"
+        _MNETHOS_SESSION_MODEL="${reply[1]}"
+        _MNETHOS_SESSION_PROVIDER="${reply[2]}"
+        _forge_log success "Session model set to \033[1m${_MNETHOS_SESSION_MODEL}\033[0m (provider: \033[1m${_MNETHOS_SESSION_PROVIDER}\033[0m)"
     fi
 }
 
 # Action handler: Reload config by resetting all session-scoped overrides.
-# Clears _FORGE_SESSION_MODEL, _FORGE_SESSION_PROVIDER, and
-# _FORGE_SESSION_REASONING_EFFORT so that every subsequent forge invocation
+# Clears _MNETHOS_SESSION_MODEL, _MNETHOS_SESSION_PROVIDER, and
+# _MNETHOS_SESSION_REASONING_EFFORT so that every subsequent forge invocation
 # falls back to the permanent global configuration.
 function _forge_action_config_reload() {
     echo
 
-    if [[ -z "$_FORGE_SESSION_MODEL" && -z "$_FORGE_SESSION_PROVIDER" && -z "$_FORGE_SESSION_REASONING_EFFORT" ]]; then
+    if [[ -z "$_MNETHOS_SESSION_MODEL" && -z "$_MNETHOS_SESSION_PROVIDER" && -z "$_MNETHOS_SESSION_REASONING_EFFORT" ]]; then
         _forge_log info "No session overrides active (already using global config)"
         return 0
     fi
 
-    _FORGE_SESSION_MODEL=""
-    _FORGE_SESSION_PROVIDER=""
-    _FORGE_SESSION_REASONING_EFFORT=""
+    _MNETHOS_SESSION_MODEL=""
+    _MNETHOS_SESSION_PROVIDER=""
+    _MNETHOS_SESSION_REASONING_EFFORT=""
 
     _forge_log success "Session overrides cleared — using global config"
 }
 
 # Action handler: Select reasoning effort for the current session only.
-# Sets _FORGE_SESSION_REASONING_EFFORT in the shell environment so that
+# Sets _MNETHOS_SESSION_REASONING_EFFORT in the shell environment so that
 # every subsequent forge invocation uses the selected value via the
-# FORGE_REASONING__EFFORT env var without modifying the permanent config.
+# MNETHOS_REASONING__EFFORT env var without modifying the permanent config.
 function _forge_action_reasoning_effort() {
     local input_text="$1"
     echo
@@ -155,14 +155,14 @@ function _forge_action_reasoning_effort() {
     selected=$(_forge_select_with_query "$input_text" reasoning-effort)
 
     if [[ -n "$selected" ]]; then
-        _FORGE_SESSION_REASONING_EFFORT="$selected"
+        _MNETHOS_SESSION_REASONING_EFFORT="$selected"
         _forge_log success "Session reasoning effort set to \033[1m${selected}\033[0m"
     fi
 }
 
 # Action handler: Set reasoning effort in global config.
 # Calls `forge config set reasoning-effort <effort>` on selection,
-# writing the chosen effort level permanently to ~/forge/.forge.toml.
+# writing the chosen effort level permanently to ~/forge/.mnethos.toml.
 function _forge_action_config_reasoning_effort() {
     local input_text="$1"
     echo
@@ -185,21 +185,21 @@ function _forge_action_config() {
 function _forge_action_config_edit() {
     echo
 
-    # Determine editor in order of preference: FORGE_EDITOR > EDITOR > nano
-    local editor_cmd="${FORGE_EDITOR:-${EDITOR:-nano}}"
+    # Determine editor in order of preference: MNETHOS_EDITOR > EDITOR > nano
+    local editor_cmd="${MNETHOS_EDITOR:-${EDITOR:-nano}}"
 
     # Validate editor exists
     if ! command -v "${editor_cmd%% *}" &>/dev/null; then
-        _forge_log error "Editor not found: $editor_cmd (set FORGE_EDITOR or EDITOR)"
+        _forge_log error "Editor not found: $editor_cmd (set MNETHOS_EDITOR or EDITOR)"
         return 1
     fi
 
-    # Resolve config file path via the forge binary (honours FORGE_CONFIG,
-    # new ~/.forge path, and legacy ~/forge fallback automatically)
+    # Resolve config file path via the forge binary (honours MNETHOS_CONFIG,
+    # new ~/.mnethos path, and legacy ~/forge fallback automatically)
     local config_file
-    config_file=$($_FORGE_BIN config path 2>/dev/null)
+    config_file=$($_MNETHOS_BIN config path 2>/dev/null)
     if [[ -z "$config_file" ]]; then
-        _forge_log error "Failed to resolve config path from '$_FORGE_BIN config path'"
+        _forge_log error "Failed to resolve config path from '$_MNETHOS_BIN config path'"
         return 1
     fi
 
@@ -236,8 +236,8 @@ function _forge_action_config_edit() {
 # Action handler: Show tools
 function _forge_action_tools() {
     echo
-    # Ensure FORGE_ACTIVE_AGENT always has a value, default to "forge"
-    local agent_id="${_FORGE_ACTIVE_AGENT:-forge}"
+    # Ensure MNETHOS_ACTIVE_AGENT always has a value, default to "forge"
+    local agent_id="${_MNETHOS_ACTIVE_AGENT:-forge}"
     _forge_exec list tools "$agent_id"
 }
 

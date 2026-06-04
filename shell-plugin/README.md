@@ -209,18 +209,18 @@ Customize the plugin behavior by setting these variables before loading the plug
 
 ```bash
 # Custom forge binary location
-export FORGE_BIN="/path/to/custom/forge"
+export MNETHOS_BIN="/path/to/custom/forge"
 ```
 
 ### Available Configuration Variables
 
-- `FORGE_BIN`: Path to the forge executable (default: `forge`)
-- `FORGE_EDITOR`: Editor command to use for `:edit` command (default: `$EDITOR` or `nano`)
-- `FORGE_SYNC_ENABLED`: Enable/disable automatic workspace sync (default: `true`)
-- `FORGE_MAX_COMMIT_DIFF`: Maximum diff size for commit message generation in bytes (default: `100000`)
-- `FORGE_SKIP_INTERACTIVE`: Skip interactive prompts (internal use)
-- `FORGE_CURRENCY_SYMBOL`: Currency symbol for cost display in ZSH theme (default: `"$"`)
-- `FORGE_CURRENCY_CONVERSION_RATE`: Conversion rate for currency display (default: `1.0`)
+- `MNETHOS_BIN`: Path to the forge executable (default: `forge`)
+- `MNETHOS_EDITOR`: Editor command to use for `:edit` command (default: `$EDITOR` or `nano`)
+- `MNETHOS_SYNC_ENABLED`: Enable/disable automatic workspace sync (default: `true`)
+- `MNETHOS_MAX_COMMIT_DIFF`: Maximum diff size for commit message generation in bytes (default: `100000`)
+- `MNETHOS_SKIP_INTERACTIVE`: Skip interactive prompts (internal use)
+- `MNETHOS_CURRENCY_SYMBOL`: Currency symbol for cost display in ZSH theme (default: `"$"`)
+- `MNETHOS_CURRENCY_CONVERSION_RATE`: Conversion rate for currency display (default: `1.0`)
 - `NERD_FONT`: Enable Nerd Font icons in ZSH theme (default: auto-detected, set to `"1"` or `"true"` to enable, `"0"` or `"false"` to disable)
 - `USE_NERD_FONT`: Alternative variable for enabling Nerd Font icons (same behavior as `NERD_FONT`)
 - Internal pattern matching for conversation syntax (`:`)
@@ -254,11 +254,11 @@ This will check:
 - Editor configuration and PATH setup
 - Nerd Font support for icons
 
-### .forge Directory
+### .mnethos Directory
 
-The plugin creates a `.forge` directory in your current working directory (similar to `.git`) for temporary files:
+The plugin creates a `.mnethos` directory in your current working directory (similar to `.git`) for temporary files:
 
-- `FORGE_EDITMSG.md`: Temporary file used when opening an external editor with `:edit`
+- `MNETHOS_EDITMSG.md`: Temporary file used when opening an external editor with `:edit`
 
 ## Advanced Features
 

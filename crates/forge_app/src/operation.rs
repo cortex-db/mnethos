@@ -2589,10 +2589,10 @@ mod tests {
                 "This is a test skill command with instructions",
                 "A test skill for demonstration",
             )
-            .path("/home/user/.forge/skills/test-skill")
+            .path("/home/user/.mnethos/skills/test-skill")
             .resources(vec![
-                PathBuf::from("/home/user/.forge/skills/test-skill/resource1.txt"),
-                PathBuf::from("/home/user/.forge/skills/test-skill/resource2.md"),
+                PathBuf::from("/home/user/.mnethos/skills/test-skill/resource1.txt"),
+                PathBuf::from("/home/user/.mnethos/skills/test-skill/resource2.md"),
             ]),
         };
 

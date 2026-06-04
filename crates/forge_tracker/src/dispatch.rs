@@ -27,7 +27,7 @@ const VERSION: &str = match option_env!("APP_VERSION") {
     None => env!("CARGO_PKG_VERSION"),
 };
 
-const TRACKING_ENV_VAR_NAME: &str = "FORGE_TRACKER";
+const TRACKING_ENV_VAR_NAME: &str = "MNETHOS_TRACKER";
 
 // Cached system information that doesn't change during application lifetime
 static CACHED_CORES: LazyLock<usize> = LazyLock::new(|| System::physical_core_count().unwrap_or(0));

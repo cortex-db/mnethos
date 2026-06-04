@@ -140,9 +140,9 @@ impl<F: FileInfoInfra + EnvironmentInfra<Config = forge_config::ForgeConfig> + I
                 .await
                 .with_context(|| {
                     if mime_type == "application/pdf" {
-                        "PDF exceeds size limit. Use a smaller PDF or increase FORGE_MAX_IMAGE_SIZE."
+                        "PDF exceeds size limit. Use a smaller PDF or increase MNETHOS_MAX_IMAGE_SIZE."
                     } else {
-                        "Image exceeds size limit. Compress the image or increase FORGE_MAX_IMAGE_SIZE."
+                        "Image exceeds size limit. Compress the image or increase MNETHOS_MAX_IMAGE_SIZE."
                     }
                 })?;
 

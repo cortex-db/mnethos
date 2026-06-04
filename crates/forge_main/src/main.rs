@@ -105,7 +105,7 @@ async fn run() -> Result<()> {
     // Read and validate configuration at startup so any errors are surfaced
     // immediately rather than silently falling back to defaults at runtime.
     let config =
-        ForgeConfig::read().context("Failed to read Forge configuration from .forge.toml")?;
+        ForgeConfig::read().context("Failed to read Mnethos configuration from .mnethos.toml")?;
 
     // Handle worktree creation if specified
     let cwd: PathBuf = match (&cli.sandbox, &cli.directory) {

@@ -42,7 +42,7 @@ jobs/**
 *.d.ts
 *.js
 *.map
-**/.forge/request.body.json
+**/.mnethos/request.body.json
 node_modules/
 bench/__pycache__
 .ai/

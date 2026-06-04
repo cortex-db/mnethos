@@ -12,8 +12,8 @@ use crate::agent_definition::AgentDefinition;
 /// Infrastructure implementation for loading agent definitions from multiple
 /// sources:
 /// 1. Built-in agents (embedded in the application)
-/// 2. Global custom agents (from ~/.forge/agents/ directory)
-/// 3. Project-local agents (from .forge/agents/ directory in current working
+/// 2. Global custom agents (from ~/.mnethos/agents/ directory)
+/// 3. Project-local agents (from .mnethos/agents/ directory in current working
 ///    directory)
 ///
 /// ## Agent Precedence
@@ -26,7 +26,7 @@ use crate::agent_definition::AgentDefinition;
 /// ## Directory Resolution
 /// - **Built-in agents**: Embedded in application binary
 /// - **Global agents**: `~/forge/agents/*.md`
-/// - **CWD agents**: `./.forge/agents/*.md` (relative to current working
+/// - **CWD agents**: `./.mnethos/agents/*.md` (relative to current working
 ///   directory)
 ///
 /// Missing directories are handled gracefully and don't prevent loading from

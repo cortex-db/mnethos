@@ -147,7 +147,7 @@ fi
 print_section "Plugin"
 
 # Check if forge plugin is loaded by checking environment variable
-if [[ -n "$_FORGE_PLUGIN_LOADED" ]]; then
+if [[ -n "$_MNETHOS_PLUGIN_LOADED" ]]; then
     print_result pass "Forge plugin loaded"
 else
     print_result fail "Forge plugin not loaded"
@@ -159,7 +159,7 @@ fi
 
 # Check plugin loading order in .zshrc
 local zshrc_file="${ZDOTDIR:-$HOME}/.zshrc"
-if [[ -f "$zshrc_file" ]] && [[ -n "$_FORGE_PLUGIN_LOADED" ]]; then
+if [[ -f "$zshrc_file" ]] && [[ -n "$_MNETHOS_PLUGIN_LOADED" ]]; then
     # Extract line numbers for plugin declarations and forge plugin eval
     local plugins_line=$(grep -n "^[[:space:]]*plugins=(" "$zshrc_file" 2>/dev/null | head -n1 | cut -d: -f1)
     local forge_plugin_line=$(grep -n "eval.*forge.*zsh plugin" "$zshrc_file" 2>/dev/null | head -n1 | cut -d: -f1)
@@ -191,7 +191,7 @@ fi
 print_section "FORGE RIGHT PROMPT"
 
 # Check if forge theme is loaded by checking environment variable
-if [[ -n "$_FORGE_THEME_LOADED" ]]; then
+if [[ -n "$_MNETHOS_THEME_LOADED" ]]; then
     print_result pass "Forge theme loaded"
 elif (( $+functions[p10k] )); then
     print_result info "Powerlevel10k detected (not using Forge theme)"
@@ -316,17 +316,17 @@ fi
 # 7. Check system configuration
 print_section "System"
 
-# Check editor configuration (FORGE_EDITOR takes precedence over EDITOR)
-if [[ -n "$FORGE_EDITOR" ]]; then
-    print_result pass "FORGE_EDITOR: ${FORGE_EDITOR}"
+# Check editor configuration (MNETHOS_EDITOR takes precedence over EDITOR)
+if [[ -n "$MNETHOS_EDITOR" ]]; then
+    print_result pass "MNETHOS_EDITOR: ${MNETHOS_EDITOR}"
     if [[ -n "$EDITOR" ]]; then
         print_result info "EDITOR also set: ${EDITOR} (ignored)"
     fi
 elif [[ -n "$EDITOR" ]]; then
     print_result pass "EDITOR: ${EDITOR}"
-    print_result info "TIP: Set FORGE_EDITOR for forge-specific editor"
+    print_result info "TIP: Set MNETHOS_EDITOR for forge-specific editor"
 else
-    print_result warn "No editor configured" "export EDITOR=vim or export FORGE_EDITOR=vim"
+    print_result warn "No editor configured" "export EDITOR=vim or export MNETHOS_EDITOR=vim"
 fi
 
 # Check PATH for common issues

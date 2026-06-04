@@ -1,7 +1,7 @@
 [
   {
     "id": "forge",
-    "api_key_vars": "FORGE_API_KEY",
+    "api_key_vars": "MNETHOS_API_KEY",
     "url_param_vars": [],
     "response_type": "OpenAI",
     "url": "https://antinomy.ai/api/v1/chat/completions",
@@ -1297,8 +1297,8 @@
   {
     "id": "forge_services",
     "provider_type": "context_engine",
-    "url_param_vars": ["FORGE_WORKSPACE_SERVER_URL"],
-    "url": "{{FORGE_WORKSPACE_SERVER_URL}}",
+    "url_param_vars": ["MNETHOS_WORKSPACE_SERVER_URL"],
+    "url": "{{MNETHOS_WORKSPACE_SERVER_URL}}",
     "auth_methods": ["api_key"]
   },
   {

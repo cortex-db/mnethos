@@ -6,15 +6,15 @@ use crate::EnvironmentInfra;
 
 /// Environment variable exported by the zsh plugin containing
 /// `\x1F`-separated (ASCII Unit Separator) command strings.
-pub const ENV_TERM_COMMANDS: &str = "_FORGE_TERM_COMMANDS";
+pub const ENV_TERM_COMMANDS: &str = "_MNETHOS_TERM_COMMANDS";
 
 /// Environment variable exported by the zsh plugin containing
 /// `\x1F`-separated exit codes corresponding to [`ENV_TERM_COMMANDS`].
-pub const ENV_TERM_EXIT_CODES: &str = "_FORGE_TERM_EXIT_CODES";
+pub const ENV_TERM_EXIT_CODES: &str = "_MNETHOS_TERM_EXIT_CODES";
 
 /// Environment variable exported by the zsh plugin containing
 /// `\x1F`-separated Unix timestamps corresponding to [`ENV_TERM_COMMANDS`].
-pub const ENV_TERM_TIMESTAMPS: &str = "_FORGE_TERM_TIMESTAMPS";
+pub const ENV_TERM_TIMESTAMPS: &str = "_MNETHOS_TERM_TIMESTAMPS";
 
 /// The separator used to join and split environment variable lists.
 ///

@@ -44,7 +44,7 @@ pub fn generate_zsh_plugin() -> Result<String> {
     output.push_str(&completions_str);
 
     // Set environment variable to indicate plugin is loaded (with timestamp)
-    output.push_str("\n_FORGE_PLUGIN_LOADED=$(date +%s)\n");
+    output.push_str("\n_MNETHOS_PLUGIN_LOADED=$(date +%s)\n");
 
     Ok(output)
 }
@@ -55,7 +55,7 @@ pub fn generate_zsh_theme() -> Result<String> {
         super::normalize_script(include_str!("../../../../shell-plugin/forge.theme.zsh"));
 
     // Set environment variable to indicate theme is loaded (with timestamp)
-    content.push_str("\n_FORGE_THEME_LOADED=$(date +%s)\n");
+    content.push_str("\n_MNETHOS_THEME_LOADED=$(date +%s)\n");
 
     Ok(content)
 }
@@ -237,7 +237,7 @@ pub struct ZshSetupResult {
 /// # Arguments
 ///
 /// * `disable_nerd_font` - If true, adds NERD_FONT=0 to .zshrc
-/// * `forge_editor` - If Some(editor), adds FORGE_EDITOR export to .zshrc
+/// * `forge_editor` - If Some(editor), adds MNETHOS_EDITOR export to .zshrc
 ///
 /// # Errors
 ///
@@ -252,8 +252,8 @@ pub fn setup_zsh_integration(
 ) -> Result<ZshSetupResult> {
     const START_MARKER: &str = "# >>> forge initialize >>>";
     const END_MARKER: &str = "# <<< forge initialize <<<";
-    const FORGE_INIT_CONFIG_RAW: &str = include_str!("../../../../shell-plugin/forge.setup.zsh");
-    let forge_init_config = super::normalize_script(FORGE_INIT_CONFIG_RAW);
+    const MNETHOS_INIT_CONFIG_RAW: &str = include_str!("../../../../shell-plugin/forge.setup.zsh");
+    let forge_init_config = super::normalize_script(MNETHOS_INIT_CONFIG_RAW);
 
     let home = std::env::var("HOME").context("HOME environment variable not set")?;
     let zdotdir = std::env::var("ZDOTDIR").unwrap_or_else(|_| home.clone());
@@ -290,8 +290,8 @@ pub fn setup_zsh_integration(
     if let Some(editor) = forge_editor {
         forge_config.push(String::new()); // Add blank line before comment
         forge_config.push("# Editor for editing prompts (set during setup)".to_string());
-        forge_config.push("# To change: update FORGE_EDITOR or remove to use $EDITOR".to_string());
-        forge_config.push(format!("export FORGE_EDITOR=\"{}\"", editor));
+        forge_config.push("# To change: update MNETHOS_EDITOR or remove to use $EDITOR".to_string());
+        forge_config.push(format!("export MNETHOS_EDITOR=\"{}\"", editor));
     }
 
     forge_config.push(END_MARKER.to_string());
@@ -381,7 +381,7 @@ mod tests {
     fn test_run_zsh_doctor_streaming() {
         // SAFETY: No mutex needed for single test - setting env var for test isolation
         unsafe {
-            std::env::set_var("FORGE_SKIP_INTERACTIVE", "1");
+            std::env::set_var("MNETHOS_SKIP_INTERACTIVE", "1");
         }
 
         let actual = run_zsh_doctor();
@@ -389,7 +389,7 @@ mod tests {
         // Clean up
         // SAFETY: No mutex needed for single test - removing env var after test
         unsafe {
-            std::env::remove_var("FORGE_SKIP_INTERACTIVE");
+            std::env::remove_var("MNETHOS_SKIP_INTERACTIVE");
         }
 
         // The doctor script runs successfully even if it reports failures
@@ -586,10 +586,10 @@ mod tests {
         assert!(zshrc_path.exists(), "zshrc file should be created");
         let content = fs::read_to_string(&zshrc_path).expect("Should be able to read zshrc");
 
-        // Should contain FORGE_EDITOR with explanatory comments
+        // Should contain MNETHOS_EDITOR with explanatory comments
         assert!(
-            content.contains("export FORGE_EDITOR=\"code --wait\""),
-            "Content should contain FORGE_EDITOR:\n{}",
+            content.contains("export MNETHOS_EDITOR=\"code --wait\""),
+            "Content should contain MNETHOS_EDITOR:\n{}",
             content
         );
         assert!(
@@ -597,7 +597,7 @@ mod tests {
             "Should contain editor explanation comment"
         );
         assert!(
-            content.contains("# To change: update FORGE_EDITOR or remove to use $EDITOR"),
+            content.contains("# To change: update MNETHOS_EDITOR or remove to use $EDITOR"),
             "Should contain editor change instructions"
         );
 
@@ -657,8 +657,8 @@ mod tests {
             content
         );
         assert!(
-            content.contains("export FORGE_EDITOR=\"vim\""),
-            "Content should contain FORGE_EDITOR:\n{}",
+            content.contains("export MNETHOS_EDITOR=\"vim\""),
+            "Content should contain MNETHOS_EDITOR:\n{}",
             content
         );
 
@@ -715,8 +715,8 @@ mod tests {
             "Should contain NERD_FONT=0 after first setup"
         );
         assert!(
-            !content.contains("export FORGE_EDITOR"),
-            "Should not contain FORGE_EDITOR after first setup"
+            !content.contains("export MNETHOS_EDITOR"),
+            "Should not contain MNETHOS_EDITOR after first setup"
         );
 
         // Second setup - without nerd font but with editor
@@ -753,8 +753,8 @@ mod tests {
 
         // Should contain the editor
         assert!(
-            content.contains("export FORGE_EDITOR=\"nvim\""),
-            "Should contain FORGE_EDITOR after update:\n{}",
+            content.contains("export MNETHOS_EDITOR=\"nvim\""),
+            "Should contain MNETHOS_EDITOR after update:\n{}",
             content
         );
 

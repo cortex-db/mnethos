@@ -1272,7 +1272,7 @@ mod env_tests {
         assert!(
             !credentials
                 .iter()
-                .any(|c| c.id == ProviderId::FORGE_SERVICES),
+                .any(|c| c.id == ProviderId::MNETHOS_SERVICES),
             "Should NOT create forge_services credential during environment migration"
         );
 

@@ -17,13 +17,13 @@ echo "Building debug binary..."
 cargo build -p forge_main 2>&1 | tail -3
 
 echo ""
-echo "Running: FORGE_SESSION__PROVIDER_ID=$PROVIDER FORGE_SESSION__MODEL_ID=$MODEL $BINARY -p 'Hi'"
+echo "Running: MNETHOS_SESSION__PROVIDER_ID=$PROVIDER MNETHOS_SESSION__MODEL_ID=$MODEL $BINARY -p 'Hi'"
 echo "---"
 
 # Capture stderr (where forge writes errors) and stdout separately.
 ERROR_OUTPUT=$(
-  FORGE_SESSION__PROVIDER_ID="$PROVIDER" \
-  FORGE_SESSION__MODEL_ID="$MODEL" \
+  MNETHOS_SESSION__PROVIDER_ID="$PROVIDER" \
+  MNETHOS_SESSION__MODEL_ID="$MODEL" \
   "$BINARY" -p "Hi" 2>&1 || true
 )
 

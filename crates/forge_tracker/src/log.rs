@@ -29,7 +29,7 @@ pub fn init_tracing(log_path: PathBuf, tracker: Tracker) -> anyhow::Result<Guard
         .with_filter(filter);
 
     tracing_subscriber::registry()
-        .with(tracing_subscriber::EnvFilter::try_from_env("FORGE_LOG").unwrap_or(level))
+        .with(tracing_subscriber::EnvFilter::try_from_env("MNETHOS_LOG").unwrap_or(level))
         .with(fmt_layer)
         .init();
 

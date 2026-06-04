@@ -1842,28 +1842,28 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
         Ok(())
     }
 
-    /// Install the Forge VS Code extension
+    /// Install the Mnethos VS Code extension
     async fn on_vscode_extension_install(&mut self) -> anyhow::Result<()> {
         self.spinner
-            .start(Some("Installing Forge VS Code extension"))?;
+            .start(Some("Installing Mnethos VS Code extension"))?;
 
         match crate::vscode::install_extension() {
             Ok(true) => {
                 self.spinner.stop(None)?;
                 self.writeln_title(TitleFormat::info(
-                    "Forge VS Code extension installed successfully",
+                    "Mnethos VS Code extension installed successfully",
                 ))?;
             }
             Ok(false) => {
                 self.spinner.stop(None)?;
                 self.writeln_title(TitleFormat::error(
-                    "Failed to install Forge VS Code extension.",
+                    "Failed to install Mnethos VS Code extension.",
                 ))?;
             }
             Err(e) => {
                 self.spinner.stop(None)?;
                 self.writeln_title(TitleFormat::error(format!(
-                    "Failed to install Forge VS Code extension: {e}"
+                    "Failed to install Mnethos VS Code extension: {e}"
                 )))?;
             }
         }
@@ -2425,7 +2425,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
             std::fs::File::create(&config_path)?;
         }
 
-        let editor = std::env::var("FORGE_EDITOR")
+        let editor = std::env::var("MNETHOS_EDITOR")
             .or_else(|_| std::env::var("EDITOR"))
             .unwrap_or_else(|_| "nano".to_string());
         let editor_binary = editor
@@ -2439,7 +2439,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
             .status()
             .map_err(|e| {
                 anyhow::anyhow!(
-                    "Failed to open editor '{}': {}. Set FORGE_EDITOR or EDITOR.",
+                    "Failed to open editor '{}': {}. Set MNETHOS_EDITOR or EDITOR.",
                     editor_binary,
                     e
                 )
@@ -2465,7 +2465,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
     async fn on_edit_buffer(&mut self, initial: Option<String>) -> anyhow::Result<()> {
         use std::io::Write as _;
 
-        let editor = std::env::var("FORGE_EDITOR")
+        let editor = std::env::var("MNETHOS_EDITOR")
             .or_else(|_| std::env::var("EDITOR"))
             .unwrap_or_else(|_| "nano".to_string());
 
@@ -2475,10 +2475,10 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
         let editor_binary = editor_parts.next().unwrap_or("nano").to_string();
         let editor_flags: Vec<&str> = editor_parts.collect();
 
-        // Create .forge directory for the temp file
-        let forge_dir = self.state.cwd.join(".forge");
+        // Create .mnethos directory for the temp file
+        let forge_dir = self.state.cwd.join(".mnethos");
         std::fs::create_dir_all(&forge_dir)?;
-        let temp_file = forge_dir.join("FORGE_EDITMSG.md");
+        let temp_file = forge_dir.join("MNETHOS_EDITMSG.md");
 
         // Write initial content
         let mut file = std::fs::File::create(&temp_file)?;
@@ -2493,7 +2493,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
             .status()
             .map_err(|e| {
                 anyhow::anyhow!(
-                    "Failed to open editor '{}': {}. Set FORGE_EDITOR or EDITOR.",
+                    "Failed to open editor '{}': {}. Set MNETHOS_EDITOR or EDITOR.",
                     editor_binary,
                     e
                 )
@@ -3340,14 +3340,14 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
         }
     }
 
-    /// Creates ForgeCode Services credentials if not already authenticated and
+    /// Creates Mnethos Services credentials if not already authenticated and
     /// displays the credentials file location to the user.
     async fn init_forge_services(&mut self) -> Result<()> {
         self.api.create_auth_credentials().await?;
         let env = self.api.environment();
         let credentials_path = crate::info::format_path_for_display(&env, &env.credentials_path());
         self.writeln_title(
-            TitleFormat::info("ForgeCode Services enabled").sub_title(&credentials_path),
+            TitleFormat::info("Mnethos Services enabled").sub_title(&credentials_path),
         )?;
         Ok(())
     }
@@ -3358,7 +3358,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
         provider_id: ProviderId,
         auth_methods: Vec<AuthMethod>,
     ) -> Result<Option<Provider<Url>>> {
-        if provider_id == ProviderId::FORGE_SERVICES {
+        if provider_id == ProviderId::MNETHOS_SERVICES {
             self.init_forge_services().await?;
             return Ok(None);
         }
@@ -4337,7 +4337,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
         Ok(())
     }
 
-    /// Rename `~/forge` to `~/.forge`.
+    /// Rename `~/forge` to `~/.mnethos`.
     ///
     /// Errors if the legacy directory does not exist, if the new directory
     /// already exists, or if the rename fails.
@@ -4345,7 +4345,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
         let home = dirs::home_dir()
             .ok_or_else(|| anyhow::anyhow!("Could not determine home directory"))?;
         let legacy = home.join("forge");
-        let new = home.join(".forge");
+        let new = home.join(".mnethos");
 
         if !legacy.exists() {
             anyhow::bail!(
@@ -4490,12 +4490,12 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
     /// Handle prompt command - returns model and conversation stats for shell
     /// integration
     async fn handle_zsh_rprompt_command(&mut self) -> Option<String> {
-        let cid = std::env::var("_FORGE_CONVERSATION_ID")
+        let cid = std::env::var("_MNETHOS_CONVERSATION_ID")
             .ok()
             .filter(|text| !text.trim().is_empty())
             .and_then(|str| ConversationId::from_str(str.as_str()).ok());
 
-        let agent_id = std::env::var("_FORGE_ACTIVE_AGENT")
+        let agent_id = std::env::var("_MNETHOS_ACTIVE_AGENT")
             .ok()
             .filter(|text| !text.trim().is_empty())
             .map(AgentId::new);
@@ -5009,14 +5009,14 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
         yes: bool,
     ) -> anyhow::Result<()> {
         // Ask for user consent before syncing and sharing directory contents
-        // with the ForgeCode Service.
+        // with the Mnethos Service.
         let display_path = path.display().to_string();
 
         let confirmed = if yes {
             Some(true)
         } else {
             ForgeWidget::confirm(format!(
-                "This will sync and share the contents of '{}' with ForgeCode Services. Do you wish to continue?",
+                "This will sync and share the contents of '{}' with Mnethos Services. Do you wish to continue?",
                 display_path
             ))
             .with_default(true)
@@ -5057,7 +5057,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
         // Display results based on whether migration occurred
         if let Some(result) = result {
             self.writeln_title(
-                TitleFormat::warning("Forge no longer reads API keys from environment variables.")
+                TitleFormat::warning("Mnethos no longer reads API keys from environment variables.")
                     .sub_title("Learn more: https://forgecode.dev/docs/custom-providers/"),
             )?;
 

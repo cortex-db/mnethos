@@ -7,26 +7,26 @@ function _forge_action_editor() {
     local initial_text="$1"
     echo
     
-    # Determine editor in order of preference: FORGE_EDITOR > EDITOR > nano
-    local editor_cmd="${FORGE_EDITOR:-${EDITOR:-nano}}"
+    # Determine editor in order of preference: MNETHOS_EDITOR > EDITOR > nano
+    local editor_cmd="${MNETHOS_EDITOR:-${EDITOR:-nano}}"
     
     # Validate editor exists
     if ! command -v "${editor_cmd%% *}" &>/dev/null; then
-        _forge_log error "Editor not found: $editor_cmd (set FORGE_EDITOR or EDITOR)"
+        _forge_log error "Editor not found: $editor_cmd (set MNETHOS_EDITOR or EDITOR)"
         return 1
     fi
     
-    # Create .forge directory if it doesn't exist
-    local forge_dir=".forge"
+    # Create .mnethos directory if it doesn't exist
+    local forge_dir=".mnethos"
     if [[ ! -d "$forge_dir" ]]; then
         mkdir -p "$forge_dir" || {
-            _forge_log error "Failed to create .forge directory"
+            _forge_log error "Failed to create .mnethos directory"
             return 1
         }
     fi
     
-    # Create temporary file with git-like naming: FORGE_EDITMSG.md
-    local temp_file="${forge_dir}/FORGE_EDITMSG.md"
+    # Create temporary file with git-like naming: MNETHOS_EDITMSG.md
+    local temp_file="${forge_dir}/MNETHOS_EDITMSG.md"
     touch "$temp_file" || {
         _forge_log error "Failed to create temporary file"
         return 1

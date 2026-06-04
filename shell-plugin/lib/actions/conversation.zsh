@@ -22,24 +22,24 @@ function _forge_switch_conversation() {
     local new_conversation_id="$1"
     
     # Only update previous if we're switching to a different conversation
-    if [[ -n "$_FORGE_CONVERSATION_ID" && "$_FORGE_CONVERSATION_ID" != "$new_conversation_id" ]]; then
+    if [[ -n "$_MNETHOS_CONVERSATION_ID" && "$_MNETHOS_CONVERSATION_ID" != "$new_conversation_id" ]]; then
         # Save current as previous
-        _FORGE_PREVIOUS_CONVERSATION_ID="$_FORGE_CONVERSATION_ID"
+        _MNETHOS_PREVIOUS_CONVERSATION_ID="$_MNETHOS_CONVERSATION_ID"
     fi
     
     # Set the new conversation as active
-    _FORGE_CONVERSATION_ID="$new_conversation_id"
+    _MNETHOS_CONVERSATION_ID="$new_conversation_id"
 }
 
 # Helper function to reset/clear conversation and track previous (like cd -)
 function _forge_clear_conversation() {
     # Save current as previous before clearing
-    if [[ -n "$_FORGE_CONVERSATION_ID" ]]; then
-        _FORGE_PREVIOUS_CONVERSATION_ID="$_FORGE_CONVERSATION_ID"
+    if [[ -n "$_MNETHOS_CONVERSATION_ID" ]]; then
+        _MNETHOS_PREVIOUS_CONVERSATION_ID="$_MNETHOS_CONVERSATION_ID"
     fi
     
     # Clear the current conversation
-    _FORGE_CONVERSATION_ID=""
+    _MNETHOS_CONVERSATION_ID=""
 }
 
 # Action handler: List/switch conversations
@@ -51,25 +51,25 @@ function _forge_action_conversation() {
     # Handle toggling to previous conversation (like cd -)
     if [[ "$input_text" == "-" ]]; then
         # Check if there's a previous conversation
-        if [[ -z "$_FORGE_PREVIOUS_CONVERSATION_ID" ]]; then
+        if [[ -z "$_MNETHOS_PREVIOUS_CONVERSATION_ID" ]]; then
             # No previous conversation tracked, show conversation list like :conversation
             input_text=""
             # Fall through to the conversation list logic below
         else
             # Swap current and previous
-            local temp="$_FORGE_CONVERSATION_ID"
-            _FORGE_CONVERSATION_ID="$_FORGE_PREVIOUS_CONVERSATION_ID"
-            _FORGE_PREVIOUS_CONVERSATION_ID="$temp"
+            local temp="$_MNETHOS_CONVERSATION_ID"
+            _MNETHOS_CONVERSATION_ID="$_MNETHOS_PREVIOUS_CONVERSATION_ID"
+            _MNETHOS_PREVIOUS_CONVERSATION_ID="$temp"
             
             # Show conversation content
             echo
-            _forge_exec conversation show "$_FORGE_CONVERSATION_ID"
+            _forge_exec conversation show "$_MNETHOS_CONVERSATION_ID"
             
             # Show conversation info
-            _forge_exec conversation info "$_FORGE_CONVERSATION_ID"
+            _forge_exec conversation info "$_MNETHOS_CONVERSATION_ID"
             
             # Print log about conversation switching
-            _forge_log success "Switched to conversation \033[1m${_FORGE_CONVERSATION_ID}\033[0m"
+            _forge_log success "Switched to conversation \033[1m${_MNETHOS_CONVERSATION_ID}\033[0m"
             
             return 0
         fi
@@ -142,14 +142,14 @@ function _forge_action_clone() {
 function _forge_action_copy() {
     echo
 
-    if [[ -z "$_FORGE_CONVERSATION_ID" ]]; then
+    if [[ -z "$_MNETHOS_CONVERSATION_ID" ]]; then
         _forge_log error "No active conversation. Start a conversation first or use :conversation to see existing ones"
         return 0
     fi
 
     # Fetch raw markdown from the last assistant message
     local content
-    content=$($_FORGE_BIN conversation show --md "$_FORGE_CONVERSATION_ID" 2>/dev/null)
+    content=$($_MNETHOS_BIN conversation show --md "$_MNETHOS_CONVERSATION_ID" 2>/dev/null)
 
     if [[ -z "$content" ]]; then
         _forge_log error "No assistant message found in the current conversation"
@@ -183,7 +183,7 @@ function _forge_action_rename() {
 
     echo
 
-    if [[ -z "$_FORGE_CONVERSATION_ID" ]]; then
+    if [[ -z "$_MNETHOS_CONVERSATION_ID" ]]; then
         _forge_log error "No active conversation. Start a conversation first or use :conversation to select one"
         return 0
     fi
@@ -193,7 +193,7 @@ function _forge_action_rename() {
         return 0
     fi
 
-    _forge_exec conversation rename "$_FORGE_CONVERSATION_ID" $input_text
+    _forge_exec conversation rename "$_MNETHOS_CONVERSATION_ID" $input_text
 }
 
 # Action handler: Rename a conversation (interactive picker or by ID)
@@ -240,12 +240,12 @@ function _forge_clone_and_switch() {
     local clone_target="$1"
     
     # Store original conversation ID to check if we're cloning current conversation
-    local original_conversation_id="$_FORGE_CONVERSATION_ID"
+    local original_conversation_id="$_MNETHOS_CONVERSATION_ID"
     
     # Execute clone command
     _forge_log info "Cloning conversation \033[1m${clone_target}\033[0m"
     local clone_output
-    clone_output=$($_FORGE_BIN conversation clone "$clone_target" 2>&1)
+    clone_output=$($_MNETHOS_BIN conversation clone "$clone_target" 2>&1)
     local clone_exit_code=$?
     
     if [[ $clone_exit_code -eq 0 ]]; then

@@ -64,7 +64,7 @@ impl<
         crate::tool_services::fs_read::assert_file_size(&*self.infra, path, max_image_size_bytes)
             .await
             .with_context(
-                || "Image exceeds size limit. Compress the image or increase FORGE_MAX_IMAGE_SIZE.",
+                || "Image exceeds size limit. Compress the image or increase MNETHOS_MAX_IMAGE_SIZE.",
             )?;
 
         // Determine image format from file extension

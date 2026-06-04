@@ -19,7 +19,7 @@ anyhow = "1.0.102"
 async-recursion = "1.1.1"
 async-stream = "0.3"
 async-trait = "0.1.89"
-aws-config = { version = "1.8.13", features = ["behavior-version-latest", "sso"], default-features = false }
+aws-config = { version = "1.8.18", features = ["behavior-version-latest", "sso"], default-features = false }
 aws-sdk-bedrockruntime = { version = "1.129.0", features = ["behavior-version-latest"], default-features = false }
 aws-credential-types = "1.2.14"
 aws-smithy-types = "1.4.3"
@@ -111,7 +111,7 @@ terminal_size = "0.4"
 unicode-width = "0.2"
 backon = "1.5.2"
 eserde = "0.1.7"
-uuid = { version = "1.23.0", features = [
+uuid = { version = "1.23.2", features = [
     "v4",
     "fast-rng",
     "serde",

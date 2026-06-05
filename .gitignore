@@ -51,3 +51,5 @@ bench/__pycache__
 testbench/runs/
 testbench/**/__pycache__/
 testbench/**/.pytest_cache/
+# Local isolated test config (carries a real awm token + LLM creds) — never commit
+testbench/.mnethos-test/

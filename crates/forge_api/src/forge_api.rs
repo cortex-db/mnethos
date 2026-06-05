@@ -37,7 +37,10 @@ impl<A, F> ForgeAPI<A, F> {
         A: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>,
         F: EnvironmentInfra<Config = forge_config::ForgeConfig>,
     {
+        // Plug the out-of-core memory layer into the agent lifecycle via the
+        // generic LifecycleHooks seam. No-op unless MNETHOS_MEMORY is set.
         ForgeApp::new(self.services.clone())
+            .with_lifecycle_hooks(forge_memory::lifecycle(self.services.clone()))
     }
 }
 

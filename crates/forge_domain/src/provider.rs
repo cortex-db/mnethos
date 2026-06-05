@@ -20,8 +20,6 @@ pub enum ProviderType {
     Llm,
     /// Context engine providers for code indexing and search
     ContextEngine,
-    /// Long-term graph-memory provider (ai-working-memory, gRPC MemoryWrite)
-    Memory,
 }
 
 /// --- IMPORTANT ---

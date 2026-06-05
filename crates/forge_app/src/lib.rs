@@ -15,8 +15,8 @@ mod git_app;
 mod hooks;
 mod infra;
 mod init_conversation_metrics;
+mod lifecycle;
 mod mcp_executor;
-mod memory_context;
 mod operation;
 mod orch;
 #[cfg(test)]
@@ -48,6 +48,7 @@ pub use data_gen::*;
 pub use error::*;
 pub use git_app::*;
 pub use infra::*;
+pub use lifecycle::*;
 pub use services::*;
 pub use template_engine::*;
 pub use terminal_context::*;

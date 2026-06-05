@@ -11,6 +11,7 @@ option go_package = "primitive-activation-graph/ai-working-memory/proto/memorywr
 
 service MemoryWrite {
   rpc CreateEpisode(CreateEpisodeRequest) returns (CreateEpisodeResponse);
+  rpc Retrieve(RetrieveRequest) returns (RetrieveResponse);
 }
 
 message Anchor {
@@ -42,4 +43,22 @@ message CreateEpisodeResponse {
   int32 unique_refs = 4;
   int32 custom_l0_count = 5;
   int32 reused_concepts = 6;
+}
+
+message RetrieveRequest {
+  string session_key = 1;
+  repeated string anchors = 2;
+}
+
+message RetrievedItem {
+  string node_id = 1;
+  int32 level = 2;
+  float activation = 3;
+  string created_at = 4;
+  repeated string aliases = 5;
+  optional float confidence = 6;
+}
+
+message RetrieveResponse {
+  repeated RetrievedItem items = 1;
 }

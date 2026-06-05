@@ -1,0 +1,31 @@
+[package]
+name = "forge_memory"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+# The Mnethos memory layer (retrieval-before-run + consolidation-after-run +
+# gRPC client to ai-working-memory). Kept ENTIRELY out of core forgecode crates
+# so upstream syncs stay conflict-free; wired into the agent lifecycle from
+# forge_api via the generic lifecycle-hook seam on ForgeApp.
+[dependencies]
+forge_domain.workspace = true
+forge_app.workspace = true
+forge_config.workspace = true
+
+anyhow.workspace = true
+async-trait.workspace = true
+backon.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+schemars.workspace = true
+tracing.workspace = true
+
+# gRPC client to the memory server (self-contained, own channel)
+tonic.workspace = true
+prost = "0.14.3"
+prost-types = "0.14.3"
+tonic-prost = "0.14.5"
+
+[build-dependencies]
+tonic-prost-build = "0.14.5"

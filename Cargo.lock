@@ -2177,6 +2177,7 @@ dependencies = [
  "forge_config",
  "forge_domain",
  "forge_infra",
+ "forge_memory",
  "forge_repo",
  "forge_services",
  "forge_stream",
@@ -2537,6 +2538,27 @@ dependencies = [
  "terminal-colorsaurus",
  "unicode-segmentation",
  "unicode-width 0.2.2",
+]
+
+[[package]]
+name = "forge_memory"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "backon",
+ "forge_app",
+ "forge_config",
+ "forge_domain",
+ "prost",
+ "prost-types",
+ "schemars 1.2.1",
+ "serde",
+ "serde_json",
+ "tonic",
+ "tonic-prost",
+ "tonic-prost-build",
+ "tracing",
 ]
 
 [[package]]

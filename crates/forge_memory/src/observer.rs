@@ -15,7 +15,7 @@ use tracing::{info, warn};
 /// building any retrieval, summarization, or embedding.
 ///
 /// Observation only: it never mutates the conversation and never fails the
-/// turn. It is opt-in via the `MNETHOS_MEMORY_OBSERVE` environment variable, so
+/// turn. It is opt-in via the `MNETHOS_MEMORY` environment variable, so
 /// normal runs are completely unaffected.
 #[derive(Debug, Clone, Default)]
 pub struct MemoryObserver;
@@ -36,6 +36,11 @@ struct ConsolidationSnapshot<'a> {
     agent_id: &'a AgentId,
     /// The model that performed the work.
     model_id: &'a ModelId,
+    /// Accumulated token usage of the AGENT TASK (sum over the conversation's
+    /// request/response messages). Excludes the memory layer's own
+    /// anchor-extraction and consolidation calls, which run in separate
+    /// contexts — so this is the apples-to-apples "task cost" for A/B metrics.
+    token_usage: Option<forge_domain::Usage>,
     /// The complete conversation available at consolidation time.
     conversation: &'a Conversation,
 }
@@ -48,7 +53,7 @@ impl EventHandle<EventData<EndPayload>> for MemoryObserver {
         conversation: &mut Conversation,
     ) -> anyhow::Result<()> {
         // Opt-in: stay completely inert unless explicitly enabled.
-        if std::env::var_os("MNETHOS_MEMORY_OBSERVE").is_none() {
+        if std::env::var_os("MNETHOS_MEMORY").is_none() {
             return Ok(());
         }
 
@@ -68,10 +73,16 @@ fn write_snapshot(event: &EventData<EndPayload>, conversation: &Conversation) ->
         .map(|d| d.as_millis())
         .unwrap_or(0);
 
+    let token_usage = conversation
+        .context
+        .as_ref()
+        .and_then(|context| context.accumulate_usage());
+
     let snapshot = ConsolidationSnapshot {
         observed_at_ms,
         agent_id: &event.agent.id,
         model_id: &event.model_id,
+        token_usage,
         conversation,
     };
 

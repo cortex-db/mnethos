@@ -10,10 +10,10 @@ use crate::apply_tunable_parameters::ApplyTunableParameters;
 use crate::changed_files::ChangedFiles;
 use crate::dto::ToolsOverview;
 use crate::hooks::{
-    CompactionHandler, DoomLoopDetector, MemoryObserver, PendingTodosHandler, RetrievalObserver,
-    TitleGenerationHandler, TracingHandler,
+    CompactionHandler, DoomLoopDetector, PendingTodosHandler, TitleGenerationHandler,
+    TracingHandler,
 };
-use crate::memory_context::MemoryContext;
+use crate::lifecycle::LifecycleHooks;
 use crate::init_conversation_metrics::InitConversationMetrics;
 use crate::orch::Orchestrator;
 use crate::services::{AgentRegistry, CustomInstructionsService, ProviderAuthService};
@@ -48,12 +48,27 @@ pub(crate) fn build_template_config(config: &ForgeConfig) -> forge_domain::Templ
 pub struct ForgeApp<S> {
     services: Arc<S>,
     tool_registry: ToolRegistry<S>,
+    /// Optional extra lifecycle hooks injected by a higher layer (e.g. an
+    /// out-of-core memory crate). Generic extension point — see [`LifecycleHooks`].
+    lifecycle: Option<Arc<dyn LifecycleHooks>>,
 }
 
 impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeApp<S> {
     /// Creates a new ForgeApp instance with the provided services.
     pub fn new(services: Arc<S>) -> Self {
-        Self { tool_registry: ToolRegistry::new(services.clone()), services }
+        Self {
+            tool_registry: ToolRegistry::new(services.clone()),
+            services,
+            lifecycle: None,
+        }
+    }
+
+    /// Registers extra Start/End lifecycle hooks (a generic extension point used
+    /// to plug in optional layers — e.g. the memory crate — without coupling
+    /// core to them).
+    pub fn with_lifecycle_hooks(mut self, hooks: Arc<dyn LifecycleHooks>) -> Self {
+        self.lifecycle = Some(hooks);
+        self
     }
 
     /// Executes a chat request and returns a stream of responses.
@@ -135,13 +150,6 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeAp
         .add_user_prompt(conversation)
         .await?;
 
-        // Insert the Mnethos memory-recall context as its OWN separate block.
-        // Deliberately independent of SystemPrompt above: it never modifies
-        // forgecode's initial context (`system_messages`), and runs before
-        // `Orchestrator::run()` so the addition is not discarded. No-op until
-        // recall is implemented.
-        let conversation = MemoryContext::new().apply(conversation);
-
         // Detect and render externally changed files notification
         let conversation = ChangedFiles::new(services.clone(), agent.clone())
             .update_file_stats(conversation)
@@ -158,26 +166,31 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeAp
 
         // Build the on_end hook, conditionally adding PendingTodosHandler based on
         // config
-        let on_end_hook = if forge_config.verify_todos {
-            tracing_handler
-                .clone()
-                .and(title_handler.clone())
-                .and(PendingTodosHandler::new())
-                .and(MemoryObserver::new())
-        } else {
-            tracing_handler
-                .clone()
-                .and(title_handler.clone())
-                .and(MemoryObserver::new())
-        };
-
-        let hook = Hook::default()
-            .on_start(
+        let mut on_end_hook: Box<dyn EventHandle<EventData<EndPayload>>> =
+            if forge_config.verify_todos {
                 tracing_handler
                     .clone()
-                    .and(title_handler)
-                    .and(RetrievalObserver::new()),
-            )
+                    .and(title_handler.clone())
+                    .and(PendingTodosHandler::new())
+            } else {
+                tracing_handler.clone().and(title_handler.clone())
+            };
+
+        // Generic extension point: fold in any injected lifecycle hooks (e.g. the
+        // out-of-core memory layer) without core knowing what they are.
+        let mut on_start_hook: Box<dyn EventHandle<EventData<StartPayload>>> =
+            tracing_handler.clone().and(title_handler);
+        if let Some(lifecycle) = &self.lifecycle {
+            if let Some(start) = lifecycle.on_start() {
+                on_start_hook = on_start_hook.and(start);
+            }
+            if let Some(end) = lifecycle.on_end() {
+                on_end_hook = on_end_hook.and(end);
+            }
+        }
+
+        let hook = Hook::default()
+            .on_start(on_start_hook)
             .on_request(tracing_handler.clone().and(DoomLoopDetector::default()))
             .on_response(
                 tracing_handler

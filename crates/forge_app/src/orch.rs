@@ -240,9 +240,10 @@ impl<S: AgentService + EnvironmentInfra<Config = forge_config::ForgeConfig>> Orc
     pub async fn run(&mut self) -> anyhow::Result<()> {
         let model_id = self.get_model();
 
-        let mut context = self.conversation.context.clone().unwrap_or_default();
-
-        // Fire the Start lifecycle event
+        // Fire the Start lifecycle event FIRST, then clone the working context.
+        // This lets a Start hook augment `conversation.context` before the model
+        // sees it (the loop drives the model from the local `context` cloned just
+        // below, so the clone must happen AFTER the Start hook runs).
         let start_event = LifecycleEvent::Start(EventData::new(
             self.agent.clone(),
             model_id.clone(),
@@ -251,6 +252,8 @@ impl<S: AgentService + EnvironmentInfra<Config = forge_config::ForgeConfig>> Orc
         self.hook
             .handle(&start_event, &mut self.conversation)
             .await?;
+
+        let mut context = self.conversation.context.clone().unwrap_or_default();
 
         // Signals that the loop should suspend (task may or may not be completed)
         let mut should_yield = false;

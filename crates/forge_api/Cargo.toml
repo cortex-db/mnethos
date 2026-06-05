@@ -13,6 +13,7 @@ forge_stream.workspace = true
 forge_services.workspace = true
 forge_repo.workspace = true
 forge_infra.workspace = true
+forge_memory.workspace = true
 futures.workspace = true
 
 

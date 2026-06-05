@@ -19,7 +19,7 @@ anyhow = "1.0.102"
 async-recursion = "1.1.1"
 async-stream = "0.3"
 async-trait = "0.1.89"
-aws-config = { version = "1.8.13", features = ["behavior-version-latest", "sso"], default-features = false }
+aws-config = { version = "1.8.18", features = ["behavior-version-latest", "sso"], default-features = false }
 aws-sdk-bedrockruntime = { version = "1.129.0", features = ["behavior-version-latest"], default-features = false }
 aws-credential-types = "1.2.14"
 aws-smithy-types = "1.4.3"
@@ -29,7 +29,7 @@ aws-smithy-runtime = { version = "1.10", features = ["connector-hyper-0-14-x", "
 base64 = "0.22.1"
 bstr = "1.12.1"
 bytes = "1.11.1"
-chrono = { version = "0.4.44", features = ["serde"] }
+chrono = { version = "0.4.45", features = ["serde"] }
 clap = { version = "4.6.0", features = ["derive"] }
 clap_complete = "4.6.0"
 colored = "3.1.1"
@@ -49,7 +49,7 @@ grep-regex = "0.1.13"
 handlebars = "6.4.0"
 html2md = "0.2.15"
 http = "1.2.0"
-ignore = "0.4.23"
+ignore = "0.4.26"
 is_ci = "1.2.0"
 indexmap = "2.13.0"
 infer = "0.19.0"
@@ -111,7 +111,7 @@ terminal_size = "0.4"
 unicode-width = "0.2"
 backon = "1.5.2"
 eserde = "0.1.7"
-uuid = { version = "1.23.0", features = [
+uuid = { version = "1.23.2", features = [
     "v4",
     "fast-rng",
     "serde",

@@ -537,7 +537,7 @@ expression: tools
   "type": "object",
   "properties": {
     "agent_id": {
-      "description": "The ID of the specialized agent to delegate to (e.g., \"forge\", \"muse\",\n\"sage\")",
+      "description": "The ID of the specialized agent to delegate to (e.g., \"smith\",\n\"architect\", \"sage\")",
       "type": "string"
     },
     "session_id": {

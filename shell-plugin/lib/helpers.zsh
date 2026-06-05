@@ -14,7 +14,7 @@ function _forge_get_commands() {
 # Helper function to execute forge commands consistently
 # This ensures proper handling of special characters and consistent output
 function _forge_exec() {
-    local agent_id="${_MNETHOS_ACTIVE_AGENT:-forge}"
+    local agent_id="${_MNETHOS_ACTIVE_AGENT:-smith}"
     local -a cmd
     cmd=($_MNETHOS_BIN --agent "$agent_id")
 
@@ -50,7 +50,7 @@ function _forge_exec() {
 # library would see a non-tty stdin and return EOF immediately.
 # Do NOT use inside $(...) command substitutions - use _forge_exec instead.
 function _forge_exec_interactive() {
-    local agent_id="${_MNETHOS_ACTIVE_AGENT:-forge}"
+    local agent_id="${_MNETHOS_ACTIVE_AGENT:-smith}"
     local -a cmd
     cmd=($_MNETHOS_BIN --agent "$agent_id")
 

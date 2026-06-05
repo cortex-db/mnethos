@@ -74,8 +74,8 @@ impl<I: FileInfoInfra + EnvironmentInfra<Config = ForgeConfig> + DirectoryReader
         let config = self.infra.get_config()?;
         parse_agent_iter(
             [
-                ("forge", include_str!("agents/forge.md")),
-                ("muse", include_str!("agents/muse.md")),
+                ("smith", include_str!("agents/smith.md")),
+                ("architect", include_str!("agents/architect.md")),
                 ("sage", include_str!("agents/sage.md")),
             ]
             .into_iter()
@@ -152,7 +152,7 @@ fn apply_subagent_tool_config(
     mut agent: AgentDefinition,
     config: &ForgeConfig,
 ) -> Result<AgentDefinition> {
-    if agent.id.as_str() != "forge" {
+    if agent.id.as_str() != "smith" {
         return Ok(agent);
     }
 
@@ -268,7 +268,7 @@ mod tests {
     #[test]
     fn test_parse_agent_file_renders_conditional_frontmatter_when_subagents_enabled() {
         let fixture = r#"---
-id: "forge"
+id: "smith"
 tools:
   - read
   - task
@@ -282,7 +282,7 @@ Body keeps {{tool_names.read}} untouched.
         let actual =
             apply_subagent_tool_config(parse_agent_file(fixture).unwrap(), &config).unwrap();
 
-        assert_eq!(actual.id, AgentId::new("forge"));
+        assert_eq!(actual.id, AgentId::new("smith"));
         assert_eq!(
             actual.system_prompt.unwrap().template,
             "Body keeps {{tool_names.read}} untouched."
@@ -293,7 +293,7 @@ Body keeps {{tool_names.read}} untouched.
     #[test]
     fn test_parse_agent_file_renders_conditional_frontmatter_when_subagents_disabled() {
         let fixture = r#"---
-id: "forge"
+id: "smith"
 tools:
   - read
   - task
@@ -307,7 +307,7 @@ Body keeps {{tool_names.read}} untouched.
         let actual =
             apply_subagent_tool_config(parse_agent_file(fixture).unwrap(), &config).unwrap();
 
-        assert_eq!(actual.id, AgentId::new("forge"));
+        assert_eq!(actual.id, AgentId::new("smith"));
         assert_snapshot!(
             "parse_agent_file_subagents_disabled_prompt",
             actual.system_prompt.unwrap().template
@@ -318,7 +318,7 @@ Body keeps {{tool_names.read}} untouched.
     #[test]
     fn test_parse_agent_file_preserves_runtime_user_prompt_variables() {
         let fixture = r#"---
-id: "forge"
+id: "smith"
 tools:
   - read
   - task
@@ -334,7 +334,7 @@ Body keeps {{tool_names.read}} untouched.
         let actual = parse_agent_file(fixture).unwrap();
         let actual_user_prompt = actual.user_prompt.clone().unwrap().template;
 
-        assert_eq!(actual.id, AgentId::new("forge"));
+        assert_eq!(actual.id, AgentId::new("smith"));
         assert_snapshot!(
             "parse_agent_file_preserves_runtime_user_prompt_variables",
             actual_user_prompt

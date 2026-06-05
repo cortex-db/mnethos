@@ -1473,7 +1473,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
             .add_key_value("type", CommandType::Agent)
             .add_key_value(
                 "description",
-                "Planning and strategy agent [alias for: muse]",
+                "Planning and strategy agent [alias for: architect]",
             );
 
         let agent_infos = self.api.get_agent_infos().await?;
@@ -2131,11 +2131,11 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
                 self.spinner.start(None)?;
                 self.on_message(Some(content.clone())).await?;
             }
-            AppCommand::Forge => {
-                self.on_agent_change(AgentId::FORGE).await?;
+            AppCommand::Smith => {
+                self.on_agent_change(AgentId::SMITH).await?;
             }
-            AppCommand::Muse => {
-                self.on_agent_change(AgentId::MUSE).await?;
+            AppCommand::Architect => {
+                self.on_agent_change(AgentId::ARCHITECT).await?;
             }
             AppCommand::Sage => {
                 self.on_agent_change(AgentId::SAGE).await?;

@@ -1105,14 +1105,14 @@ mod tests {
 
     #[test]
     fn test_agent_id_short_alias() {
-        let fixture = Cli::parse_from(["forge", "--aid", "muse"]);
-        assert_eq!(fixture.agent, Some(AgentId::new("muse")));
+        let fixture = Cli::parse_from(["forge", "--aid", "architect"]);
+        assert_eq!(fixture.agent, Some(AgentId::new("architect")));
     }
 
     #[test]
     fn test_agent_id_with_prompt() {
-        let fixture = Cli::parse_from(["forge", "--agent", "forge", "-p", "test prompt"]);
-        assert_eq!(fixture.agent, Some(AgentId::new("forge")));
+        let fixture = Cli::parse_from(["forge", "--agent", "smith", "-p", "test prompt"]);
+        assert_eq!(fixture.agent, Some(AgentId::new("smith")));
         assert_eq!(fixture.prompt, Some("test prompt".to_string()));
     }
 

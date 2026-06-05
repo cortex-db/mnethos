@@ -590,9 +590,9 @@ crates/forge_repo/Cargo.toml
 crates/forge_repo/build.rs
 crates/forge_repo/proto/forge.proto
 crates/forge_repo/src/agent.rs
-crates/forge_repo/src/agents/forge.md
-crates/forge_repo/src/agents/muse.md
+crates/forge_repo/src/agents/architect.md
 crates/forge_repo/src/agents/sage.md
+crates/forge_repo/src/agents/smith.md
 crates/forge_repo/src/app_config.rs
 crates/forge_repo/src/context_engine.rs
 crates/forge_repo/src/conversation/conversation_record.rs

@@ -234,7 +234,7 @@ When you install the ZSH plugin (`mnethos setup`), you get a `:` prefix command 
 
 ```zsh
 : <prompt>         # Send a prompt to the active agent
-:sage <prompt>     # Send a prompt to a specific agent by name (sage, muse, mnethos, or any custom agent)
+:sage <prompt>     # Send a prompt to a specific agent by name (sage, architect, smith, or any custom agent)
 :agent <name>      # Switch the active agent; opens interactive picker if no name given
 ```
 
@@ -244,18 +244,18 @@ Mnethos ships with three built-in agents, each with a different role:
 
 | Agent | Alias | Purpose | Modifies files? |
 |---|---|---|---|
-| `mnethos` | (default) | Implementation: builds features, fixes bugs, and runs tests | Yes |
+| `smith` | (default) | Implementation: builds features, fixes bugs, and runs tests | Yes |
 | `sage` | `:ask` | Research: maps architecture, traces data flow, and reads code | No |
-| `muse` | `:plan` | Planning: analyzes structure and writes implementation plans to `plans/` | No |
+| `architect` | `:plan` | Planning: analyzes structure and writes implementation plans to `plans/` | No |
 
 ### Sending Prompts
 
 ```zsh
 : refactor the auth module to use the new middleware
 :sage how does the caching layer work?    # sage = read-only research agent
-:muse design a deployment strategy        # muse = planning agent (writes to plans/)
+:architect design a deployment strategy   # architect = planning agent (writes to plans/)
 :ask how does X work?                     # alias for :sage
-:plan create a migration plan             # alias for :muse
+:plan create a migration plan             # alias for :architect
 ```
 
 The agent context persists. Typing `:sage` alone (no prompt text) switches the active agent to sage for all subsequent `: <prompt>` commands.
@@ -391,7 +391,7 @@ After running `:sync`, the AI can search your codebase by meaning rather than ex
 | `:suggest <desc>` | `:s` | Translate natural language to command |
 | `:edit` | `:ed` | Compose prompt in $EDITOR |
 | `:sage <prompt>` | `:ask` | Q&A / code understanding agent |
-| `:muse <prompt>` | `:plan` | Planning agent |
+| `:architect <prompt>` | `:plan` | Planning agent |
 | `:agent <name>` | `:a` | Switch active agent (interactive picker if no name given) |
 | `:model <id>` | `:m` | Set model for this session only |
 | `:config-model <id>` | `:cm` | Set default model (persistent) |

@@ -49,7 +49,7 @@ Specify an agent by name after the colon:
 
 ```bash
 :sage How does caching work in this system?
-:muse Create a deployment strategy for my app
+:architect Create a deployment strategy for my app
 ```
 
 **Tab Completion**: Type `:` followed by partial agent name and press `TAB` for interactive selection.

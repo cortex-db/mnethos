@@ -71,7 +71,7 @@ pub fn display(cli_mode: bool) -> io::Result<()> {
             ("Get started:", ":info, :conversation"),
             ("Switch model:", ":model"),
             ("Switch provider:", ":provider"),
-            ("Switch agent:", ":<agent_name> e.g. :forge or :muse"),
+            ("Switch agent:", ":<agent_name> e.g. :smith or :architect"),
         ]
     } else {
         // Interactive mode: show all commands
@@ -79,7 +79,7 @@ pub fn display(cli_mode: bool) -> io::Result<()> {
             ("New conversation:", ":new"),
             ("Get started:", ":info, :usage, :help, :conversation"),
             ("Switch model:", ":model"),
-            ("Switch agent:", ":forge or :muse or :agent"),
+            ("Switch agent:", ":smith or :architect or :agent"),
             ("Update:", ":update"),
             ("Quit:", ":exit or <CTRL+D>"),
         ]

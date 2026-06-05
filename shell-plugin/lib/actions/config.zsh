@@ -236,8 +236,8 @@ function _forge_action_config_edit() {
 # Action handler: Show tools
 function _forge_action_tools() {
     echo
-    # Ensure MNETHOS_ACTIVE_AGENT always has a value, default to "forge"
-    local agent_id="${_MNETHOS_ACTIVE_AGENT:-forge}"
+    # Ensure MNETHOS_ACTIVE_AGENT always has a value, default to "smith"
+    local agent_id="${_MNETHOS_ACTIVE_AGENT:-smith}"
     _forge_exec list tools "$agent_id"
 }
 

@@ -130,7 +130,7 @@ function forge-accept-line() {
             user_action="sage"
         ;;
         plan)
-            user_action="muse"
+            user_action="architect"
         ;;
     esac
     

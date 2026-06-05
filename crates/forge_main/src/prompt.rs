@@ -319,7 +319,7 @@ mod tests {
         let actual = prompt.render_prompt_right();
         // Agent symbol and name present
         assert!(actual.contains(AGENT_SYMBOL));
-        assert!(actual.contains("FORGE"));
+        assert!(actual.contains("SMITH"));
         // Model symbol and name present
         assert!(actual.contains(MODEL_SYMBOL));
         assert!(actual.contains("gpt-4"));

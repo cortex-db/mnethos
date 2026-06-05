@@ -96,8 +96,8 @@ impl ForgeCommandManager {
         matches!(
             name,
             "agent"
-                | "forge"
-                | "muse"
+                | "smith"
+                | "architect"
                 | "sage"
                 | "help"
                 | "compact"
@@ -567,17 +567,17 @@ pub enum AppCommand {
     #[strum(props(usage = "Updates to the latest compatible version of forge"))]
     Update,
 
-    /// Switch to "forge" agent.
-    /// This can be triggered with the '/act' command (alias: forge).
+    /// Switch to "smith" agent.
+    /// This can be triggered with the '/act' command (alias: smith).
     #[strum(props(usage = "Enable implementation mode with code changes"))]
-    #[command(name = "act", alias = "forge")]
-    Forge,
+    #[command(name = "act", alias = "smith")]
+    Smith,
 
-    /// Switch to "muse" agent.
-    /// This can be triggered with the '/plan' command (alias: muse).
+    /// Switch to "architect" agent.
+    /// This can be triggered with the '/plan' command (alias: architect).
     #[strum(props(usage = "Enable planning mode without code changes"))]
-    #[command(name = "plan", alias = "muse")]
-    Muse,
+    #[command(name = "plan", alias = "architect")]
+    Architect,
 
     /// Switch to "sage" agent.
     /// This can be triggered with the '/sage' command.
@@ -701,8 +701,8 @@ impl AppCommand {
             AppCommand::Info => "info",
             AppCommand::Usage => "usage",
             AppCommand::Exit => "exit",
-            AppCommand::Forge => "forge",
-            AppCommand::Muse => "muse",
+            AppCommand::Smith => "smith",
+            AppCommand::Architect => "architect",
             AppCommand::Sage => "sage",
             AppCommand::Help => "help",
             AppCommand::Commit { .. } => "commit",
@@ -761,14 +761,14 @@ impl AppCommand {
     }
 
     /// Returns true for variants that are pure agent-switch shorthands whose
-    /// canonical name matches a built-in agent (forge, muse, sage).  These
+    /// canonical name matches a built-in agent (smith, architect, sage).  These
     /// commands are already emitted as AGENT rows by the agent-info loop in
     /// `on_show_commands`, so they must be excluded from the COMMAND loop to
     /// avoid duplicate entries in `list commands --porcelain`.
     pub fn is_agent_switch(&self) -> bool {
         matches!(
             self,
-            AppCommand::Forge | AppCommand::Muse | AppCommand::Sage
+            AppCommand::Smith | AppCommand::Architect | AppCommand::Sage
         )
     }
 }
@@ -1136,8 +1136,8 @@ mod tests {
     fn test_is_reserved_command() {
         // Test reserved commands
         assert!(ForgeCommandManager::is_reserved_command("agent"));
-        assert!(ForgeCommandManager::is_reserved_command("forge"));
-        assert!(ForgeCommandManager::is_reserved_command("muse"));
+        assert!(ForgeCommandManager::is_reserved_command("smith"));
+        assert!(ForgeCommandManager::is_reserved_command("architect"));
         assert!(!ForgeCommandManager::is_reserved_command("agent-custom"));
         assert!(!ForgeCommandManager::is_reserved_command("custom"));
     }

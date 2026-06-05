@@ -28,7 +28,7 @@ function _forge_action_agent() {
         return 0
     fi
     
-    # Use forge select agent for interactive picking
+    # Use mnethos select agent for interactive picking
     local agent_id
     agent_id=$(_forge_select_with_query "$input_text" agent)
     
@@ -53,7 +53,7 @@ function _forge_action_model() {
 }
 
 # Action handler: Select model for commit message generation
-# Calls `forge config set commit <provider_id> <model_id>` on selection.
+# Calls `mnethos config set commit <provider_id> <model_id>` on selection.
 function _forge_action_commit_model() {
     local input_text="$1"
     echo
@@ -67,7 +67,7 @@ function _forge_action_commit_model() {
 }
 
 # Action handler: Select model for command suggestion generation
-# Calls `forge config set suggest <provider_id> <model_id>` on selection.
+# Calls `mnethos config set suggest <provider_id> <model_id>` on selection.
 function _forge_action_suggest_model() {
     local input_text="$1"
     echo
@@ -111,7 +111,7 @@ function _forge_action_sync_info() {
 
 # Action handler: Select model for the current session only.
 # Sets _MNETHOS_SESSION_MODEL and _MNETHOS_SESSION_PROVIDER in the shell environment
-# so that every subsequent forge invocation uses those values via --model /
+# so that every subsequent mnethos invocation uses those values via --model /
 # --provider flags without touching the permanent global configuration.
 function _forge_action_session_model() {
     local input_text="$1"
@@ -126,7 +126,7 @@ function _forge_action_session_model() {
 
 # Action handler: Reload config by resetting all session-scoped overrides.
 # Clears _MNETHOS_SESSION_MODEL, _MNETHOS_SESSION_PROVIDER, and
-# _MNETHOS_SESSION_REASONING_EFFORT so that every subsequent forge invocation
+# _MNETHOS_SESSION_REASONING_EFFORT so that every subsequent mnethos invocation
 # falls back to the permanent global configuration.
 function _forge_action_config_reload() {
     echo
@@ -145,7 +145,7 @@ function _forge_action_config_reload() {
 
 # Action handler: Select reasoning effort for the current session only.
 # Sets _MNETHOS_SESSION_REASONING_EFFORT in the shell environment so that
-# every subsequent forge invocation uses the selected value via the
+# every subsequent mnethos invocation uses the selected value via the
 # MNETHOS_REASONING__EFFORT env var without modifying the permanent config.
 function _forge_action_reasoning_effort() {
     local input_text="$1"
@@ -161,7 +161,7 @@ function _forge_action_reasoning_effort() {
 }
 
 # Action handler: Set reasoning effort in global config.
-# Calls `forge config set reasoning-effort <effort>` on selection,
+# Calls `mnethos config set reasoning-effort <effort>` on selection,
 # writing the chosen effort level permanently to ~/forge/.mnethos.toml.
 function _forge_action_config_reasoning_effort() {
     local input_text="$1"
@@ -181,7 +181,7 @@ function _forge_action_config() {
     _forge_exec config list
 }
 
-# Action handler: Open the global forge config file in an editor
+# Action handler: Open the global mnethos config file in an editor
 function _forge_action_config_edit() {
     echo
 
@@ -194,7 +194,7 @@ function _forge_action_config_edit() {
         return 1
     fi
 
-    # Resolve config file path via the forge binary (honours MNETHOS_CONFIG,
+    # Resolve config file path via the mnethos binary (honours MNETHOS_CONFIG,
     # new ~/.mnethos path, and legacy ~/forge fallback automatically)
     local config_file
     config_file=$($_MNETHOS_BIN config path 2>/dev/null)

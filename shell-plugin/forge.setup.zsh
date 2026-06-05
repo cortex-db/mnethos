@@ -9,12 +9,12 @@ if [[ ! " ${plugins[@]} " =~ " zsh-syntax-highlighting " ]]; then
     plugins+=(zsh-syntax-highlighting)
 fi
 
-# Load forge shell plugin (commands, completions, keybindings) if not already loaded
+# Load mnethos shell plugin (commands, completions, keybindings) if not already loaded
 if [[ -z "$_MNETHOS_PLUGIN_LOADED" ]]; then
-    eval "$(forge zsh plugin)"
+    eval "$(mnethos zsh plugin)"
 fi
 
-# Load forge shell theme (prompt with AI context) if not already loaded
+# Load mnethos shell theme (prompt with AI context) if not already loaded
 if [[ -z "$_MNETHOS_THEME_LOADED" ]]; then
-    eval "$(forge zsh theme)"
+    eval "$(mnethos zsh theme)"
 fi

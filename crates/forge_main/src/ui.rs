@@ -1961,7 +1961,7 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
 
         self.writeln_title(TitleFormat::info(result.message))?;
 
-        self.writeln_title(TitleFormat::debug("running forge zsh doctor"))?;
+        self.writeln_title(TitleFormat::debug("running mnethos zsh doctor"))?;
         println!();
         let doctor_result = self.on_zsh_doctor().await;
 

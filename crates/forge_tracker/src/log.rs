@@ -51,7 +51,7 @@ fn prepare_writer(
             tracing_subscriber::EnvFilter::new("forge=info"),
         )
     } else {
-        let append = tracing_appender::rolling::daily(log_path, "forge.log");
+        let append = tracing_appender::rolling::daily(log_path, "mnethos.log");
         (
             tracing_appender::non_blocking(append),
             tracing_subscriber::EnvFilter::new("forge=debug"),

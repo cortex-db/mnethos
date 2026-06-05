@@ -387,7 +387,7 @@ impl ForgeCommandManager {
 
                 // Surface a clean error from Clap (strips ANSI + internal parser name).
                 let rendered = clap_err.render().to_string();
-                let cleaned = rendered.replace("forge_cmd", "forge");
+                let cleaned = rendered.replace("forge_cmd", "mnethos");
                 Err(anyhow::anyhow!("{}", cleaned.trim()))
             }
         }
@@ -563,8 +563,8 @@ pub enum AppCommand {
     #[strum(props(usage = "Exit the application"))]
     Exit,
 
-    /// Updates the forge version
-    #[strum(props(usage = "Updates to the latest compatible version of forge"))]
+    /// Updates the mnethos version
+    #[strum(props(usage = "Updates to the latest compatible version of mnethos"))]
     Update,
 
     /// Switch to "smith" agent.

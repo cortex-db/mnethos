@@ -78,7 +78,7 @@ function _forge_action_default() {
         _MNETHOS_ACTIVE_AGENT="$user_action"
     fi
     
-    # Execute the forge command directly with proper escaping
+    # Execute the mnethos command directly with proper escaping
     _forge_exec_interactive -p "$input_text" --cid "$_MNETHOS_CONVERSATION_ID"
     
     # Start background sync job if enabled and not already running
@@ -140,7 +140,7 @@ function forge-accept-line() {
     #
     # Naming convention: shell commands should follow Object-Action (e.g., provider-login).
     #
-    # ZLE-dispatched Forge commands bypass zsh preexec/precmd hooks, so emit
+    # ZLE-dispatched Mnethos commands bypass zsh preexec/precmd hooks, so emit
     # OSC 133 markers explicitly. Ghostty uses these markers to distinguish the
     # prompt from command output during window resize/reflow.
     _forge_osc133_emit "B"

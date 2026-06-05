@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-# Terminal context capture for forge plugin
+# Terminal context capture for mnethos plugin
 #
 # Provides three layers of terminal context:
 # 1. preexec/precmd hooks: ring buffer of recent commands + exit codes

@@ -111,7 +111,7 @@ impl ConversationSelector {
             .collect();
 
         let preview_command =
-            "CLICOLOR_FORCE=1 forge conversation info {1}; echo; CLICOLOR_FORCE=1 forge conversation show {1}"
+            "CLICOLOR_FORCE=1 mnethos conversation info {1}; echo; CLICOLOR_FORCE=1 mnethos conversation show {1}"
                 .to_string();
 
         let selected_uuid = tokio::task::spawn_blocking(move || -> Result<Option<String>> {

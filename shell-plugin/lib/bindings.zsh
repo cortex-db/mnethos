@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-# Key bindings and widget registration for forge plugin
+# Key bindings and widget registration for mnethos plugin
 
 # Register ZLE widgets
 zle -N forge-accept-line
@@ -9,13 +9,13 @@ zle -N forge-completion
 # Custom bracketed-paste handler that wraps dropped file paths in @[] syntax
 # and fixes syntax highlighting after paste.
 #
-# Path detection and wrapping is delegated to `forge zsh format` (Rust) so
+# Path detection and wrapping is delegated to `mnethos zsh format` (Rust) so
 # that all parsing logic lives in one well-tested place.
 function forge-bracketed-paste() {
     # Call the built-in bracketed-paste widget first
     zle .$WIDGET "$@"
     
-    # Only auto-wrap when the line is a forge command (starts with ':').
+    # Only auto-wrap when the line is a mnethos command (starts with ':').
     # This avoids mangling paths pasted into normal shell commands like
     # 'vim /some/path' or 'cat /some/path'.
     if [[ "$BUFFER" == :* ]]; then

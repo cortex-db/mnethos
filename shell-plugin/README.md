@@ -1,10 +1,10 @@
-# Forge ZSH Plugin
+# Mnethos ZSH Plugin
 
-A powerful ZSH plugin that provides intelligent command transformation, file tagging, and conversation management for the Forge AI assistant.
+A powerful ZSH plugin that provides intelligent command transformation, file tagging, and conversation management for the Mnethos AI assistant.
 
 ## Features
 
-- **Smart Command Transformation**: Convert `:command` syntax into forge executions
+- **Smart Command Transformation**: Convert `:command` syntax into mnethos executions
 - **Agent Selection**: Tab completion for available agents using `:agent_name`
 - **File Tagging**: Interactive file selection with `@[filename]` syntax
 - **Syntax Highlighting**: Visual feedback for commands and tagged files
@@ -16,7 +16,7 @@ A powerful ZSH plugin that provides intelligent command transformation, file tag
 Before using this plugin, ensure you have the following tools installed:
 
 - **fd** - Fast file finder (alternative to find)
-- **forge** - The Forge CLI tool
+- **mnethos** - The Mnethos CLI tool
 
 ### Installation of Prerequisites
 
@@ -41,7 +41,7 @@ Begin any command with `:` followed by your prompt:
 : Get the current time
 ```
 
-This automatically starts a new conversation with the default Forge agent.
+This automatically starts a new conversation with the default Mnethos agent.
 
 ### Using Specific Agents
 
@@ -208,13 +208,13 @@ The plugin provides visual feedback through syntax highlighting:
 Customize the plugin behavior by setting these variables before loading the plugin:
 
 ```bash
-# Custom forge binary location
-export MNETHOS_BIN="/path/to/custom/forge"
+# Custom mnethos binary location
+export MNETHOS_BIN="/path/to/custom/mnethos"
 ```
 
 ### Available Configuration Variables
 
-- `MNETHOS_BIN`: Path to the forge executable (default: `forge`)
+- `MNETHOS_BIN`: Path to the mnethos executable (default: `mnethos`)
 - `MNETHOS_EDITOR`: Editor command to use for `:edit` command (default: `$EDITOR` or `nano`)
 - `MNETHOS_SYNC_ENABLED`: Enable/disable automatic workspace sync (default: `true`)
 - `MNETHOS_MAX_COMMIT_DIFF`: Maximum diff size for commit message generation in bytes (default: `100000`)
@@ -238,7 +238,7 @@ This will index the current directory for semantic code search.
 
 ### Environment Diagnostics
 
-Run comprehensive environment diagnostics to check your Forge setup:
+Run comprehensive environment diagnostics to check your Mnethos setup:
 
 ```bash
 :doctor
@@ -246,7 +246,7 @@ Run comprehensive environment diagnostics to check your Forge setup:
 
 This will check:
 - ZSH version and terminal information
-- Forge installation and version
+- Mnethos installation and version
 - Plugin and theme loading status
 - Completions availability
 - Dependencies (fd, bat)
@@ -266,14 +266,14 @@ The plugin creates a `.mnethos` directory in your current working directory (sim
 
 All transformed commands are properly saved to ZSH history, allowing you to:
 - Navigate command history with arrow keys
-- Search previous forge commands with `Ctrl+R`
+- Search previous mnethos commands with `Ctrl+R`
 - Reuse complex commands with file tags
 
 ### Keyboard Shortcuts
 
 - **Tab**: Interactive completion for files (`@`) and agents (`:`)
 - **Enter**: Transform and execute `:commands`
-- **Ctrl+C**: Interrupt running forge commands
+- **Ctrl+C**: Interrupt running mnethos commands
 
 ## Examples
 
@@ -282,7 +282,7 @@ All transformed commands are properly saved to ZSH history, allowing you to:
 ```bash
 : What's the weather like?
 :sage Explain the MVC pattern
-:planner Help me structure this project
+:architect Help me structure this project
 ```
 
 ### With File Tagging

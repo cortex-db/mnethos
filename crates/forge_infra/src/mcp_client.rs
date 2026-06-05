@@ -484,7 +484,7 @@ impl ForgeMcpClient {
             .clone();
 
         // Send styled success response with auto-close
-        let response_body = r#"<!doctype html><html><head><title>Forge - Authorization Successful</title><meta charset="utf-8"></head><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#111827;color:#f9fafb;"><div style="text-align:center;padding:2rem;"><h1 style="margin-bottom:0.75rem;">Authorization Successful</h1><p style="color:#d1d5db;">You can close this window and return to Forge.</p></div><script>setTimeout(()=>window.close(),2000)</script></body></html>"#;
+        let response_body = r#"<!doctype html><html><head><title>Mnethos - Authorization Successful</title><meta charset="utf-8"></head><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#111827;color:#f9fafb;"><div style="text-align:center;padding:2rem;"><h1 style="margin-bottom:0.75rem;">Authorization Successful</h1><p style="color:#d1d5db;">You can close this window and return to Mnethos.</p></div><script>setTimeout(()=>window.close(),2000)</script></body></html>"#;
         let response = format!(
             "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
             response_body.len(),
@@ -713,7 +713,7 @@ pub async fn mcp_auth(server_url: &str, env: &Environment) -> anyhow::Result<()>
         .clone();
 
     // Send styled response
-    let body = r#"<!doctype html><html><head><title>Forge - Authorization Successful</title></head><body style="font-family:-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#111827;color:#f9fafb;"><div style="text-align:center;"><h1>Authorization Successful</h1><p style="color:#d1d5db;">You can close this window and return to Forge.</p></div><script>setTimeout(()=>window.close(),2000)</script></body></html>"#;
+    let body = r#"<!doctype html><html><head><title>Mnethos - Authorization Successful</title></head><body style="font-family:-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#111827;color:#f9fafb;"><div style="text-align:center;"><h1>Authorization Successful</h1><p style="color:#d1d5db;">You can close this window and return to Mnethos.</p></div><script>setTimeout(()=>window.close(),2000)</script></body></html>"#;
     let resp = format!(
         "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
         body.len(),

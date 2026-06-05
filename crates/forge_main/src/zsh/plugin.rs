@@ -36,7 +36,7 @@ pub fn generate_zsh_plugin() -> Result<String> {
     // Generate clap completions for the CLI
     let mut cmd = Cli::command();
     let mut completions = Vec::new();
-    generate(Zsh, &mut cmd, "forge", &mut completions);
+    generate(Zsh, &mut cmd, "mnethos", &mut completions);
 
     // Append completions to the output with clear separator
     let completions_str = String::from_utf8(completions)?;
@@ -49,7 +49,7 @@ pub fn generate_zsh_plugin() -> Result<String> {
     Ok(output)
 }
 
-/// Generates the ZSH theme for Forge
+/// Generates the ZSH theme for Mnethos
 pub fn generate_zsh_theme() -> Result<String> {
     let mut content =
         super::normalize_script(include_str!("../../../../shell-plugin/forge.theme.zsh"));
@@ -250,8 +250,8 @@ pub fn setup_zsh_integration(
     disable_nerd_font: bool,
     forge_editor: Option<&str>,
 ) -> Result<ZshSetupResult> {
-    const START_MARKER: &str = "# >>> forge initialize >>>";
-    const END_MARKER: &str = "# <<< forge initialize <<<";
+    const START_MARKER: &str = "# >>> mnethos initialize >>>";
+    const END_MARKER: &str = "# <<< mnethos initialize <<<";
     const MNETHOS_INIT_CONFIG_RAW: &str = include_str!("../../../../shell-plugin/forge.setup.zsh");
     let forge_init_config = super::normalize_script(MNETHOS_INIT_CONFIG_RAW);
 
@@ -312,7 +312,7 @@ pub fn setup_zsh_integration(
             };
 
             let mut error =
-                anyhow::anyhow!("Invalid forge markers found in {}", zshrc_path.display());
+                anyhow::anyhow!("Invalid mnethos markers found in {}", zshrc_path.display());
             if let Some(loc) = location {
                 error = error.context(format!("Markers found at {}", loc));
             }
@@ -360,7 +360,7 @@ pub fn setup_zsh_integration(
         .context(format!("Failed to write to {}", zshrc_path.display()))?;
 
     Ok(ZshSetupResult {
-        message: format!("forge plugins {}", config_action),
+        message: format!("mnethos plugins {}", config_action),
         backup_path,
     })
 }
@@ -493,8 +493,8 @@ mod tests {
         assert!(!content.contains("NERD_FONT=0"));
 
         // Should contain the markers
-        assert!(content.contains("# >>> forge initialize >>>"));
-        assert!(content.contains("# <<< forge initialize <<<"));
+        assert!(content.contains("# >>> mnethos initialize >>>"));
+        assert!(content.contains("# <<< mnethos initialize <<<"));
     }
 
     #[test]
@@ -541,8 +541,8 @@ mod tests {
         assert!(content.contains("# To re-enable: remove this line and install a Nerd Font from https://www.nerdfonts.com/"), "Should contain re-enable instructions");
 
         // Should contain the markers
-        assert!(content.contains("# >>> forge initialize >>>"));
-        assert!(content.contains("# <<< forge initialize <<<"));
+        assert!(content.contains("# >>> mnethos initialize >>>"));
+        assert!(content.contains("# <<< mnethos initialize <<<"));
 
         // Restore environment
         // SAFETY: We hold ENV_LOCK to prevent concurrent environment modifications
@@ -602,8 +602,8 @@ mod tests {
         );
 
         // Should contain the markers
-        assert!(content.contains("# >>> forge initialize >>>"));
-        assert!(content.contains("# <<< forge initialize <<<"));
+        assert!(content.contains("# >>> mnethos initialize >>>"));
+        assert!(content.contains("# <<< mnethos initialize <<<"));
 
         // Restore environment
         // SAFETY: We hold ENV_LOCK to prevent concurrent environment modifications
@@ -663,8 +663,8 @@ mod tests {
         );
 
         // Should contain the markers
-        assert!(content.contains("# >>> forge initialize >>>"));
-        assert!(content.contains("# <<< forge initialize <<<"));
+        assert!(content.contains("# >>> mnethos initialize >>>"));
+        assert!(content.contains("# <<< mnethos initialize <<<"));
 
         // Restore environment
         // SAFETY: We hold ENV_LOCK to prevent concurrent environment modifications
@@ -759,17 +759,17 @@ mod tests {
         );
 
         // Should still have markers
-        assert!(content.contains("# >>> forge initialize >>>"));
-        assert!(content.contains("# <<< forge initialize <<<"));
+        assert!(content.contains("# >>> mnethos initialize >>>"));
+        assert!(content.contains("# <<< mnethos initialize <<<"));
 
         // Should only have one set of markers
         assert_eq!(
-            content.matches("# >>> forge initialize >>>").count(),
+            content.matches("# >>> mnethos initialize >>>").count(),
             1,
             "Should have exactly one start marker"
         );
         assert_eq!(
-            content.matches("# <<< forge initialize <<<").count(),
+            content.matches("# <<< mnethos initialize <<<").count(),
             1,
             "Should have exactly one end marker"
         );

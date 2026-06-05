@@ -124,8 +124,8 @@ fn display_zsh_encouragement() {
         format!(
             "{} {} {}",
             "·".dimmed(),
-            "Set up forge via our zsh plugin:".dimmed(),
-            "forge zsh setup".bold().green(),
+            "Set up Mnethos via our zsh plugin:".dimmed(),
+            "mnethos zsh setup".bold().green(),
         ),
         format!(
             "{} {} {}",

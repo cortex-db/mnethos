@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-# Core action handlers for basic forge operations
+# Core action handlers for basic mnethos operations
 
 # Action handler: Start a new conversation
 function _forge_action_new() {
@@ -8,7 +8,7 @@ function _forge_action_new() {
     
     # Clear conversation and save as previous (like cd -)
     _forge_clear_conversation
-    _MNETHOS_ACTIVE_AGENT="forge"
+    _MNETHOS_ACTIVE_AGENT="smith"
     
     echo
     
@@ -18,7 +18,7 @@ function _forge_action_new() {
         local new_id=$($_MNETHOS_BIN conversation new)
         _forge_switch_conversation "$new_id"
         
-        # Execute the forge command with the input text
+        # Execute the mnethos command with the input text
         _forge_exec_interactive -p "$input_text" --cid "$_MNETHOS_CONVERSATION_ID"
         
         # Start background sync job if enabled and not already running

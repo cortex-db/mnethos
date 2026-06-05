@@ -4,7 +4,7 @@
 
 # Action handler: Select the provider for the current session.
 # Sets _MNETHOS_SESSION_PROVIDER in the shell environment so that every
-# subsequent forge invocation uses that provider via --provider flag
+# subsequent mnethos invocation uses that provider via --provider flag
 # without touching the permanent global configuration.
 function _forge_action_session_provider() {
     local input_text="$1"

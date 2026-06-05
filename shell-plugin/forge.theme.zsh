@@ -9,7 +9,7 @@ setopt PROMPT_SUBST
 function _forge_prompt_info() {
     local forge_bin="${_MNETHOS_BIN:-${MNETHOS_BIN:-mnethos}}"
     
-    # Get fully formatted prompt from forge (single command).
+    # Get fully formatted prompt from mnethos (single command).
     # Pass session model/provider as CLI flags when set so the rprompt
     # reflects the active session override rather than global config.
     local -a forge_cmd
@@ -21,7 +21,7 @@ function _forge_prompt_info() {
     _MNETHOS_CONVERSATION_ID=$_MNETHOS_CONVERSATION_ID _MNETHOS_ACTIVE_AGENT=$_MNETHOS_ACTIVE_AGENT COLUMNS=$COLUMNS "${forge_cmd[@]}" 2>/dev/null
 }
 
-# Right prompt: agent and model with token count (uses single forge prompt command)
+# Right prompt: agent and model with token count (uses single mnethos prompt command)
 # Set RPROMPT if empty, otherwise append to existing value
 if [[ -z "$_MNETHOS_THEME_LOADED" ]]; then
     RPROMPT='$(_forge_prompt_info)'"${RPROMPT:+ ${RPROMPT}}"

@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-# Core utility functions for forge plugin
+# Core utility functions for mnethos plugin
 
 # Lazy loader for commands cache
 # Loads the commands list only when first needed, avoiding startup cost
@@ -11,7 +11,7 @@ function _forge_get_commands() {
     echo "$_MNETHOS_COMMANDS"
 }
 
-# Helper function to execute forge commands consistently
+# Helper function to execute mnethos commands consistently
 # This ensures proper handling of special characters and consistent output
 function _forge_exec() {
     local agent_id="${_MNETHOS_ACTIVE_AGENT:-smith}"
@@ -22,7 +22,7 @@ function _forge_exec() {
     # the Rust TerminalContextService can read them via get_env_var.
     # ASCII Unit Separator (\x1F) is used instead of `:` because commands
     # can legitimately contain colons (URLs, port mappings, paths, etc.).
-    # Use `local -x` so the variables are exported only to the child forge
+    # Use `local -x` so the variables are exported only to the child mnethos
     # process and do not leak into the caller's shell environment.
     if [[ "$_MNETHOS_TERM" == "true" && ${#_MNETHOS_TERM_COMMANDS} -gt 0 ]]; then
         # Join the ring-buffer arrays with the ASCII Unit Separator (\x1F).
@@ -44,7 +44,7 @@ function _forge_exec() {
 }
 
 # Like _forge_exec but connects stdin/stdout to /dev/tty so that interactive
-# prompts (rustyline, nucleo-picker, etc.) work correctly when forge is launched as a
+# prompts (rustyline, nucleo-picker, etc.) work correctly when mnethos is launched as a
 # child of a ZLE widget. ZLE owns the terminal and replaces the process's
 # stdin/stdout with its own pipes, so without this redirect any readline
 # library would see a non-tty stdin and return EOF immediately.
@@ -59,7 +59,7 @@ function _forge_exec_interactive() {
     # ASCII Unit Separator (\x1F) is used instead of `:` because commands
     # can legitimately contain colons (URLs, port mappings, paths, etc.).
     # Use `local -x` so the variables are exported only for the duration of
-    # this function call (i.e. inherited by the child forge process) and do
+    # this function call (i.e. inherited by the child mnethos process) and do
     # not leak into the caller's shell environment.
     if [[ "$_MNETHOS_TERM" == "true" && ${#_MNETHOS_TERM_COMMANDS} -gt 0 ]]; then
         local _old_ifs="$IFS" _sep=$'\x1f'

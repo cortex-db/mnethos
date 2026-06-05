@@ -2,7 +2,7 @@
 
 # Documentation in [README.md](./README.md)
 
-# Modular forge plugin - sources all required modules
+# Modular mnethos plugin - sources all required modules
 
 # Configuration variables
 source "${0:A:h}/lib/config.zsh"

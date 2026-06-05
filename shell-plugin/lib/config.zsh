@@ -1,15 +1,15 @@
 #!/usr/bin/env zsh
 
-# Configuration variables for forge plugin
+# Configuration variables for mnethos plugin
 # Using typeset to keep variables local to plugin scope and prevent public exposure
 
-typeset -h _MNETHOS_BIN="${MNETHOS_BIN:-forge}"
+typeset -h _MNETHOS_BIN="${MNETHOS_BIN:-mnethos}"
 typeset -h _MNETHOS_CONVERSATION_PATTERN=":"
 typeset -h _MNETHOS_MAX_COMMIT_DIFF="${MNETHOS_MAX_COMMIT_DIFF:-100000}"
 
 typeset -h _MNETHOS_COMMANDS=""
 
-# Hidden variables to be used only via the ForgeCLI
+# Hidden variables to be used only via the Mnethos CLI
 typeset -h _MNETHOS_CONVERSATION_ID
 typeset -h _MNETHOS_ACTIVE_AGENT
 
@@ -17,13 +17,13 @@ typeset -h _MNETHOS_ACTIVE_AGENT
 typeset -h _MNETHOS_PREVIOUS_CONVERSATION_ID
 
 # Session-scoped model and provider overrides (set via :model / :m).
-# When non-empty, these are passed as --model / --provider to every forge
+# When non-empty, these are passed as --model / --provider to every mnethos
 # invocation for the lifetime of the current shell session.
 typeset -h _MNETHOS_SESSION_MODEL
 typeset -h _MNETHOS_SESSION_PROVIDER
 
 # Session-scoped reasoning effort override (set via :reasoning-effort / :re).
-# When non-empty, exported as MNETHOS_REASONING__EFFORT for every forge invocation.
+# When non-empty, exported as MNETHOS_REASONING__EFFORT for every mnethos invocation.
 typeset -h _MNETHOS_SESSION_REASONING_EFFORT
 
 # Terminal context capture settings

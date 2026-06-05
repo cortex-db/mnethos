@@ -18,6 +18,21 @@ pub const EMBEDDING_MODEL: &str = "text-embedding-3-large";
 /// Dimensionality of [`EMBEDDING_MODEL`] vectors.
 pub const EMBEDDING_DIMENSION: usize = 3072;
 
+/// Maximum number of inputs packed into a single `Embed` request.
+///
+/// Each input yields one [`EMBEDDING_DIMENSION`]-element `f32` vector in the
+/// response (~12 KiB encoded). Capping the batch keeps a single response under
+/// tonic's 4 MiB default gRPC decode limit even before the raised
+/// [`MAX_MESSAGE_SIZE`] applies, so embeddings always decode regardless of how
+/// many chunks an upload produces.
+const MAX_EMBED_BATCH_INPUTS: usize = 256;
+
+/// Upper bound, in bytes, for a single gRPC message exchanged with the gateway.
+///
+/// Raised far above tonic's 4 MiB default so large embedding responses decode
+/// as defense-in-depth alongside [`MAX_EMBED_BATCH_INPUTS`] batching.
+const MAX_MESSAGE_SIZE: usize = 128 * 1024 * 1024;
+
 /// Produces embedding vectors for input text.
 #[async_trait]
 pub trait Embedder: Send + Sync {
@@ -49,13 +64,17 @@ impl AiGatewayEmbedder {
         self
     }
 
-    /// Opens a fresh gRPC channel to the gateway.
+    /// Opens a fresh gRPC channel to the gateway with raised message-size limits.
     async fn connect(&self) -> Result<AiGatewayClient<Channel>, ServerError> {
-        AiGatewayClient::connect(self.endpoint.clone())
+        let client = AiGatewayClient::connect(self.endpoint.clone())
             .await
             .map_err(|error| ServerError::Embedding {
                 message: format!("failed to connect to ai-gateway at {}: {error}", self.endpoint),
-            })
+            })?;
+
+        Ok(client
+            .max_decoding_message_size(MAX_MESSAGE_SIZE)
+            .max_encoding_message_size(MAX_MESSAGE_SIZE))
     }
 }
 
@@ -68,27 +87,34 @@ impl Embedder for AiGatewayEmbedder {
 
         let mut client = self.connect().await?;
 
-        let request = tonic::Request::new(EmbedRequest {
-            external_id: uuid::Uuid::new_v4().to_string(),
-            model: self.model.clone(),
-            inputs: inputs.to_vec(),
-        });
-
-        let response = client.embed(request).await.map_err(|status| ServerError::Embedding {
-            message: format!("ai-gateway Embed failed: {status}"),
-        })?;
-
-        let vectors: Vec<Vec<f32>> =
-            response.into_inner().vectors.into_iter().map(|v| v.values).collect();
-
-        if vectors.len() != inputs.len() {
-            return Err(ServerError::Embedding {
-                message: format!(
-                    "ai-gateway returned {} vectors for {} inputs",
-                    vectors.len(),
-                    inputs.len()
-                ),
+        // Embed in bounded sub-batches so neither the request nor the response
+        // exceeds the gateway's gRPC message-size limits, no matter how many
+        // chunks an upload contains.
+        let mut vectors: Vec<Vec<f32>> = Vec::with_capacity(inputs.len());
+        for batch in inputs.chunks(MAX_EMBED_BATCH_INPUTS) {
+            let request = tonic::Request::new(EmbedRequest {
+                external_id: uuid::Uuid::new_v4().to_string(),
+                model: self.model.clone(),
+                inputs: batch.to_vec(),
             });
+
+            let response =
+                client.embed(request).await.map_err(|status| ServerError::Embedding {
+                    message: format!("ai-gateway Embed failed: {status}"),
+                })?;
+
+            let batch_vectors = response.into_inner().vectors;
+            if batch_vectors.len() != batch.len() {
+                return Err(ServerError::Embedding {
+                    message: format!(
+                        "ai-gateway returned {} vectors for {} inputs",
+                        batch_vectors.len(),
+                        batch.len()
+                    ),
+                });
+            }
+
+            vectors.extend(batch_vectors.into_iter().map(|v| v.values));
         }
 
         Ok(vectors)
@@ -146,6 +172,18 @@ pub mod tests {
         let fixture = FakeEmbedder::new(8);
         let actual = fixture.embed(&["hello".to_string()]).await.unwrap();
         let expected = fixture.embed(&["hello".to_string()]).await.unwrap();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_embed_batch_stays_under_default_grpc_limit() {
+        // tonic decodes gRPC messages with a 4 MiB default cap. A full batch's
+        // response (one EMBEDDING_DIMENSION f32 vector per input) must stay
+        // under it so embeddings decode even without the raised limit.
+        let bytes_per_vector = EMBEDDING_DIMENSION * std::mem::size_of::<f32>();
+        let max_batch_response_bytes = MAX_EMBED_BATCH_INPUTS * bytes_per_vector;
+        let actual = max_batch_response_bytes < 4 * 1024 * 1024;
+        let expected = true;
         assert_eq!(actual, expected);
     }
 

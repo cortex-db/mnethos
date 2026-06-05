@@ -2177,7 +2177,6 @@ dependencies = [
  "forge_config",
  "forge_domain",
  "forge_infra",
- "forge_memory",
  "forge_repo",
  "forge_services",
  "forge_stream",
@@ -2541,27 +2540,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "forge_memory"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "backon",
- "forge_app",
- "forge_config",
- "forge_domain",
- "prost",
- "prost-types",
- "schemars 1.2.1",
- "serde",
- "serde_json",
- "tonic",
- "tonic-prost",
- "tonic-prost-build",
- "tracing",
-]
-
-[[package]]
 name = "forge_repo"
 version = "0.1.0"
 dependencies = [
@@ -2640,6 +2618,31 @@ dependencies = [
  "pretty_assertions",
  "rustyline",
  "tracing",
+]
+
+[[package]]
+name = "forge_server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "chrono",
+ "derive_setters",
+ "futures",
+ "pretty_assertions",
+ "prost",
+ "prost-types",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tiny_http",
+ "tokio",
+ "tonic",
+ "tonic-prost",
+ "tonic-prost-build",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
 ]
 
 [[package]]

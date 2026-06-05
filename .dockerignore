@@ -1,0 +1,15 @@
+# Build context is the repository root. Keep it lean so the build context sent
+# to the Docker daemon (and to a remote builder) stays small and the layer
+# cache stays warm.
+target
+**/target
+.git
+node_modules
+**/node_modules
+testbench/.mnethos-test/logs
+**/*.log
+plans
+docs
+benchmarks
+.idea
+.vscode

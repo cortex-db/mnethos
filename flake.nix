@@ -88,7 +88,7 @@
 
             meta = {
               description = "forge: AI enabled pair programmer for Claude, GPT, O Series, Grok, Deepseek, Gemini and 300+ models";
-              homepage = "https://forgecode.dev";
+              homepage = "https://mnethos.com";
               license = lib.licenses.mit;
               mainProgram = "forge";
               platforms = lib.platforms.unix;

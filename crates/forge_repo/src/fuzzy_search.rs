@@ -6,7 +6,7 @@ use forge_app::GrpcInfra;
 use forge_domain::{FuzzySearchRepository, SearchMatch};
 
 use crate::proto_generated::FuzzySearchRequest;
-use crate::proto_generated::forge_service_client::ForgeServiceClient;
+use crate::proto_generated::mnethos_service_client::MnethosServiceClient;
 
 /// gRPC implementation of FuzzySearchRepository
 pub struct ForgeFuzzySearchRepository<I> {
@@ -40,7 +40,7 @@ impl<I: GrpcInfra> FuzzySearchRepository for ForgeFuzzySearchRepository<I> {
 
         // Call gRPC API
         let channel = self.infra.channel()?;
-        let mut client = ForgeServiceClient::new(channel);
+        let mut client = MnethosServiceClient::new(channel);
         let response = client
             .fuzzy_search(request)
             .await

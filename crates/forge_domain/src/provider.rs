@@ -64,7 +64,7 @@ impl ProviderId {
     pub const OPENAI_RESPONSES_COMPATIBLE: ProviderId =
         ProviderId(Cow::Borrowed("openai_responses_compatible"));
     pub const ANTHROPIC_COMPATIBLE: ProviderId = ProviderId(Cow::Borrowed("anthropic_compatible"));
-    pub const MNETHOS_SERVICES: ProviderId = ProviderId(Cow::Borrowed("forge_services"));
+    pub const MNETHOS_SERVICES: ProviderId = ProviderId(Cow::Borrowed("mnethos_services"));
     pub const IO_INTELLIGENCE: ProviderId = ProviderId(Cow::Borrowed("io_intelligence"));
     pub const BEDROCK: ProviderId = ProviderId(Cow::Borrowed("bedrock"));
     pub const MINIMAX: ProviderId = ProviderId(Cow::Borrowed("minimax"));
@@ -142,6 +142,7 @@ impl ProviderId {
             "openai_compatible" => "OpenAICompatible".to_string(),
             "openai_responses_compatible" => "OpenAIResponsesCompatible".to_string(),
             "io_intelligence" => "IOIntelligence".to_string(),
+            "mnethos_services" => "Mnethos Services".to_string(),
             "minimax" => "MiniMax".to_string(),
             "codex" => "Codex".to_string(),
             "opencode_zen" => "OpenCode Zen".to_string(),
@@ -193,7 +194,7 @@ impl std::str::FromStr for ProviderId {
             "openai_compatible" => ProviderId::OPENAI_COMPATIBLE,
             "openai_responses_compatible" => ProviderId::OPENAI_RESPONSES_COMPATIBLE,
             "anthropic_compatible" => ProviderId::ANTHROPIC_COMPATIBLE,
-            "forge_services" => ProviderId::MNETHOS_SERVICES,
+            "mnethos_services" => ProviderId::MNETHOS_SERVICES,
             "io_intelligence" => ProviderId::IO_INTELLIGENCE,
             "minimax" => ProviderId::MINIMAX,
             "codex" => ProviderId::CODEX,
@@ -593,6 +594,33 @@ mod tests {
         let actual = ProviderId::from_str("codex").unwrap();
         let expected = ProviderId::CODEX;
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_mnethos_services_canonical_id() {
+        let actual = ProviderId::MNETHOS_SERVICES.as_ref();
+        let expected = "mnethos_services";
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_mnethos_services_from_str() {
+        let actual = ProviderId::from_str("mnethos_services").unwrap();
+        let expected = ProviderId::MNETHOS_SERVICES;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_mnethos_services_display_name() {
+        let actual = ProviderId::MNETHOS_SERVICES.to_string();
+        let expected = "Mnethos Services".to_string();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_mnethos_services_in_built_in_providers() {
+        let built_in = ProviderId::built_in_providers();
+        assert!(built_in.contains(&ProviderId::MNETHOS_SERVICES));
     }
 
     #[test]

@@ -407,6 +407,9 @@ fn extract_tool_info(call: &ToolCallFull, current_todos: &[Todo]) -> Option<Summ
             }
             ToolCatalog::TodoRead(_) => Some(SummaryTool::TodoRead),
             ToolCatalog::Task(input) => Some(SummaryTool::Task { agent_id: input.agent_id }),
+            // Memory bookkeeping is not summarized in compaction.
+            ToolCatalog::Remember(_) => None,
+            ToolCatalog::MemSearch(_) => None,
         };
     }
 

@@ -79,6 +79,16 @@ impl FormatContent for ToolCatalog {
                         .into(),
                 )
             }
+            ToolCatalog::Remember(input) => Some(
+                TitleFormat::debug("Remember")
+                    .sub_title(format!("{} episode(s)", input.episodes.len()))
+                    .into(),
+            ),
+            ToolCatalog::MemSearch(input) => Some(
+                TitleFormat::debug("Memory search")
+                    .sub_title(input.queries.join(", "))
+                    .into(),
+            ),
             ToolCatalog::Remove(input) => {
                 let display_path = display_path_for(&input.path);
                 Some(TitleFormat::debug("Remove").sub_title(display_path).into())

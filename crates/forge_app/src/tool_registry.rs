@@ -276,9 +276,17 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ToolReg
             stdout_max_line_length: config.max_stdout_line_chars,
         };
 
+        // The memory tools (`remember` + `mem_search`) are offered only when the
+        // memory layer is on (MNETHOS_MEMORY) AND configured (memory.json present).
+        let memory_supported = std::env::var_os("MNETHOS_MEMORY").is_some()
+            && forge_config::ConfigReader::base_path()
+                .join("memory.json")
+                .exists();
+
         Ok(ToolsOverview::new()
             .system(Self::get_system_tools(
                 is_indexed && is_authenticated,
+                memory_supported,
                 &environment,
                 model,
                 agents,
@@ -292,6 +300,7 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ToolReg
 impl<S> ToolRegistry<S> {
     fn get_system_tools(
         sem_search_supported: bool,
+        memory_supported: bool,
         env: &Environment,
         model: Option<Model>,
         agents: Vec<forge_domain::Agent>,
@@ -307,10 +316,10 @@ impl<S> ToolRegistry<S> {
         let tool_names: Map<String, Value> = ToolCatalog::iter()
             .filter(|tool| {
                 // Only include tools that are supported (filter sem_search if not supported)
-                if matches!(tool, ToolCatalog::SemSearch(_)) {
-                    sem_search_supported
-                } else {
-                    true
+                match tool {
+                    ToolCatalog::SemSearch(_) => sem_search_supported,
+                    ToolCatalog::Remember(_) | ToolCatalog::MemSearch(_) => memory_supported,
+                    _ => true,
                 }
             })
             .map(|tool| {
@@ -332,10 +341,10 @@ impl<S> ToolRegistry<S> {
         ToolCatalog::iter()
             .filter(|tool| {
                 // Filter out sem_search if cwd is not indexed
-                if matches!(tool, ToolCatalog::SemSearch(_)) {
-                    sem_search_supported
-                } else {
-                    true
+                match tool {
+                    ToolCatalog::SemSearch(_) => sem_search_supported,
+                    ToolCatalog::Remember(_) | ToolCatalog::MemSearch(_) => memory_supported,
+                    _ => true,
                 }
             })
             .map(|tool| {
@@ -699,6 +708,7 @@ mod tests {
         let template_config = TemplateConfig::default();
         let actual = ToolRegistry::<()>::get_system_tools(
             true,
+            false,
             &env,
             None,
             create_test_agents(),
@@ -713,6 +723,7 @@ mod tests {
         let env: Environment = Faker.fake();
         let template_config = TemplateConfig::default();
         let actual = ToolRegistry::<()>::get_system_tools(
+            false,
             false,
             &env,
             None,
@@ -732,9 +743,10 @@ mod tests {
         reversed_agents.reverse();
 
         let fixture =
-            ToolRegistry::<()>::get_system_tools(true, &env, None, agents, &template_config);
+            ToolRegistry::<()>::get_system_tools(true, false, &env, None, agents, &template_config);
         let actual = ToolRegistry::<()>::get_system_tools(
             true,
+            false,
             &env,
             None,
             reversed_agents,
@@ -823,6 +835,7 @@ fn test_template_rendering_in_tool_descriptions() {
 
     let actual = ToolRegistry::<()>::get_system_tools(
         true,
+        false,
         &env,
         None,
         create_test_agents(),
@@ -864,6 +877,7 @@ fn test_dynamic_tool_description_with_vision_model() {
 
     let tools_with_vision = ToolRegistry::<()>::get_system_tools(
         true,
+        false,
         &env,
         Some(vision_model),
         create_test_agents(),
@@ -892,6 +906,7 @@ fn test_dynamic_tool_description_with_text_only_model() {
 
     let tools_text_only = ToolRegistry::<()>::get_system_tools(
         true,
+        false,
         &env,
         Some(text_only_model),
         create_test_agents(),
@@ -1047,6 +1062,7 @@ fn test_dynamic_tool_description_without_model() {
     // When no model is provided, should default to showing minimal capabilities
     let tools_no_model = ToolRegistry::<()>::get_system_tools(
         true,
+        false,
         &env,
         None,
         create_test_agents(),
@@ -1079,6 +1095,7 @@ fn test_all_rendered_tool_descriptions() {
 
     let tools = ToolRegistry::<()>::get_system_tools(
         true,
+        false,
         &env,
         None,
         create_test_agents(),

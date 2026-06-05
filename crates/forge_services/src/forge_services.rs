@@ -6,9 +6,9 @@ use forge_app::{
     McpServerInfra, Services, StrategyFactory, UserInfra, WalkerInfra,
 };
 use forge_domain::{
-    ChatRepository, ConversationRepository, FuzzySearchRepository, ProviderRepository,
-    SkillRepository, SnapshotRepository, TextPatchRepository, ValidationRepository,
-    WorkspaceIndexRepository,
+    ChatRepository, ConversationRepository, FuzzySearchRepository, MemoryRepository,
+    ProviderRepository, SkillRepository, SnapshotRepository, TextPatchRepository,
+    ValidationRepository, WorkspaceIndexRepository,
 };
 
 use crate::ForgeProviderAuthService;
@@ -83,6 +83,7 @@ pub struct ForgeServices<
     provider_auth_service: ForgeProviderAuthService<F>,
     workspace_service: Arc<crate::context_engine::ForgeWorkspaceService<F, FdDefault<F>>>,
     skill_service: Arc<ForgeSkillFetch<F>>,
+    memory_service: Arc<crate::memory::ForgeMemoryService<F>>,
     infra: Arc<F>,
 }
 
@@ -141,6 +142,7 @@ impl<
             discovery,
         ));
         let skill_service = Arc::new(ForgeSkillFetch::new(infra.clone()));
+        let memory_service = Arc::new(crate::memory::ForgeMemoryService::new(infra.clone()));
 
         Self {
             conversation_service,
@@ -169,6 +171,7 @@ impl<
             provider_auth_service,
             workspace_service,
             skill_service,
+            memory_service,
             chat_service,
             infra,
         }
@@ -198,6 +201,7 @@ impl<
         + SkillRepository
         + StrategyFactory
         + WorkspaceIndexRepository
+        + MemoryRepository
         + ValidationRepository
         + FuzzySearchRepository
         + TextPatchRepository
@@ -236,6 +240,7 @@ impl<
     type ProviderService = ForgeProviderService<F>;
     type WorkspaceService = crate::context_engine::ForgeWorkspaceService<F, FdDefault<F>>;
     type SkillFetchService = ForgeSkillFetch<F>;
+    type MemoryService = crate::memory::ForgeMemoryService<F>;
 
     fn config_service(&self) -> &Self::AppConfigService {
         &self.config_service
@@ -334,6 +339,10 @@ impl<
     }
     fn skill_fetch_service(&self) -> &Self::SkillFetchService {
         &self.skill_service
+    }
+
+    fn memory_service(&self) -> &Self::MemoryService {
+        &self.memory_service
     }
 
     fn provider_service(&self) -> &Self::ProviderService {

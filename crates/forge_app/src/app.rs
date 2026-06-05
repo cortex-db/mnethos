@@ -13,7 +13,6 @@ use crate::hooks::{
     CompactionHandler, DoomLoopDetector, PendingTodosHandler, TitleGenerationHandler,
     TracingHandler,
 };
-use crate::lifecycle::LifecycleHooks;
 use crate::init_conversation_metrics::InitConversationMetrics;
 use crate::orch::Orchestrator;
 use crate::services::{AgentRegistry, CustomInstructionsService, ProviderAuthService};
@@ -48,9 +47,6 @@ pub(crate) fn build_template_config(config: &ForgeConfig) -> forge_domain::Templ
 pub struct ForgeApp<S> {
     services: Arc<S>,
     tool_registry: ToolRegistry<S>,
-    /// Optional extra lifecycle hooks injected by a higher layer (e.g. an
-    /// out-of-core memory crate). Generic extension point — see [`LifecycleHooks`].
-    lifecycle: Option<Arc<dyn LifecycleHooks>>,
 }
 
 impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeApp<S> {
@@ -59,16 +55,7 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeAp
         Self {
             tool_registry: ToolRegistry::new(services.clone()),
             services,
-            lifecycle: None,
         }
-    }
-
-    /// Registers extra Start/End lifecycle hooks (a generic extension point used
-    /// to plug in optional layers — e.g. the memory crate — without coupling
-    /// core to them).
-    pub fn with_lifecycle_hooks(mut self, hooks: Arc<dyn LifecycleHooks>) -> Self {
-        self.lifecycle = Some(hooks);
-        self
     }
 
     /// Executes a chat request and returns a stream of responses.
@@ -166,7 +153,7 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeAp
 
         // Build the on_end hook, conditionally adding PendingTodosHandler based on
         // config
-        let mut on_end_hook: Box<dyn EventHandle<EventData<EndPayload>>> =
+        let on_end_hook: Box<dyn EventHandle<EventData<EndPayload>>> =
             if forge_config.verify_todos {
                 tracing_handler
                     .clone()
@@ -176,18 +163,8 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeAp
                 tracing_handler.clone().and(title_handler.clone())
             };
 
-        // Generic extension point: fold in any injected lifecycle hooks (e.g. the
-        // out-of-core memory layer) without core knowing what they are.
-        let mut on_start_hook: Box<dyn EventHandle<EventData<StartPayload>>> =
+        let on_start_hook: Box<dyn EventHandle<EventData<StartPayload>>> =
             tracing_handler.clone().and(title_handler);
-        if let Some(lifecycle) = &self.lifecycle {
-            if let Some(start) = lifecycle.on_start() {
-                on_start_hook = on_start_hook.and(start);
-            }
-            if let Some(end) = lifecycle.on_end() {
-                on_end_hook = on_end_hook.and(end);
-            }
-        }
 
         let hook = Hook::default()
             .on_start(on_start_hook)

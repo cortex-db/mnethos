@@ -11,6 +11,8 @@ tools:
   - read
   - fetch
   - plan
+  - remember
+  - mem_search
   - mcp_*
 user_prompt: |-
   <{{event.name}}>{{event.value}}</{{event.name}}>

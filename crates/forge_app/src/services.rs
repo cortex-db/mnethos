@@ -540,6 +540,28 @@ pub trait ProviderAuthService: Send + Sync {
     ) -> anyhow::Result<Provider<Url>>;
 }
 
+/// Long-term memory capability (backs the `remember` tool's write path and the
+/// retrieval hook's read path). Mirrors [`WorkspaceService`]: a sub-service on
+/// [`Services`] that bridges to the repo-layer [`forge_domain::MemoryRepository`].
+/// No-op (0 written / empty recall) when memory is not configured.
+#[async_trait::async_trait]
+pub trait MemoryService: Send + Sync {
+    /// Persist episodes scoped by `session_key`. Returns the count written.
+    async fn remember(
+        &self,
+        session_key: &str,
+        episodes: Vec<forge_domain::MemoryEpisode>,
+    ) -> anyhow::Result<usize>;
+
+    /// Search memory via the fast retrieve route (MCP `retrieve_episodes`
+    /// contract — spreading activation, not the slow deep recall).
+    async fn retrieve(
+        &self,
+        session_key: &str,
+        queries: Vec<String>,
+    ) -> anyhow::Result<Vec<forge_domain::MemoryRecallItem>>;
+}
+
 pub trait Services: Send + Sync + 'static + Clone + EnvironmentInfra {
     type ProviderService: ProviderService;
     type AppConfigService: AppConfigService;
@@ -568,6 +590,7 @@ pub trait Services: Send + Sync + 'static + Clone + EnvironmentInfra {
     type ProviderAuthService: ProviderAuthService;
     type WorkspaceService: WorkspaceService;
     type SkillFetchService: SkillFetchService;
+    type MemoryService: MemoryService;
 
     fn provider_service(&self) -> &Self::ProviderService;
     fn config_service(&self) -> &Self::AppConfigService;
@@ -596,6 +619,7 @@ pub trait Services: Send + Sync + 'static + Clone + EnvironmentInfra {
     fn provider_auth_service(&self) -> &Self::ProviderAuthService;
     fn workspace_service(&self) -> &Self::WorkspaceService;
     fn skill_fetch_service(&self) -> &Self::SkillFetchService;
+    fn memory_service(&self) -> &Self::MemoryService;
 }
 
 #[async_trait::async_trait]
@@ -1023,6 +1047,25 @@ impl<I: Services> ProviderAuthService for I {
         self.provider_auth_service()
             .refresh_provider_credential(provider)
             .await
+    }
+}
+
+#[async_trait::async_trait]
+impl<I: Services> MemoryService for I {
+    async fn remember(
+        &self,
+        session_key: &str,
+        episodes: Vec<forge_domain::MemoryEpisode>,
+    ) -> anyhow::Result<usize> {
+        self.memory_service().remember(session_key, episodes).await
+    }
+
+    async fn retrieve(
+        &self,
+        session_key: &str,
+        queries: Vec<String>,
+    ) -> anyhow::Result<Vec<forge_domain::MemoryRecallItem>> {
+        self.memory_service().retrieve(session_key, queries).await
     }
 }
 

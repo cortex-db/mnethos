@@ -46,6 +46,7 @@ pub struct ForgeRepo<F> {
     provider_repository: Arc<ForgeProviderRepository<F>>,
     chat_repository: Arc<ForgeChatRepository<F>>,
     codebase_repo: Arc<ForgeContextEngineRepository<F>>,
+    memory_repo: Arc<crate::memory::ForgeMemoryRepository>,
     agent_repository: Arc<ForgeAgentRepository<F>>,
     skill_repository: Arc<ForgeSkillRepository<F>>,
     validation_repository: Arc<ForgeValidationRepository<F>>,
@@ -79,6 +80,7 @@ impl<
         let chat_repository = Arc::new(ForgeChatRepository::new(infra.clone()));
 
         let codebase_repo = Arc::new(ForgeContextEngineRepository::new(infra.clone()));
+        let memory_repo = Arc::new(crate::memory::ForgeMemoryRepository::new());
         let agent_repository = Arc::new(ForgeAgentRepository::new(infra.clone()));
         let skill_repository = Arc::new(ForgeSkillRepository::new(infra.clone()));
         let validation_repository = Arc::new(ForgeValidationRepository::new(infra.clone()));
@@ -91,6 +93,7 @@ impl<
             provider_repository,
             chat_repository,
             codebase_repo,
+            memory_repo,
             agent_repository,
             skill_repository,
             validation_repository,
@@ -524,6 +527,25 @@ impl<F: StrategyFactory> StrategyFactory for ForgeRepo<F> {
 }
 
 #[async_trait::async_trait]
+impl<F: Send + Sync> forge_domain::MemoryRepository for ForgeRepo<F> {
+    async fn create_episode(
+        &self,
+        session_key: &str,
+        episode: forge_domain::MemoryEpisode,
+    ) -> anyhow::Result<Option<forge_domain::MemoryWriteResult>> {
+        self.memory_repo.create_episode(session_key, episode).await
+    }
+
+    async fn retrieve(
+        &self,
+        session_key: &str,
+        anchors: Vec<String>,
+    ) -> anyhow::Result<Vec<forge_domain::MemoryRecallItem>> {
+        self.memory_repo.retrieve(session_key, anchors).await
+    }
+}
+
+#[async_trait::async_trait]
 impl<F: GrpcInfra + Send + Sync> forge_domain::WorkspaceIndexRepository for ForgeRepo<F> {
     async fn authenticate(&self) -> anyhow::Result<forge_domain::WorkspaceAuth> {
         self.codebase_repo.authenticate().await
@@ -644,7 +666,7 @@ impl<F: GrpcInfra + Send + Sync> TextPatchRepository for ForgeRepo<F> {
 
         let channel = self.infra.channel()?;
         let mut client =
-            crate::proto_generated::forge_service_client::ForgeServiceClient::new(channel);
+            crate::proto_generated::mnethos_service_client::MnethosServiceClient::new(channel);
         let response = client.build_text_patch(request).await?.into_inner();
 
         Ok(TextPatchBlock { patch: response.patch, patched_text: response.patched_text })

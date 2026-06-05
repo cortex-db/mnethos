@@ -1295,7 +1295,7 @@
     "auth_methods": ["api_key"]
   },
   {
-    "id": "forge_services",
+    "id": "mnethos_services",
     "provider_type": "context_engine",
     "url_param_vars": ["MNETHOS_WORKSPACE_SERVER_URL"],
     "url": "{{MNETHOS_WORKSPACE_SERVER_URL}}",

@@ -9,6 +9,8 @@ tools:
   - search
   - read
   - fetch
+  - remember
+  - mem_search
 user_prompt: |-
   <{{event.name}}>{{event.value}}</{{event.name}}>
   <system_date>{{current_date}}</system_date>

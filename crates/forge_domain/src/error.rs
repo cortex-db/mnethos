@@ -99,8 +99,14 @@ pub enum Error {
     #[error("Workspace already initialized with id: {0}")]
     WorkspaceAlreadyInitialized(WorkspaceId),
 
-    #[error("Failed to sync {count} file(s)")]
-    SyncFailed { count: usize },
+    #[error("Failed to sync {count} file(s){}", format_sync_failure_reasons(reasons))]
+    #[from(skip)]
+    SyncFailed {
+        /// Number of files that failed to sync.
+        count: usize,
+        /// Deduplicated, human-readable reasons describing why files failed.
+        reasons: Vec<String>,
+    },
 
     #[error("No default provider and model configured.")]
     NoDefaultSession,
@@ -145,17 +151,57 @@ impl Error {
         Self::VertexAiConfiguration { message: message.into() }
     }
 
-    pub fn sync_failed(count: usize) -> Self {
-        Self::SyncFailed { count }
+    pub fn sync_failed(count: usize, reasons: Vec<String>) -> Self {
+        Self::SyncFailed { count, reasons }
+    }
+}
+
+/// Formats the trailing reason list for an [`Error::SyncFailed`] message.
+///
+/// Returns an empty string when there are no reasons so the base message reads
+/// naturally; otherwise returns a newline-separated, bulleted list prefixed
+/// with a colon.
+///
+/// # Arguments
+///
+/// * `reasons` - The deduplicated failure reasons to render.
+fn format_sync_failure_reasons(reasons: &[String]) -> String {
+    if reasons.is_empty() {
+        String::new()
+    } else {
+        format!(":\n- {}", reasons.join("\n- "))
     }
 }
 
 #[cfg(test)]
 mod test {
     use forge_json_repair::JsonRepairError;
+    use pretty_assertions::assert_eq;
     use serde_json::Value;
 
     use crate::Error;
+
+    #[test]
+    fn test_sync_failed_display_with_reasons() {
+        let fixture = Error::sync_failed(
+            2,
+            vec![
+                "Failed to upload files: connection reset".to_string(),
+                "Failed to read file 'logo.png': invalid utf-8".to_string(),
+            ],
+        );
+        let actual = fixture.to_string();
+        let expected = "Failed to sync 2 file(s):\n- Failed to upload files: connection reset\n- Failed to read file 'logo.png': invalid utf-8".to_string();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_sync_failed_display_without_reasons() {
+        let fixture = Error::sync_failed(3, vec![]);
+        let actual = fixture.to_string();
+        let expected = "Failed to sync 3 file(s)".to_string();
+        assert_eq!(actual, expected);
+    }
 
     #[test]
     fn test_debug_serde_error() {

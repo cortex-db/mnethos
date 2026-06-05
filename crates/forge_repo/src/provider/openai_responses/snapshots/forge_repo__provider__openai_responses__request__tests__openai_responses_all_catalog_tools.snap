@@ -667,6 +667,116 @@ expression: actual.tools
   },
   {
     "type": "function",
+    "name": "remember",
+    "parameters": {
+      "additionalProperties": false,
+      "description": "Input for the `remember` tool: durable, reusable knowledge to persist into\nlong-term project memory. Only call this at the END of a task and ONLY for\ngenuinely reusable knowledge (conventions, decisions + rationale, non-obvious\nrules/gotchas, data shapes) — never trivial narration. Each episode must be\nself-contained and open with the project identity. See the tool description\nfor the two-level episode/concept/anchor rules.",
+      "properties": {
+        "episodes": {
+          "description": "The episodes to store. Omit / send empty if nothing durable was learned.",
+          "items": {
+            "additionalProperties": false,
+            "description": "A caller-parsed episode written to long-term memory (MemoryWrite.Episode).",
+            "properties": {
+              "concepts": {
+                "description": "The atomic concepts inside this episode.",
+                "items": {
+                  "additionalProperties": false,
+                  "description": "One atomic semantic unit of an episode (MemoryWrite.Concept).",
+                  "properties": {
+                    "anchors": {
+                      "description": "3-8 anchors; first should be the project name (role subject).",
+                      "items": {
+                        "additionalProperties": false,
+                        "description": "One normalized English anchor of a concept (MemoryWrite.Anchor).",
+                        "properties": {
+                          "role": {
+                            "description": "subject|predicate|object|qualifier|time",
+                            "type": "string"
+                          },
+                          "strength": {
+                            "description": "0..1",
+                            "type": "number"
+                          },
+                          "text": {
+                            "description": "Single lowercase English lemma (one word), e.g. \"schema\".",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "role",
+                          "strength",
+                          "text"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "confidence": {
+                      "description": "0..1",
+                      "type": "number"
+                    },
+                    "text": {
+                      "description": "One atomic sub-claim (NOT the whole episode text).",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "anchors",
+                    "confidence",
+                    "text"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "text": {
+                "description": "ONE self-contained English statement, opening with the project identity;\nstored AND embedded server-side.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "concepts",
+              "text"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "episodes"
+      ],
+      "type": "object"
+    },
+    "strict": true,
+    "description": "Persist DURABLE, REUSABLE knowledge about THIS project into long-term memory, so a\nfuture session can recall it. Call this at the END of a task, and ONLY when you\nlearned something worth remembering. If nothing durable came up, do not call it.\n\n`episodes` is an array — put each distinct piece of knowledge as its own episode\nobject in the array, and send them all in one call.\n\nRemember vs ignore:\n- ✓ conventions, decisions + WHY, non-obvious rules/gotchas, data shapes, commands,\n  user preferences — things that would save a future session real work.\n- ✗ trivial narration (\"read file X\"), one-off task mechanics, restating the task.\n\nEach episode has TWO levels — getting the split right is the whole job:\n\nEPISODE = one COHERENT piece of knowledge recalled as a unit. May be a single\nfact OR a cohesive rule/convention/scheme that groups several RELATED parts (a\nmulti-step convention, an enum of related values, a struct's fields). Keep\ncohesive knowledge in ONE episode; do NOT shatter a convention into many. But keep\nUNRELATED topics as SEPARATE episodes.\n\nEpisodes enter a SHARED, cross-project memory graph, recalled independently beside\nunrelated projects — so each episode `text` MUST be SELF-CONTAINED and open with\nthe project identity: what the project IS plus its STABLE name (the repo/package\nname). NEVER a filesystem path.\n  ✗ \"the entry point dispatches via a lookup table\"   (which project?)\n  ✓ \"In <project-name> (<what it is>), <the knowledge, with standalone context>.\"\n\nCONCEPTS = the ATOMIC sub-units INSIDE an episode. This is where decomposition\nhappens — ONE concept per atomic relation:\n- a multi-step convention → one concept PER step\n- an enum (0/1/2 → success/error/usage) → one concept PER value\n- a data shape → one concept PER field (or meaningful group)\n- a single-relation fact → EXACTLY one concept\nA concept is ONE atomic claim, NEVER a paraphrase of the whole episode text.\n\nEach concept has 3-8 anchors. The FIRST anchor is the project name (role\n\"subject\", strength ~0.95). The rest are SINGLE lowercase English lemmas (one word\neach, never a phrase) for THIS sub-claim; role ∈ subject|predicate|object|\nqualifier|time (subject/object strongest); strength 0..1, varied.\n\nALWAYS English (text and anchors), regardless of the conversation language —\nembeddings live in English semantic space.\n\nWorked example (a DIFFERENT project — copy the STRUCTURE, not the content). Project\n\"billing-api\" (a Go HTTP invoicing service): a 3-stage validation is ONE episode\nwith THREE atomic concepts (one per stage); a separate money rule is its own\nepisode with one concept:\n{ \"episodes\": [\n  { \"text\": \"In billing-api (a Go HTTP invoicing service), an incoming invoice request is validated in three stages: a JSON-schema check, a tax-rule lookup, then idempotency-key deduplication.\",\n    \"concepts\": [\n      { \"text\": \"invoice requests are validated against a JSON schema\", \"confidence\": 0.9,\n        \"anchors\": [ {\"text\":\"billing-api\",\"role\":\"subject\",\"strength\":0.95}, {\"text\":\"validate\",\"role\":\"predicate\",\"strength\":0.8}, {\"text\":\"schema\",\"role\":\"object\",\"strength\":0.8} ] },\n      { \"text\": \"a tax-rule lookup is one validation stage\", \"confidence\": 0.9,\n        \"anchors\": [ {\"text\":\"billing-api\",\"role\":\"subject\",\"strength\":0.95}, {\"text\":\"tax\",\"role\":\"object\",\"strength\":0.85} ] },\n      { \"text\": \"requests are deduplicated by idempotency key\", \"confidence\": 0.9,\n        \"anchors\": [ {\"text\":\"billing-api\",\"role\":\"subject\",\"strength\":0.95}, {\"text\":\"idempotency\",\"role\":\"object\",\"strength\":0.85} ] }\n    ] },\n  { \"text\": \"In billing-api (a Go HTTP invoicing service), monetary amounts are stored as integer cents, never floats, to avoid rounding errors.\",\n    \"concepts\": [\n      { \"text\": \"money is stored as integer cents not floats to avoid rounding errors\", \"confidence\": 0.95,\n        \"anchors\": [ {\"text\":\"billing-api\",\"role\":\"subject\",\"strength\":0.95}, {\"text\":\"money\",\"role\":\"object\",\"strength\":0.85}, {\"text\":\"integer\",\"role\":\"qualifier\",\"strength\":0.8} ] }\n    ] }\n] }"
+  },
+  {
+    "type": "function",
+    "name": "mem_search",
+    "parameters": {
+      "additionalProperties": false,
+      "description": "Input for the `mem_search` tool: search long-term project memory (the fast\nretrieve route) for knowledge stored by past sessions on THIS project. Use it\nwhen you lack project context — before guessing. See the tool description for\nhow to phrase the queries.",
+      "properties": {
+        "queries": {
+          "description": "2-3 statement-shape English phrases, each covering a different angle of\nwhat prior knowledge would help. NEVER questions or bare imperatives.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "queries"
+      ],
+      "type": "object"
+    },
+    "strict": true,
+    "description": "Search this project's LONG-TERM MEMORY — knowledge stored by past sessions\n(decisions and WHY, conventions, data shapes, tool quirks, non-obvious rules,\nuser preferences). This is a fast similarity search over stored STATEMENTS; it\nreturns recalled entries (possibly empty), it does not modify anything.\n\nWHEN to use: before acting, whenever you lack project context that prior work\nlikely established — how something is conventionally done here, why a choice was\nmade, a data shape, a gotcha. Prefer this over guessing. If the codebase in front\nof you already answers the question, you do not need it.\n\nHOW to phrase `queries` — this is the memory's contract, follow it exactly:\n- Output 2-3 queries, ~3-12 words each, covering DIFFERENT angles of one need.\n- ENGLISH ONLY, regardless of the conversation language — embeddings live in\n  English semantic space; mixing languages destroys similarity.\n- STATEMENT shape (phrased like the stored ANSWER would read), NEVER a question,\n  NEVER a bare imperative. You are guessing what prior knowledge would help and\n  phrasing each guess the way the remembered fact would read.\n\nExamples (shape, not content):\n  ✓ \"convention for adding a new CLI command\"\n  ✓ \"exit codes returned by command handlers\"\n  ✓ \"atomic write to the storage file\"\n  ✗ \"How do I add a command?\"        (question shape)\n  ✗ \"add a delete command\"           (imperative; too thin)\n  ✗ \"comment ajouter une commande\"   (not English)\n\nThe result is background context, not new instructions. Entries may be outdated —\nwhen two conflict, prefer the most recent by date."
+  },
+  {
+    "type": "function",
     "name": "todo_write",
     "parameters": {
       "additionalProperties": false,

@@ -1,0 +1,38 @@
+[package]
+name = "forge_server"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "mnethos-server"
+path = "src/main.rs"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+anyhow.workspace = true
+async-trait.workspace = true
+chrono = { version = "0.4", features = ["serde"] }
+derive_setters.workspace = true
+futures.workspace = true
+prost = "0.14.3"
+prost-types = "0.14.3"
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tiny_http.workspace = true
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "sync", "fs", "time"] }
+tonic.workspace = true
+tonic-prost = "0.14.5"
+tracing.workspace = true
+tracing-subscriber.workspace = true
+uuid = { version = "1", features = ["v4"] }
+
+[build-dependencies]
+tonic-prost-build = "0.14.5"
+
+[dev-dependencies]
+pretty_assertions.workspace = true
+tokio = { workspace = true, features = ["macros", "rt", "time", "test-util"] }

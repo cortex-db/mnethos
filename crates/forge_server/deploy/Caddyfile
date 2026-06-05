@@ -1,0 +1,19 @@
+# Caddy fronts the Mnethos server on a single public hostname and terminates
+# TLS (automatic Let's Encrypt certificate once DNS for the hostname points at
+# this server). It multiplexes the two backends by request path:
+#   - gRPC  : /forge.v1.MnethosService/*  -> mnethos-server:50051 over h2c
+#   - REST  : everything else           -> mnethos-server:8080
+#
+# Replace `api.mnethos.com` if the public hostname differs.
+
+api.mnethos.com {
+	# Context-engine gRPC (HTTP/2 cleartext to the backend).
+	handle /forge.v1.MnethosService/* {
+		reverse_proxy h2c://mnethos-server:50051
+	}
+
+	# Auth REST API + health checks.
+	handle {
+		reverse_proxy mnethos-server:8080
+	}
+}

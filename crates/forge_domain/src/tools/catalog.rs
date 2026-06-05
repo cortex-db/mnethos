@@ -54,6 +54,8 @@ pub enum ToolCatalog {
     Followup(Followup),
     Plan(PlanCreate),
     Skill(SkillFetch),
+    Remember(Remember),
+    MemSearch(MemSearch),
     TodoWrite(TodoWrite),
     TodoRead(TodoRead),
     #[serde(alias = "Task")]
@@ -447,6 +449,31 @@ pub struct SemanticSearch {
     pub queries: Vec<SearchQuery>,
 }
 
+/// Input for the `remember` tool: durable, reusable knowledge to persist into
+/// long-term project memory. Only call this at the END of a task and ONLY for
+/// genuinely reusable knowledge (conventions, decisions + rationale, non-obvious
+/// rules/gotchas, data shapes) — never trivial narration. Each episode must be
+/// self-contained and open with the project identity. See the tool description
+/// for the two-level episode/concept/anchor rules.
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, ToolDescription, PartialEq)]
+#[tool_description_file = "crates/forge_domain/src/tools/descriptions/remember.md"]
+pub struct Remember {
+    /// The episodes to store. Omit / send empty if nothing durable was learned.
+    pub episodes: Vec<crate::MemoryEpisode>,
+}
+
+/// Input for the `mem_search` tool: search long-term project memory (the fast
+/// retrieve route) for knowledge stored by past sessions on THIS project. Use it
+/// when you lack project context — before guessing. See the tool description for
+/// how to phrase the queries.
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, ToolDescription, PartialEq)]
+#[tool_description_file = "crates/forge_domain/src/tools/descriptions/mem_search.md"]
+pub struct MemSearch {
+    /// 2-3 statement-shape English phrases, each covering a different angle of
+    /// what prior knowledge would help. NEVER questions or bare imperatives.
+    pub queries: Vec<String>,
+}
+
 #[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, ToolDescription, PartialEq)]
 #[tool_description_file = "crates/forge_domain/src/tools/descriptions/fs_remove.md"]
 pub struct FSRemove {
@@ -824,6 +851,8 @@ impl ToolDescription for ToolCatalog {
             ToolCatalog::Write(v) => v.description(),
             ToolCatalog::Plan(v) => v.description(),
             ToolCatalog::Skill(v) => v.description(),
+            ToolCatalog::Remember(v) => v.description(),
+            ToolCatalog::MemSearch(v) => v.description(),
             ToolCatalog::TodoWrite(v) => v.description(),
             ToolCatalog::TodoRead(v) => v.description(),
             ToolCatalog::Task(v) => v.description(),
@@ -884,6 +913,8 @@ impl ToolCatalog {
             ToolCatalog::Write(_) => r#gen.into_root_schema_for::<FSWrite>(),
             ToolCatalog::Plan(_) => r#gen.into_root_schema_for::<PlanCreate>(),
             ToolCatalog::Skill(_) => r#gen.into_root_schema_for::<SkillFetch>(),
+            ToolCatalog::Remember(_) => r#gen.into_root_schema_for::<Remember>(),
+            ToolCatalog::MemSearch(_) => r#gen.into_root_schema_for::<MemSearch>(),
             ToolCatalog::Task(_) => r#gen.into_root_schema_for::<TaskInput>(),
             ToolCatalog::TodoWrite(_) => r#gen.into_root_schema_for::<TodoWrite>(),
             ToolCatalog::TodoRead(_) => r#gen.into_root_schema_for::<TodoRead>(),
@@ -1010,6 +1041,8 @@ impl ToolCatalog {
             | ToolCatalog::Followup(_)
             | ToolCatalog::Plan(_)
             | ToolCatalog::Skill(_)
+            | ToolCatalog::Remember(_)
+            | ToolCatalog::MemSearch(_)
             | ToolCatalog::TodoWrite(_)
             | ToolCatalog::TodoRead(_)
             | ToolCatalog::Task(_) => None,

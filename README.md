@@ -1,7 +1,7 @@
 <h1 align="center">⚒️ Mnethos: AI-Enhanced Terminal Development Environment</h1>
 <p align="center">A comprehensive coding agent that integrates AI capabilities with your development environment</p>
 
-<p align="center"><code>curl -fsSL https://forgecode.dev/cli | sh</code></p>
+<p align="center"><code>curl -fsSL https://mnethos.com/cli | sh</code></p>
 
 [![CI Status](https://img.shields.io/github/actions/workflow/status/tailcallhq/forgecode/ci.yml?style=for-the-badge)](https://github.com/tailcallhq/forgecode/actions)
 [![GitHub Release](https://img.shields.io/github/v/release/tailcallhq/forgecode?style=for-the-badge)](https://github.com/tailcallhq/forgecode/releases)
@@ -57,7 +57,7 @@
 To get started with Mnethos, run the command below:
 
 ```bash
-curl -fsSL https://forgecode.dev/cli | sh
+curl -fsSL https://mnethos.com/cli | sh
 ```
 
 On first run, Mnethos will guide you through setting up your AI provider credentials using the interactive login flow. Alternatively, you can configure providers beforehand:
@@ -368,7 +368,7 @@ Project-local skills override global ones, which override built-in ones. To scaf
 :workspace-info           # Show workspace details
 ```
 
-After running `:sync`, the AI can search your codebase by meaning rather than exact text matches. Indexing sends file content to the workspace server, which defaults to `https://api.forgecode.dev`. Set `FORGE_WORKSPACE_SERVER_URL` to override this if self-hosting.
+After running `:sync`, the AI can search your codebase by meaning rather than exact text matches. Indexing sends file content to the workspace server, which defaults to `https://api.mnethos.com`. Set `FORGE_WORKSPACE_SERVER_URL` to override this if self-hosting.
 
 ### Quick Reference: All `:` Commands
 
@@ -804,8 +804,8 @@ Override default API endpoints and provider/model settings:
 
 ```bash
 # .env
-FORGE_API_URL=https://api.forgecode.dev  # Custom Mnethos API URL (default: https://api.forgecode.dev)
-FORGE_WORKSPACE_SERVER_URL=http://localhost:8080  # URL for the indexing server (default: https://api.forgecode.dev/)
+FORGE_API_URL=https://api.mnethos.com  # Custom Mnethos API URL (default: https://api.mnethos.com)
+FORGE_WORKSPACE_SERVER_URL=http://localhost:8080  # URL for the indexing server (default: https://api.mnethos.com/)
 ```
 
 </details>
@@ -1098,7 +1098,7 @@ For comprehensive documentation on all features and capabilities, please visit t
 
 ```bash
 # YOLO
-curl -fsSL https://forgecode.dev/cli | sh
+curl -fsSL https://mnethos.com/cli | sh
 
 # Package managers
 nix run github:tailcallhq/forgecode # for latest dev branch

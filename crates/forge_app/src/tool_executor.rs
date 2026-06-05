@@ -10,8 +10,8 @@ use crate::services::{Services, ShellService};
 use crate::{
     AgentRegistry, ConversationService, EnvironmentInfra, FollowUpService, FsPatchService,
     FsReadService, FsRemoveService, FsSearchService, FsUndoService, FsWriteService,
-    ImageReadService, NetFetchService, PlanCreateService, ProviderService, SkillFetchService,
-    WorkspaceService,
+    ImageReadService, MemoryService, NetFetchService, PlanCreateService, ProviderService,
+    SkillFetchService, WorkspaceService,
 };
 
 pub struct ToolExecutor<S> {
@@ -34,6 +34,7 @@ impl<
         + EnvironmentInfra<Config = forge_config::ForgeConfig>
         + PlanCreateService
         + SkillFetchService
+        + MemoryService
         + AgentRegistry
         + ProviderService
         + Services,
@@ -321,6 +322,18 @@ impl<
             ToolCatalog::Skill(input) => {
                 let skill = self.services.fetch_skill(input.name.clone()).await?;
                 ToolOperation::Skill { output: skill }
+            }
+            ToolCatalog::Remember(input) => {
+                let session_key =
+                    forge_domain::memory_session_key(&self.services.get_environment().cwd);
+                let count = self.services.remember(&session_key, input.episodes).await?;
+                ToolOperation::Remember { count }
+            }
+            ToolCatalog::MemSearch(input) => {
+                let session_key =
+                    forge_domain::memory_session_key(&self.services.get_environment().cwd);
+                let items = self.services.retrieve(&session_key, input.queries).await?;
+                ToolOperation::MemSearch { items }
             }
             ToolCatalog::TodoWrite(input) => {
                 let before = context.get_todos()?;

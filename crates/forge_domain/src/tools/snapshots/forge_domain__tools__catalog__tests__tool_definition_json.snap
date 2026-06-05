@@ -399,6 +399,101 @@ expression: tools
   ]
 }
 {
+  "description": "Input for the `remember` tool: durable, reusable knowledge to persist into\nlong-term project memory. Only call this at the END of a task and ONLY for\ngenuinely reusable knowledge (conventions, decisions + rationale, non-obvious\nrules/gotchas, data shapes) — never trivial narration. Each episode must be\nself-contained and open with the project identity. See the tool description\nfor the two-level episode/concept/anchor rules.",
+  "type": "object",
+  "properties": {
+    "episodes": {
+      "description": "The episodes to store. Omit / send empty if nothing durable was learned.",
+      "type": "array",
+      "items": {
+        "description": "A caller-parsed episode written to long-term memory (MemoryWrite.Episode).",
+        "type": "object",
+        "properties": {
+          "concepts": {
+            "description": "The atomic concepts inside this episode.",
+            "type": "array",
+            "items": {
+              "description": "One atomic semantic unit of an episode (MemoryWrite.Concept).",
+              "type": "object",
+              "properties": {
+                "anchors": {
+                  "description": "3-8 anchors; first should be the project name (role subject).",
+                  "type": "array",
+                  "items": {
+                    "description": "One normalized English anchor of a concept (MemoryWrite.Anchor).",
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "description": "subject|predicate|object|qualifier|time",
+                        "type": "string"
+                      },
+                      "strength": {
+                        "description": "0..1",
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "text": {
+                        "description": "Single lowercase English lemma (one word), e.g. \"schema\".",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "text",
+                      "role",
+                      "strength"
+                    ]
+                  }
+                },
+                "confidence": {
+                  "description": "0..1",
+                  "type": "number",
+                  "format": "float"
+                },
+                "text": {
+                  "description": "One atomic sub-claim (NOT the whole episode text).",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "confidence",
+                "anchors"
+              ]
+            }
+          },
+          "text": {
+            "description": "ONE self-contained English statement, opening with the project identity;\nstored AND embedded server-side.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "concepts"
+        ]
+      }
+    }
+  },
+  "required": [
+    "episodes"
+  ]
+}
+{
+  "description": "Input for the `mem_search` tool: search long-term project memory (the fast\nretrieve route) for knowledge stored by past sessions on THIS project. Use it\nwhen you lack project context — before guessing. See the tool description for\nhow to phrase the queries.",
+  "type": "object",
+  "properties": {
+    "queries": {
+      "description": "2-3 statement-shape English phrases, each covering a different angle of\nwhat prior knowledge would help. NEVER questions or bare imperatives.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "queries"
+  ]
+}
+{
   "type": "object",
   "properties": {
     "todos": {

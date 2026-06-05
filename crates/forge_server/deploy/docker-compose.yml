@@ -1,0 +1,64 @@
+# Mnethos server deployment, co-located with the primitive-activation-graph
+# (`pag-prod`) stack. Joins the existing `pag-prod_default` network so the
+# context engine can reach the embedding gateway at `ai-gateway:50054`.
+#
+# Usage (on the server, from this directory):
+#   docker compose up -d --build
+#
+# A single public hostname (api.mnethos.com) is fronted by Caddy, which
+# terminates TLS and routes:
+#   - gRPC  (/forge.v1.MnethosService/*) -> mnethos-server:50051  (h2c)
+#   - REST  (/auth/*, /health)         -> mnethos-server:8080
+
+name: mnethos
+
+services:
+  mnethos-server:
+    build:
+      # Repository root (three levels up from crates/forge_server/deploy).
+      context: ../../..
+      dockerfile: crates/forge_server/deploy/Dockerfile
+    image: mnethos-server:latest
+    container_name: mnethos-server
+    environment:
+      MNETHOS_REST_ADDRESS: "0.0.0.0:8080"
+      MNETHOS_GRPC_ADDRESS: "0.0.0.0:50051"
+      MNETHOS_AI_GATEWAY_ADDR: "http://ai-gateway:50054"
+      MNETHOS_SNAPSHOT_PATH: "/data/workspaces.json"
+      RUST_LOG: "info"
+    volumes:
+      - mnethos_data:/data
+    # Bound to loopback only — for server-local testing / SSH tunnels. Public
+    # traffic always goes through Caddy on the docker network, never these.
+    ports:
+      - "127.0.0.1:50051:50051"
+      - "127.0.0.1:8080:8080"
+    networks:
+      - pag
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    container_name: mnethos-caddy
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - pag
+    restart: unless-stopped
+    depends_on:
+      - mnethos-server
+
+networks:
+  pag:
+    name: pag-prod_default
+    external: true
+
+volumes:
+  mnethos_data:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+// Slim, wire-compatible subset of the ai-gateway contract
+// (primitive-activation-graph/ai-gateway/internal/proto/aigateway.proto).
+//
+// Only the synchronous `Embed` RPC is vendored here because that is the single
+// call the Mnethos context-engine server makes against the gateway. Field tag
+// numbers and the package/service/method names match the upstream definition
+// exactly, so requests/responses are byte-compatible on the wire. Additional
+// upstream fields (e.g. `usage`) are simply ignored by prost when decoding.
+
+package ai_gateway.v1;
+
+service AIGateway {
+  // Synchronously embeds one or more input strings with the given model.
+  rpc Embed(EmbedRequest) returns (EmbedResponse);
+}
+
+message FloatVector {
+  repeated float values = 1;
+}
+
+message EmbedRequest {
+  string external_id = 1;
+  string model = 2;
+  repeated string inputs = 3;
+}
+
+message EmbedResponse {
+  string external_id = 1;
+  repeated FloatVector vectors = 2;
+}

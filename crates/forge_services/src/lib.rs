@@ -14,6 +14,7 @@ mod fd_walker;
 mod forge_services;
 mod instructions;
 mod mcp;
+mod memory;
 mod policy;
 
 mod provider_auth;

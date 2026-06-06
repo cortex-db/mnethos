@@ -4,9 +4,9 @@ before_run:
 
 run:
   # Clone into `tmp/task` dir
-  - git clone --depth=1 --branch main https://github.com/tailcallhq/forgecode .
+  - git clone --depth=1 --branch main https://github.com/cortex-db/mnethos .
   - forgee workspace sync
-  - FORGE_DEBUG_REQUESTS='{{dir}}/context.json' forgee --provider open_router --model {{model}} -p '{{task}}'
+  - MNETHOS_DEBUG_REQUESTS='{{dir}}/context.json' forgee --provider open_router --model {{model}} -p '{{task}}'
 
 parallelism: 30
 timeout: 120

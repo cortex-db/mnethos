@@ -1,6 +1,6 @@
 run:
-  - git clone --depth=1 --branch main https://github.com/tailcallhq/forgecode .
-  - FORGE_DEBUG_REQUESTS='{{dir}}/context.json' forgee --provider open_router --model {{model}} -p '{{task}}'
+  - git clone --depth=1 --branch main https://github.com/cortex-db/mnethos .
+  - MNETHOS_DEBUG_REQUESTS='{{dir}}/context.json' forgee --provider open_router --model {{model}} -p '{{task}}'
 parallelism: 10
 timeout: 180
 early_exit: true

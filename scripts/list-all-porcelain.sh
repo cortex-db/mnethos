@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Script to run all 'forge list' commands with --porcelain flag
+# Script to run all 'mnethos list' commands with --porcelain flag
 # This helps visualize which list types contain $ID columns
 
 set -e
 
-MNETHOS_BIN="${1:-./target/debug/forge}"
+MNETHOS_BIN="${1:-./target/debug/mnethos}"
 
 if [ ! -f "$MNETHOS_BIN" ]; then
-    echo "Error: forge binary not found at $MNETHOS_BIN"
-    echo "Usage: $0 [path-to-forge-binary]"
+    echo "Error: mnethos binary not found at $MNETHOS_BIN"
+    echo "Usage: $0 [path-to-mnethos-binary]"
     exit 1
 fi
 

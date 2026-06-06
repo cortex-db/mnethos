@@ -1,8 +1,8 @@
 # No before_run needed - binary should be pre-built
 run:
   - # Clone into `tmp/task` dir
-  - git clone --depth=1 --branch main https://github.com/tailcallhq/forgecode .
-  - FORGE_DEBUG_REQUESTS='{{dir}}/context.json' forgee --provider open_router --model {{model}} -p '{{task}}'
+  - git clone --depth=1 --branch main https://github.com/cortex-db/mnethos .
+  - MNETHOS_DEBUG_REQUESTS='{{dir}}/context.json' forgee --provider open_router --model {{model}} -p '{{task}}'
 parallelism: 5
 timeout: 120
 early_exit: true

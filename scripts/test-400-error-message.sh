@@ -11,7 +11,7 @@ set -euo pipefail
 
 PROVIDER="${1:-github_copilot}"
 MODEL="${2:-gpt-5.5}"
-BINARY="target/debug/forge"
+BINARY="target/debug/mnethos"
 
 echo "Building debug binary..."
 cargo build -p forge_main 2>&1 | tail -3

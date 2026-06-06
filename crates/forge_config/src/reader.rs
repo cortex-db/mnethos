@@ -58,9 +58,9 @@ impl ConfigReader {
     /// 1. `MNETHOS_CONFIG` environment variable, if set.
     /// 2. `~/.mnethos` (default).
     ///
-    /// Mnethos deliberately does NOT fall back to forgecode's legacy `~/forge`
+    /// Mnethos deliberately does NOT fall back to any legacy `~/forge`
     /// directory: it keeps its own config, fully separate from any upstream
-    /// forge install.
+    /// install.
     pub fn base_path() -> PathBuf {
         BASE_PATH.clone()
     }

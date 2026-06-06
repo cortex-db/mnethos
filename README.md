@@ -3,12 +3,10 @@
 
 <p align="center"><code>curl -fsSL https://mnethos.com/cli | sh</code></p>
 
-[![CI Status](https://img.shields.io/github/actions/workflow/status/tailcallhq/forgecode/ci.yml?style=for-the-badge)](https://github.com/tailcallhq/forgecode/actions)
-[![GitHub Release](https://img.shields.io/github/v/release/tailcallhq/forgecode?style=for-the-badge)](https://github.com/tailcallhq/forgecode/releases)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/cortex-db/mnethos/ci.yml?style=for-the-badge)](https://github.com/cortex-db/mnethos/actions)
+[![GitHub Release](https://img.shields.io/github/v/release/cortex-db/mnethos?style=for-the-badge)](https://github.com/cortex-db/mnethos/releases)
 [![Discord](https://img.shields.io/discord/1044859667798568962?style=for-the-badge&cacheSeconds=120&logo=discord)](https://discord.gg/kRZBPpkgwq)
-[![CLA assistant](https://cla-assistant.io/readme/badge/tailcallhq/forgecode?style=for-the-badge)](https://cla-assistant.io/tailcallhq/forgecode)
-
-![Mnethos Demo](https://assets.antinomy.ai/images/forge_demo_2x.gif)
+[![CLA assistant](https://cla-assistant.io/readme/badge/cortex-db/mnethos?style=for-the-badge)](https://cla-assistant.io/cortex-db/mnethos)
 
 ---
 
@@ -368,7 +366,7 @@ Project-local skills override global ones, which override built-in ones. To scaf
 :workspace-info           # Show workspace details
 ```
 
-After running `:sync`, the AI can search your codebase by meaning rather than exact text matches. Indexing sends file content to the workspace server, which defaults to `https://api.mnethos.com`. Set `FORGE_WORKSPACE_SERVER_URL` to override this if self-hosting.
+After running `:sync`, the AI can search your codebase by meaning rather than exact text matches. Indexing sends file content to the workspace server, which defaults to `https://api.mnethos.com/`. Set `MNETHOS_SERVICES_URL` to override this if self-hosting.
 
 ### Quick Reference: All `:` Commands
 
@@ -728,21 +726,6 @@ model: anthropic.claude-3-opus
 
 </details>
 
-<details>
-<summary><strong>Mnethos Services</strong></summary>
-
-```bash
-# .env
-FORGE_API_KEY=<your_forge_api_key>
-```
-
-```yaml
-# mnethos.yaml
-model: claude-3.7-sonnet
-```
-
-</details>
-
 </details>
 
 ---
@@ -760,11 +743,11 @@ Control how Mnethos handles retry logic for failed requests:
 
 ```bash
 # .env
-FORGE_RETRY_INITIAL_BACKOFF_MS=1000    # Initial backoff time in milliseconds (default: 1000)
-FORGE_RETRY_BACKOFF_FACTOR=2           # Multiplier for backoff time (default: 2)
-FORGE_RETRY_MAX_ATTEMPTS=3             # Maximum retry attempts (default: 3)
-FORGE_SUPPRESS_RETRY_ERRORS=false      # Suppress retry error messages (default: false)
-FORGE_RETRY_STATUS_CODES=429,500,502   # HTTP status codes to retry (default: 429,500,502,503,504)
+MNETHOS_RETRY__INITIAL_BACKOFF_MS=1000    # Initial backoff time in milliseconds (default: 1000)
+MNETHOS_RETRY__BACKOFF_FACTOR=2           # Multiplier for backoff time (default: 2)
+MNETHOS_RETRY__MAX_ATTEMPTS=3             # Maximum retry attempts (default: 3)
+MNETHOS_RETRY__SUPPRESS_ERRORS=false      # Suppress retry error messages (default: false)
+MNETHOS_RETRY__STATUS_CODES=429,500,502   # HTTP status codes to retry (default: 429,500,502,503,504)
 ```
 
 </details>
@@ -776,24 +759,24 @@ Fine-tune HTTP client behavior for API requests:
 
 ```bash
 # .env
-FORGE_HTTP_CONNECT_TIMEOUT=30              # Connection timeout in seconds (default: 30)
-FORGE_HTTP_READ_TIMEOUT=900                # Read timeout in seconds (default: 900)
-FORGE_HTTP_POOL_IDLE_TIMEOUT=90            # Pool idle timeout in seconds (default: 90)
-FORGE_HTTP_POOL_MAX_IDLE_PER_HOST=5        # Max idle connections per host (default: 5)
-FORGE_HTTP_MAX_REDIRECTS=10                # Maximum redirects to follow (default: 10)
-FORGE_HTTP_USE_HICKORY=false               # Use Hickory DNS resolver (default: false)
-FORGE_HTTP_TLS_BACKEND=default             # TLS backend: "default" or "rustls" (default: "default")
-FORGE_HTTP_MIN_TLS_VERSION=1.2             # Minimum TLS version: "1.0", "1.1", "1.2", "1.3"
-FORGE_HTTP_MAX_TLS_VERSION=1.3             # Maximum TLS version: "1.0", "1.1", "1.2", "1.3"
-FORGE_HTTP_ADAPTIVE_WINDOW=true            # Enable HTTP/2 adaptive window (default: true)
-FORGE_HTTP_KEEP_ALIVE_INTERVAL=60          # Keep-alive interval in seconds (default: 60, use "none"/"disabled" to disable)
-FORGE_HTTP_KEEP_ALIVE_TIMEOUT=10           # Keep-alive timeout in seconds (default: 10)
-FORGE_HTTP_KEEP_ALIVE_WHILE_IDLE=true      # Keep-alive while idle (default: true)
-FORGE_HTTP_ACCEPT_INVALID_CERTS=false      # Accept invalid certificates (default: false) - USE WITH CAUTION
-FORGE_HTTP_ROOT_CERT_PATHS=/path/to/cert1.pem,/path/to/cert2.crt  # Paths to root certificate files (PEM, CRT, CER format), multiple paths separated by commas
+MNETHOS_HTTP__CONNECT_TIMEOUT_SECS=30        # Connection timeout in seconds (default: 30)
+MNETHOS_HTTP__READ_TIMEOUT_SECS=900          # Read timeout in seconds (default: 900)
+MNETHOS_HTTP__POOL_IDLE_TIMEOUT_SECS=90      # Pool idle timeout in seconds (default: 90)
+MNETHOS_HTTP__POOL_MAX_IDLE_PER_HOST=5       # Max idle connections per host (default: 5)
+MNETHOS_HTTP__MAX_REDIRECTS=10               # Maximum redirects to follow (default: 10)
+MNETHOS_HTTP__HICKORY=false                  # Use Hickory DNS resolver (default: false)
+MNETHOS_HTTP__TLS_BACKEND=default            # TLS backend: "default" or "rustls" (default: "default")
+MNETHOS_HTTP__MIN_TLS_VERSION=1.2            # Minimum TLS version: "1.0", "1.1", "1.2", "1.3"
+MNETHOS_HTTP__MAX_TLS_VERSION=1.3            # Maximum TLS version: "1.0", "1.1", "1.2", "1.3"
+MNETHOS_HTTP__ADAPTIVE_WINDOW=true           # Enable HTTP/2 adaptive window (default: true)
+MNETHOS_HTTP__KEEP_ALIVE_INTERVAL_SECS=60    # Keep-alive interval in seconds (default: 60)
+MNETHOS_HTTP__KEEP_ALIVE_TIMEOUT_SECS=10     # Keep-alive timeout in seconds (default: 10)
+MNETHOS_HTTP__KEEP_ALIVE_WHILE_IDLE=true     # Keep-alive while idle (default: true)
+MNETHOS_HTTP__ACCEPT_INVALID_CERTS=false     # Accept invalid certificates (default: false) - USE WITH CAUTION
+MNETHOS_HTTP__ROOT_CERT_PATHS=/path/to/cert1.pem,/path/to/cert2.crt  # Paths to root certificate files (PEM, CRT, CER format), multiple paths separated by commas
 ```
 
-> **⚠️ Security Warning**: Setting `FORGE_HTTP_ACCEPT_INVALID_CERTS=true` disables SSL/TLS certificate verification, which can expose you to man-in-the-middle attacks. Only use this in development environments or when you fully trust the network and endpoints.
+> **⚠️ Security Warning**: Setting `MNETHOS_HTTP__ACCEPT_INVALID_CERTS=true` disables SSL/TLS certificate verification, which can expose you to man-in-the-middle attacks. Only use this in development environments or when you fully trust the network and endpoints.
 
 </details>
 
@@ -804,8 +787,7 @@ Override default API endpoints and provider/model settings:
 
 ```bash
 # .env
-FORGE_API_URL=https://api.mnethos.com  # Custom Mnethos API URL (default: https://api.mnethos.com)
-FORGE_WORKSPACE_SERVER_URL=http://localhost:8080  # URL for the indexing server (default: https://api.mnethos.com/)
+MNETHOS_SERVICES_URL=https://api.mnethos.com/  # Base URL of the Mnethos services API used for auth, semantic search, and indexing (default: https://api.mnethos.com/)
 ```
 
 </details>
@@ -817,10 +799,10 @@ Configuring the tool calls settings:
 
 ```bash
 # .env
-FORGE_TOOL_TIMEOUT=300         # Maximum execution time in seconds for a tool before it is terminated to prevent hanging the session. (default: 300)
-FORGE_MAX_IMAGE_SIZE=10485760  # Maximum image file size in bytes for read_image operations (default: 10485760 - 10 MB)
-FORGE_DUMP_AUTO_OPEN=false     # Automatically open dump files in browser (default: false)
-FORGE_DEBUG_REQUESTS=/path/to/debug/requests.json  # Write debug HTTP request files to specified path (supports absolute and relative paths)
+MNETHOS_TOOL_TIMEOUT_SECS=300          # Maximum execution time in seconds for a tool before it is terminated to prevent hanging the session. (default: 300)
+MNETHOS_MAX_IMAGE_SIZE_BYTES=10485760  # Maximum image file size in bytes for read_image operations (default: 10485760 - 10 MB)
+MNETHOS_AUTO_OPEN_DUMP=false           # Automatically open dump files in browser (default: false)
+MNETHOS_DEBUG_REQUESTS=/path/to/debug/requests.json  # Write debug HTTP request files to specified path (supports absolute and relative paths)
 ```
 
 </details>
@@ -832,10 +814,10 @@ Configure the ZSH plugin behavior:
 
 ```bash
 # .env
-FORGE_BIN=mnethos                    # Command to use for mnethos operations (default: "mnethos")
+MNETHOS_BIN=mnethos                  # Command to use for mnethos operations (default: "mnethos")
 ```
 
-The `FORGE_BIN` environment variable allows you to customize the command used by the ZSH plugin when transforming `:` prefixed commands. If not set, it defaults to `"mnethos"`.
+The `MNETHOS_BIN` environment variable allows you to customize the command used by the ZSH plugin when transforming `:` prefixed commands. If not set, it defaults to `"mnethos"`.
 
 </details>
 
@@ -846,13 +828,13 @@ Configure display options for the Mnethos UI and ZSH theme:
 
 ```bash
 # .env
-FORGE_CURRENCY_SYMBOL="$"         # Currency symbol for cost display in ZSH theme (default: "$")
-FORGE_CURRENCY_CONVERSION_RATE=1.0  # Conversion rate for currency display (default: 1.0)
+MNETHOS_CURRENCY_SYMBOL="$"            # Currency symbol for cost display in ZSH theme (default: "$")
+MNETHOS_CURRENCY_CONVERSION_RATE=1.0  # Conversion rate for currency display (default: 1.0)
 NERD_FONT=1                       # Enable Nerd Font icons in ZSH theme (default: auto-detected, set to "1" or "true" to enable, "0" or "false" to disable)
 USE_NERD_FONT=1                   # Alternative variable for enabling Nerd Font icons (same behavior as NERD_FONT)
 ```
 
-The `FORGE_CURRENCY_SYMBOL` and `FORGE_CURRENCY_CONVERSION_RATE` variables control how costs are displayed in the ZSH theme right prompt. Use these to customize the currency display for your region or preferred currency.
+The `MNETHOS_CURRENCY_SYMBOL` and `MNETHOS_CURRENCY_CONVERSION_RATE` variables control how costs are displayed in the ZSH theme right prompt. Use these to customize the currency display for your region or preferred currency.
 
 </details>
 
@@ -863,13 +845,13 @@ System-level environment variables (usually set automatically):
 
 ```bash
 # .env
-FORGE_CONFIG=/custom/config/dir        # Base directory for all Mnethos config files (default: ~/.mnethos)
-FORGE_MAX_SEARCH_RESULT_BYTES=10240   # Maximum bytes for search results (default: 10240 - 10 KB)
-FORGE_HISTORY_FILE=/path/to/history    # Custom path for Mnethos history file (default: uses system default location)
-FORGE_BANNER="Your custom banner text" # Custom banner text to display on startup (default: Mnethos ASCII art)
-FORGE_MAX_CONVERSATIONS=100            # Maximum number of conversations to show in list (default: 100)
-FORGE_MAX_LINE_LENGTH=2000             # Maximum characters per line for file read operations (default: 2000)
-FORGE_STDOUT_MAX_LINE_LENGTH=2000      # Maximum characters per line for shell output (default: 2000)
+MNETHOS_CONFIG=/custom/config/dir       # Base directory for all Mnethos config files (default: ~/.mnethos)
+MNETHOS_MAX_SEARCH_RESULT_BYTES=10240   # Maximum bytes for search results (default: 10240 - 10 KB)
+MNETHOS_CUSTOM_HISTORY_PATH=/path/to/history  # Custom path for Mnethos history file (default: uses system default location)
+MNETHOS_BANNER="Your custom banner text"  # Custom banner text to display on startup (default: Mnethos ASCII art)
+MNETHOS_MAX_CONVERSATIONS=100           # Maximum number of conversations to show in list (default: 100)
+MNETHOS_MAX_LINE_CHARS=2000             # Maximum characters per line for file read operations (default: 2000)
+MNETHOS_MAX_STDOUT_LINE_CHARS=2000      # Maximum characters per line for shell output (default: 2000)
 SHELL=/bin/zsh                         # Shell to use for command execution (Unix/Linux/macOS)
 COMSPEC=cmd.exe                        # Command processor to use (Windows)
 ```
@@ -883,8 +865,8 @@ Configure semantic search behavior for code understanding:
 
 ```bash
 # .env
-FORGE_SEM_SEARCH_LIMIT=200            # Maximum number of results to return from initial vector search (default: 200)
-FORGE_SEM_SEARCH_TOP_K=20             # Top-k parameter for relevance filtering during semantic search (default: 20)
+MNETHOS_MAX_SEM_SEARCH_RESULTS=200      # Maximum number of results to return from initial vector search (default: 200)
+MNETHOS_SEM_SEARCH_TOP_K=20             # Top-k parameter for relevance filtering during semantic search (default: 20)
 ```
 
 </details>
@@ -896,10 +878,10 @@ Configure logging verbosity and output:
 
 ```bash
 # .env
-FORGE_LOG=mnethos=info                  # Log filter level (default: mnethos=debug when tracking disabled, mnethos=info when tracking enabled)
+MNETHOS_LOG=mnethos=info                # Log filter level (default: mnethos=debug when tracking disabled, mnethos=info when tracking enabled)
 ```
 
-The `FORGE_LOG` variable controls the logging level for Mnethos's internal operations using the standard tracing filter syntax. Common values:
+The `MNETHOS_LOG` variable controls the logging level for Mnethos's internal operations using the standard tracing filter syntax. Common values:
 - `mnethos=error` - Only errors
 - `mnethos=warn` - Warnings and errors
 - `mnethos=info` - Informational messages (default when tracking enabled)
@@ -915,10 +897,10 @@ Control tracking of user-identifying metadata in telemetry events:
 
 ```bash
 # .env
-FORGE_TRACKER=false                   # Disable tracking enrichment metadata (default: true)
+MNETHOS_TRACKER=false                   # Disable tracking enrichment metadata (default: true)
 ```
 
-The `FORGE_TRACKER` variable controls whether tracking enrichment metadata is included in telemetry events.
+The `MNETHOS_TRACKER` variable controls whether tracking enrichment metadata is included in telemetry events.
 
 </details>
 
@@ -1090,7 +1072,7 @@ MCP tools can be used as part of multi-agent workflows, allowing specialized age
 
 ## Documentation
 
-For comprehensive documentation on all features and capabilities, please visit the [documentation site](https://github.com/tailcallhq/forgecode/tree/main/docs).
+For comprehensive documentation on all features and capabilities, please visit the [documentation site](https://mnethos.com/docs).
 
 ---
 
@@ -1101,7 +1083,7 @@ For comprehensive documentation on all features and capabilities, please visit t
 curl -fsSL https://mnethos.com/cli | sh
 
 # Package managers
-nix run github:tailcallhq/forgecode # for latest dev branch
+nix run github:cortex-db/mnethos # for latest dev branch
 ```
 
 ---

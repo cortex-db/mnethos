@@ -20,12 +20,12 @@ CYAN='\033[36m'
 PASS=0
 FAIL=0
 
-# Resolve the forge binary (prefer local debug build)
+# Resolve the mnethos binary (prefer local debug build)
 SCRIPT_DIR="${0:A:h}"
-MNETHOS_BIN="${MNETHOS_BIN:-${SCRIPT_DIR}/../target/debug/forge}"
+MNETHOS_BIN="${MNETHOS_BIN:-${SCRIPT_DIR}/../target/debug/mnethos}"
 
 if [[ ! -x "$MNETHOS_BIN" ]]; then
-    echo "${RED}forge binary not found at ${MNETHOS_BIN}${RESET}"
+    echo "${RED}mnethos binary not found at ${MNETHOS_BIN}${RESET}"
     echo "Run: cargo build -p forge_main"
     exit 1
 fi

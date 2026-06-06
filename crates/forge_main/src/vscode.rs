@@ -15,9 +15,9 @@ pub fn is_vscode_terminal() -> bool {
         || std::env::var("VSCODE_GIT_IPC_HANDLE").is_ok()
 }
 
-/// Checks if the Forge VS Code extension is installed
+/// Checks if the Mnethos VS Code extension is installed
 ///
-/// Checks VS Code's extension list to see if ForgeCode.forge-vscode is
+/// Checks VS Code's extension list to see if Mnethos.mnethos-vscode is
 /// installed.
 pub fn is_extension_installed() -> bool {
     // Try to list installed extensions
@@ -27,19 +27,19 @@ pub fn is_extension_installed() -> bool {
     {
         return extensions
             .lines()
-            .any(|line| line.trim() == "ForgeCode.forge-vscode");
+            .any(|line| line.trim() == "Mnethos.mnethos-vscode");
     }
     false
 }
 
-/// Attempts to install the Forge VS Code extension silently
+/// Attempts to install the Mnethos VS Code extension silently
 ///
 /// Returns Ok(true) if installation was successful, Ok(false) if it failed,
 /// or Err if the command couldn't be executed.
 pub fn install_extension() -> Result<bool, std::io::Error> {
     let output = Command::new("code")
         .arg("--install-extension")
-        .arg("ForgeCode.forge-vscode")
+        .arg("Mnethos.mnethos-vscode")
         .arg("--force")
         .output()?;
 

@@ -190,9 +190,9 @@ impl<F: forge_app::FileWriterInfra + 'static> ForgeHttpInfra<F> {
         let mut headers = headers.unwrap_or_default();
         // Only set User-Agent if the provider hasn't already set one
         if !headers.contains_key("User-Agent") {
-            headers.insert("User-Agent", HeaderValue::from_static("Forge"));
+            headers.insert("User-Agent", HeaderValue::from_static("Mnethos"));
         }
-        headers.insert("X-Title", HeaderValue::from_static("forge"));
+        headers.insert("X-Title", HeaderValue::from_static("Mnethos"));
         headers.insert(
             "x-app-version",
             HeaderValue::from_str(format!("v{VERSION}").as_str())

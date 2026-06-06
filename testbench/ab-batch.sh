@@ -89,7 +89,7 @@ for i in $(seq 1 "$N"); do
     export MEMORY=0; unset KEEP_MEMORY 2>/dev/null || true
     if guarded_run "$TASK_DELETE" "$OUT/baseline-$i.log"; then
         m="$(newest_metrics add-delete-command)"
-        [ -n "$m" ] && cp "$m" "$OUT/baseline-$i.json" && log "  baseline-$i grand=$(jq -r '.tokens.grand_total' "$m") files=$(jq -r '.files_changed' "$m")"
+        [ -n "$m" ] && cp "$m" "$OUT/baseline-$i.json" && log "  baseline-$i tokens=$(jq -r '.tokens.agent_task.total' "$m") files=$(jq -r '.files_changed' "$m")"
     else
         log "  baseline-$i FAILED (timeout/err) — dropped"
     fi
@@ -102,7 +102,7 @@ for i in $(seq 1 "$N"); do
     export MEMORY=1 KEEP_MEMORY=1
     if guarded_run "$TASK_DELETE" "$OUT/warm-$i.log"; then
         m="$(newest_metrics add-delete-command)"
-        [ -n "$m" ] && cp "$m" "$OUT/warm-$i.json" && log "  warm-$i grand=$(jq -r '.tokens.grand_total' "$m") recalled=$(jq -r '.recalled' "$m") files=$(jq -r '.files_changed' "$m")"
+        [ -n "$m" ] && cp "$m" "$OUT/warm-$i.json" && log "  warm-$i tokens=$(jq -r '.tokens.agent_task.total' "$m") files=$(jq -r '.files_changed' "$m")"
     else
         log "  warm-$i FAILED (timeout/err) — dropped"
     fi
@@ -118,13 +118,9 @@ summarize() { # $1 = baseline|warm
                     | if $n==0 then null else $s[(($n-1)/2)|floor] end;
         map(select(.files_changed>=2)) as $ok |
         {branch:$b, n_ok:($ok|length), n_total:length,
-         grand_median:      ($ok|med(.tokens.grand_total)),
          agent_task_median: ($ok|med(.tokens.agent_task.total)),
          wall_median:       ($ok|med(.wall_clock_secs)),
-         grand:             ($ok|map(.tokens.grand_total)),
          agent_task:        ($ok|map(.tokens.agent_task.total)),
-         anchor:            ($ok|map(.tokens.anchor_extraction_total)),
-         consolidation:     ($ok|map(.tokens.consolidation_total)),
          wall:              ($ok|map(.wall_clock_secs))}' $files
 }
 

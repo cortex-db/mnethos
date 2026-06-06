@@ -4,15 +4,15 @@
 # Copies a pristine fixture project into a fresh, ISOLATED git repo and runs the
 # mnethos agent on a task INSIDE that copy — the fixture itself is never touched.
 #
-# ONE memory switch: MEMORY=1 (default) turns the WHOLE memory flow on (the
-# single MNETHOS_MEMORY flag → retrieval recalls+injects at start, consolidation
-# extracts+writes at end). MEMORY=0 runs a PURE agent with no memory at all — the
-# true A/B baseline. Either way the agent-task token usage is read back from the
+# ONE memory switch: MEMORY=1 (default) turns memory ON (the single MNETHOS_MEMORY
+# flag → the agent is offered the remember + mem_search tools and uses them inside
+# its own loop). MEMORY=0 runs a PURE agent with no memory tools at all — the true
+# A/B baseline. Either way the agent-task token usage is read back from the
 # persisted conversation (DB), so metrics work in both modes.
 #
-# Memory writes/recall need the isolated test config (run setup-memory-user.sh
-# first → testbench/.mnethos-test, a dedicated awm user). Without it, MEMORY=1
-# still runs the memory LLM calls but read/write are no-ops.
+# The memory tools need the isolated test config (run setup-memory-user.sh first →
+# testbench/.mnethos-test, a dedicated awm user). Without it, the remember/mem_search
+# tools are still offered but their reads/writes are no-ops.
 #
 # Usage:
 #   bash testbench/run-test.sh [TASK_FILE]
@@ -24,7 +24,7 @@
 #   FIXTURE=<dir>       pristine project to copy (default: fixtures/todo-cli)
 #   MNETHOS_BIN=<path>  agent binary           (default: target/debug/mnethos)
 #   RUN_ROOT=<dir>      where run copies live  (default: $TMPDIR/mnethos-testruns)
-#   MNETHOS_EXTRA=...   extra flags passed to mnethos (e.g. "--agent forge -C .")
+#   MNETHOS_EXTRA=...   extra flags passed to mnethos (e.g. "--agent smith -C .")
 set -euo pipefail
 
 MEMORY="${MEMORY:-1}"
@@ -72,10 +72,10 @@ git add -A
 git -c user.email="test@mnethos.dev" -c user.name="mnethos-test" commit -q -m "fixture baseline"
 
 # 2.5) Decide the memory switch. Always point mnethos at the isolated test
-#      config when it exists (own DB + creds + memory provider). MEMORY=1 turns
-#      the whole memory flow on (MNETHOS_MEMORY) and wipes the graph first
-#      (unless KEEP_MEMORY=1, so a run can recall prior runs). MEMORY=0 is the
-#      pure-agent baseline: no memory flag, no recall, no consolidation, no wipe.
+#      config when it exists (own DB + creds + memory provider). MEMORY=1 offers
+#      the memory tools (MNETHOS_MEMORY) and wipes the graph first (unless
+#      KEEP_MEMORY=1, so a run can recall prior runs). MEMORY=0 is the pure-agent
+#      baseline: no memory tools, no recall, no wipe.
 TEST_CONFIG_DIR="$SCRIPT_DIR/.mnethos-test"
 if [ -f "$TEST_CONFIG_DIR/test-memory.env" ]; then
     # shellcheck disable=SC1090
@@ -84,7 +84,7 @@ if [ -f "$TEST_CONFIG_DIR/test-memory.env" ]; then
 fi
 
 if [ "$MEMORY" = "1" ]; then
-    export MNETHOS_MEMORY=1   # single switch: turns the whole memory flow on
+    export MNETHOS_MEMORY=1   # single switch: offers the remember + mem_search tools
     if [ -f "$TEST_CONFIG_DIR/test-memory.env" ]; then
         echo ">>> memory: ON  (full flow; config=$MNETHOS_CONFIG  awm=$AWM_URL)"
         if [ "${KEEP_MEMORY:-0}" = "1" ]; then
@@ -103,7 +103,7 @@ if [ "$MEMORY" = "1" ]; then
         echo ">>> memory: ON but NO test config — recall/write are no-ops (run setup-memory-user.sh)"
     fi
 else
-    echo ">>> memory: OFF  (pure-agent baseline — no recall, no consolidation)"
+    echo ">>> memory: OFF  (pure-agent baseline — no memory tools)"
 fi
 echo
 
@@ -118,7 +118,7 @@ run_secs=$SECONDS
 echo "----------------------------------------------------------------"
 echo
 
-# 4) Report: what changed + where the consolidation snapshot landed.
+# 4) Report: what the agent changed.
 echo ">>> file changes vs baseline:"
 git --no-pager diff --stat || true
 echo
@@ -129,56 +129,10 @@ dest="$REPO_ROOT/testbench/runs/${task_name}-${stamp}"
 mkdir -p "$dest"
 git --no-pager diff > "$dest/model.diff" 2>/dev/null || true
 
-echo ">>> RETRIEVAL (pre-request) snapshot(s):"
-if ls .mnethos/retrieval/*.json >/dev/null 2>&1; then
-    ls -la .mnethos/retrieval/*.json
-    for f in .mnethos/retrieval/*.json; do cp "$f" "$dest/retrieval-$(basename "$f")"; done
-    for f in .mnethos/retrieval/*.json; do
-        echo "  recalled=$(jq -r '.recalled_count // 0' "$f" 2>/dev/null)  injected=$(jq -r '.injected // false' "$f" 2>/dev/null)  anchors=$(jq -rc '.anchors // []' "$f" 2>/dev/null)"
-    done
-else
-    echo "  (none written)"
-fi
-echo
-echo ">>> CONSOLIDATION (post-task) raw snapshot(s):"
-if ls .mnethos/consolidation/*.json >/dev/null 2>&1; then
-    ls -la .mnethos/consolidation/*.json
-    for f in .mnethos/consolidation/*.json; do cp "$f" "$dest/consolidation-$(basename "$f")"; done
-else
-    echo "  (none written — check that the agent reached the End event)"
-fi
-echo
-echo ">>> EPISODES (consolidation model output):"
-if ls .mnethos/episodes/*.json >/dev/null 2>&1; then
-    ls -la .mnethos/episodes/*.json
-    for f in .mnethos/episodes/*.json; do cp "$f" "$dest/episodes-$(basename "$f")"; done
-    for f in .mnethos/episodes/*.json; do
-        echo "  episode_count=$(jq -r '.episode_count // "?"' "$f" 2>/dev/null)  parsed_ok=$(jq -r '.parsed_ok // "?"' "$f" 2>/dev/null)"
-    done
-else
-    echo "  (none written)"
-fi
-echo
-echo
-# 5) METRICS — wall-clock + FULL token accounting for A/B (memory on vs off).
-#    Three buckets:
-#      * agent_task  — the agent's own requests. Read from the PERSISTED
-#        conversation (DB), so it works whether or not the memory flow ran;
-#        equals conversation.accumulate_usage().
-#      * anchor      — read-side overhead (anchor-extraction call), MEMORY=1 only.
-#      * consolidation — write-side overhead (whole convo → episodes), MEMORY=1 only.
-#    grand_total = agent_task + anchor + consolidation = true cost of the run.
-# NOTE: snapshots are absent when MEMORY=0; every lookup below must tolerate that
-# without tripping `set -euo pipefail` (|| true on globs, file guards on jq).
-retr="$(ls -t "$dest"/retrieval-*.json 2>/dev/null | head -1 || true)"
-epis="$(ls -t "$dest"/episodes-*.json 2>/dev/null | head -1 || true)"
-# TokenCount serializes as {"actual": N}; reach through .actual, else bare number, else 0.
-tok() { # $1=file $2=root-path $3=field   → 0 if file missing/unparsable
-    [ -f "$1" ] || { echo 0; return; }
-    jq -r "((($2) // {}) | (.$3.actual // .$3)) // 0" "$1" 2>/dev/null || echo 0
-}
-# agent_task: sum per-message usage of the latest persisted conversation
-# (flag-independent — works whether or not the memory flow ran).
+# 5) METRICS — wall-clock + token accounting. The agent's own requests (including
+#    any remember/mem_search tool calls, which run inside the agent loop) are read
+#    from the PERSISTED conversation (DB), so this works whether or not memory was
+#    on. NOTE: tolerate a missing DB without tripping `set -euo pipefail`.
 db="${MNETHOS_CONFIG:-/nonexistent}/.mnethos.db"
 dbtok() {
     [ -f "$db" ] || { echo 0; return; }
@@ -189,36 +143,21 @@ task_total="$(dbtok total_tokens)"
 task_prompt="$(dbtok prompt_tokens)"
 task_completion="$(dbtok completion_tokens)"
 task_cached="$(dbtok cached_tokens)"
-anchor_total="$(tok "$retr" .anchor_extraction_usage total_tokens)"
-consol_total="$(tok "$epis" .consolidation_usage total_tokens)"
-grand_total=$(( ${task_total:-0} + ${anchor_total:-0} + ${consol_total:-0} ))
-if [ -f "$retr" ]; then
-    recalled="$(jq -r '.recalled_count // 0' "$retr" 2>/dev/null || echo 0)"
-    injected="$(jq -r '.injected // false' "$retr" 2>/dev/null || echo false)"
-else
-    recalled=0; injected=false
-fi
 files_changed="$(git --no-pager diff --numstat 2>/dev/null | wc -l | tr -d ' ')"
 
 jq -n --arg task "$task_name" --argjson mem "$MEMORY" --argjson wall "$run_secs" \
-   --argjson recalled "${recalled:-0}" --argjson injected "${injected:-false}" \
    --argjson files "${files_changed:-0}" \
    --argjson tt "${task_total:-0}" --argjson tp "${task_prompt:-0}" \
    --argjson tc "${task_completion:-0}" --argjson tk "${task_cached:-0}" \
-   --argjson an "${anchor_total:-0}" --argjson co "${consol_total:-0}" \
-   --argjson gt "${grand_total:-0}" \
-   '{task:$task, memory:$mem, wall_clock_secs:$wall, recalled:$recalled, injected:$injected, files_changed:$files,
-     tokens:{agent_task:{total:$tt, prompt:$tp, completion:$tc, cached:$tk},
-             anchor_extraction_total:$an, consolidation_total:$co, grand_total:$gt}}' \
+   '{task:$task, memory:$mem, wall_clock_secs:$wall, files_changed:$files,
+     tokens:{agent_task:{total:$tt, prompt:$tp, completion:$tc, cached:$tk}}}' \
    > "$dest/metrics.json" 2>/dev/null
 
-echo ">>> METRICS  (memory=$MEMORY  recalled=$recalled  injected=$injected)"
+echo ">>> METRICS  (memory=$MEMORY)"
 echo "      wall_clock        : ${run_secs}s"
 echo "      agent_task tokens : total=$task_total  prompt=$task_prompt  completion=$task_completion  cached=$task_cached"
-echo "      memory overhead   : anchor_extraction=$anchor_total  consolidation=$consol_total"
-echo "      GRAND TOTAL tokens: $grand_total   (agent_task + anchor + consolidation)"
 echo "      files_chg         : $files_changed"
 echo
 echo ">>> mirrored for inspection: $dest"
-echo ">>> inspect: jq . \"$dest\"/*.json | less    |    model diff: $dest/model.diff"
+echo ">>> inspect: cat \"$dest/metrics.json\"    |    model diff: $dest/model.diff"
 echo ">>> metrics: $dest/metrics.json"

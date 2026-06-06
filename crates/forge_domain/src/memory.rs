@@ -13,7 +13,7 @@ use schemars::JsonSchema;
 use serde::Serialize;
 
 /// Stable per-project memory session key: the working-directory basename. Shared
-/// by the write path (remember tool) and the read path (retrieval hook) so both
+/// by the write path (remember tool) and the read path (mem_search tool) so both
 /// address the same memory-service session. Derived from cwd (available at both
 /// turn start and during tool execution).
 pub fn memory_session_key(cwd: &Path) -> String {

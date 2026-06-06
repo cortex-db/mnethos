@@ -1,15 +1,16 @@
-# testbench — memory observation harness
+# testbench — memory A/B harness
 
 Runs the mnethos agent on a realistic task **inside an isolated copy** of a
-fixture project, then captures the consolidation snapshot so we can design the
-real memory layer against real data.
+fixture project, with long-term memory (the `remember` + `mem_search` tools)
+either ON or OFF, so we can measure whether memory helps against real data.
 
 ```
 testbench/
   fixtures/todo-cli/      pristine test project (NEVER modified by the agent)
   tasks/                  task prompts fed to the agent
   run-test.sh             harness: copy → isolate → run → collect
-  runs/                   per-run snapshots + diffs (gitignored)
+  ab-batch.sh             health-gated A/B batch (N samples, medians)
+  runs/                   per-run metrics + diffs (gitignored)
 ```
 
 ## Why this fixture/task
@@ -41,15 +42,14 @@ bash testbench/run-test.sh testbench/tasks/add-delete-command.md
 ```
 
 The fixture stays pristine; each run gets a fresh isolated git repo under
-`$TMPDIR/mnethos-testruns/`. Snapshots + the model's diff are mirrored into
+`$TMPDIR/mnethos-testruns/`. Metrics + the model's diff are mirrored into
 `testbench/runs/<task>-<timestamp>/` for inspection.
 
-## Inspect the consolidation snapshot
+## Inspect a run
+
+Each run mirrors its results into `testbench/runs/<task>-<timestamp>/`:
 
 ```bash
-jq . testbench/runs/*/*.json | less
-# message roles + tool-call counts:
-jq '.conversation.context.messages[] | {role: .message.role, tools: (.message.tool_calls|length)}' testbench/runs/*/*.json
-# files the agent touched:
-jq '.conversation.metrics.file_operations' testbench/runs/*/*.json
+cat testbench/runs/*/metrics.json     # wall-clock + agent_task tokens + files-changed
+less testbench/runs/*/model.diff       # the change the agent made
 ```

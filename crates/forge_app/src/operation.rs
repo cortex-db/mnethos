@@ -652,8 +652,7 @@ impl ToolOperation {
             }
             ToolOperation::MemSearch { items } => {
                 // Prefer L2 episodes (the self-contained recall unit); fall back to
-                // L1 concepts. Rank by activation, cap, date — same policy the old
-                // retrieval hook used, now as the tool's own output.
+                // L1 concepts. Rank by activation, cap at 8, and surface with dates.
                 let mut chosen: Vec<&MemoryRecallItem> =
                     items.iter().filter(|item| item.level == 2).collect();
                 if chosen.is_empty() {

@@ -6,6 +6,11 @@ pub fn release_npm_job() -> Job {
     let matrix = create_npm_matrix();
 
     Job::new("npm_release")
+        // The npm channel (repo cortex-db/npm-mnethos + NPM_ACCESS/NPM_TOKEN
+        // secrets) is not yet provisioned, so allow this job to fail without
+        // failing the overall release run. It starts publishing automatically
+        // once the repository and secrets exist.
+        .continue_on_error(true)
         .strategy(Strategy { fail_fast: None, max_parallel: None, matrix: Some(matrix) })
         .add_step(
             Step::new("Checkout Code")

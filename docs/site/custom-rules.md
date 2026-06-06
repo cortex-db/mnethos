@@ -1,0 +1,144 @@
+---
+title: AGENTS.md
+slug: /custom-rules
+description: Define project-wide development standards that are automatically injected into every Mnethos agent conversation.
+---
+
+# AGENTS.md
+
+Project guidelines allow you to define specific development standards and instructions that shape how AI agents behave in your project. These guidelines act as persistent instructions that get injected into every AI conversation.
+
+> **Looking for best practices and examples?**
+> For comprehensive examples, team management strategies, and real-world use cases, check out our [Project Guidelines Guide](/docs/custom-rules-guide/).
+
+## Getting Started
+
+Project guidelines are defined using an **`AGENTS.md` file** in your project root directory. This file uses markdown format for comprehensive, documentation-style guidelines.
+
+> **File compatibility**
+> `AGENTS.md` is equivalent to `CLAUDE.md`. You can copy content directly between `CLAUDE.md` and `AGENTS.md` without changing instructions.
+
+**Quick Start:**
+
+1. Create `AGENTS.md` in your project root directory
+2. Write your development guidelines using markdown
+3. Guidelines are automatically loaded when the agent starts
+
+The `AGENTS.md` file is ideal for:
+
+- Comprehensive development standards
+- Project-specific architecture patterns
+- Detailed coding conventions
+- Team workflows and best practices
+
+> **info**
+> AGENTS.md supports full markdown formatting including headings, lists, code blocks, and emphasis. This makes it perfect for detailed documentation-style guidelines.
+
+## Complete Example
+
+Here's a real-world `AGENTS.md` file for a full-stack web application:
+
+````markdown
+# Development Guidelines for MyApp
+
+## Core Development Rules
+
+### Application Runtime
+
+- **NEVER** attempt to run the application - it's already running on port 3000 in watch mode
+- The development server is persistent and handles hot reloading automatically
+- Always assume the application is accessible at `http://localhost:3000`
+
+### Package Management
+
+- **Use**: `npm` or `npx` commands exclusively
+- **Avoid**: `yarn` or `pnpm` - not used in this project
+- Always check `package.json` for available scripts before running commands
+
+### Code Quality Standards
+
+- **TypeScript First**: All code must be type-safe with proper type definitions
+- **Component Architecture**: Follow React functional components with hooks
+- **Responsive Design**: Ensure all UI components work across devices
+- **Error Handling**: Always wrap async operations in try-catch blocks
+
+## Project Structure
+
+```
+├── src/
+│   ├── components/      # Reusable React components
+│   ├── pages/           # Next.js pages
+│   ├── services/        # API calls and business logic
+│   ├── utils/           # Helper functions
+│   └── styles/          # Global styles and themes
+├── public/              # Static assets
+└── tests/               # Test files
+```
+
+## Development Focus Areas
+
+### API Integration
+
+- All API calls must go through the `services/` directory
+- Use the custom `apiClient` wrapper for consistent error handling
+- Never hardcode API endpoints - use environment variables
+
+### State Management
+
+- Use React Context for global state
+- Keep component state local when possible
+- Avoid prop drilling - use context or composition
+
+### Testing
+
+- Write unit tests for all utility functions
+- Use React Testing Library for component tests
+- Aim for 80% code coverage on new features
+
+## Restrictions & Limitations
+
+### What NOT to do:
+
+- Run `npm start` or similar server commands (server is already running)
+- Use `any` type in TypeScript
+- Create non-responsive components
+- Skip error handling in async functions
+
+### What TO do:
+
+- Use existing development server
+- Write TypeScript-first code with proper types
+- Follow mobile-first responsive design
+- Add comprehensive error handling
+- Write tests for new features
+
+## Code Style
+
+- Use functional components with hooks (no class components)
+- Prefer `const` over `let`, avoid `var`
+- Use arrow functions for callbacks
+- Keep functions small and focused (max 50 lines)
+- Use meaningful variable names (no single letters except loop counters)
+
+## Before Completing Any Task
+
+- [ ] Code is TypeScript compliant with proper types
+- [ ] Components are responsive and accessible
+- [ ] Error handling is implemented
+- [ ] No attempts to restart the development server
+- [ ] Tests are written and passing
+````
+
+This example shows how to structure comprehensive guidelines that cover runtime behavior, code standards, project structure, and team conventions all in one place.
+
+## How It Works
+
+When you start an AI agent session:
+
+1. **Loading**: The system searches for `AGENTS.md` files in three locations in order of priority:
+   - **Base path** (`~/.mnethos`) - highest priority
+   - **Git root directory** (if available) - medium priority
+   - **Current working directory** (`pwd`) - lowest priority
+
+2. **Injection**: All guidelines from the found file become part of the AI's system prompt
+3. **Application**: AI applies all guidelines to every response in the session

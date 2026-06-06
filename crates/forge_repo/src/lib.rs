@@ -12,7 +12,7 @@ mod skill;
 mod validation;
 
 mod proto_generated {
-    tonic::include_proto!("forge.v1");
+    tonic::include_proto!("mnethos.v1");
 }
 
 mod memorywrite_proto {

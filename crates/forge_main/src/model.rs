@@ -1360,7 +1360,7 @@ mod tests {
     #[test]
     fn test_cli_provider_display_no_domain() {
         let fixture = AnyProvider::Url(Provider {
-            id: ProviderId::FORGE,
+            id: ProviderId::AZURE,
             provider_type: forge_domain::ProviderType::Llm,
             response: Some(ProviderResponse::OpenAI),
             url: Url::parse("http://localhost:8080/chat/completions").unwrap(),
@@ -1374,7 +1374,7 @@ mod tests {
         });
         let formatted = format!("{}", CliProvider(fixture));
         let actual = strip_ansi_codes(&formatted);
-        let expected = "✓ Forge                     [localhost]";
+        let expected = "✓ Azure                     [localhost]";
         assert_eq!(actual, expected);
     }
 
@@ -1402,7 +1402,7 @@ mod tests {
     #[test]
     fn test_cli_provider_display_ip_address() {
         let fixture = AnyProvider::Url(Provider {
-            id: ProviderId::FORGE,
+            id: ProviderId::AZURE,
             provider_type: forge_domain::ProviderType::Llm,
             response: Some(ProviderResponse::OpenAI),
             url: Url::parse("http://192.168.1.1:8080/chat/completions").unwrap(),
@@ -1416,7 +1416,7 @@ mod tests {
         });
         let formatted = format!("{}", CliProvider(fixture));
         let actual = strip_ansi_codes(&formatted);
-        let expected = format!("✓ Forge                     {}", markers::EMPTY);
+        let expected = format!("✓ Azure                     {}", markers::EMPTY);
         assert_eq!(actual, expected);
     }
 

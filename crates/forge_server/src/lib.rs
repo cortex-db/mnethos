@@ -3,7 +3,7 @@
 //! This crate implements the minimal backend contract the Mnethos CLI depends
 //! on: the `auth/user` and `auth/usage` REST endpoints consumed by
 //! `crates/forge_services/src/auth.rs`. It is intentionally self-contained so
-//! the client no longer requires an external `forgecode.dev`-style service to
+//! the client no longer requires an external hosted account service to
 //! resolve account identity and usage.
 //!
 //! The crate exposes:
@@ -11,7 +11,7 @@
 //! - [`store`]: the [`UserStore`] abstraction and an in-memory implementation.
 //! - [`server`]: the HTTP [`Server`] (auth REST) and its pure routing core.
 //! - [`chunk`], [`embedding`], [`workspace`], [`grpc`]: the semantic-search
-//!   context engine (`forge.v1.MnethosService`) backed by the ai-gateway for
+//!   context engine (`mnethos.v1.MnethosService`) backed by the ai-gateway for
 //!   embeddings and an embedded vector store for chunk search.
 
 pub mod chunk;

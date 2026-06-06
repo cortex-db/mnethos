@@ -47,7 +47,6 @@ pub struct ProviderId(Cow<'static, str>);
 
 impl ProviderId {
     // Built-in provider constants
-    pub const FORGE: ProviderId = ProviderId(Cow::Borrowed("forge"));
     pub const OPENAI: ProviderId = ProviderId(Cow::Borrowed("openai"));
     pub const OPEN_ROUTER: ProviderId = ProviderId(Cow::Borrowed("open_router"));
     pub const REQUESTY: ProviderId = ProviderId(Cow::Borrowed("requesty"));
@@ -90,7 +89,6 @@ impl ProviderId {
     /// This includes all providers defined as constants in this implementation.
     pub fn built_in_providers() -> &'static [ProviderId] {
         &[
-            ProviderId::FORGE,
             ProviderId::OPENAI,
             ProviderId::OPEN_ROUTER,
             ProviderId::REQUESTY,
@@ -182,7 +180,6 @@ impl std::str::FromStr for ProviderId {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // Check if it's a built-in provider first
         let provider = match s {
-            "forge" => ProviderId::FORGE,
             "openai" => ProviderId::OPENAI,
             "open_router" => ProviderId::OPEN_ROUTER,
             "requesty" => ProviderId::REQUESTY,

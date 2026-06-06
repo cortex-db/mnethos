@@ -407,7 +407,7 @@ mod tests {
     fn test_agent() -> Agent {
         Agent::new(
             AgentId::new("test_agent"),
-            ProviderId::FORGE,
+            ProviderId::OPENAI,
             ModelId::new("test-model"),
         )
     }

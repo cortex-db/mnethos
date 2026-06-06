@@ -3,7 +3,7 @@
 //! Runs two servers concurrently:
 //! - the **auth REST** API (`/auth/user`, `/auth/usage`, `/health`) on
 //!   [`REST_ADDRESS_ENV`];
-//! - the **context-engine gRPC** service (`forge.v1.MnethosService`) on
+//! - the **context-engine gRPC** service (`mnethos.v1.MnethosService`) on
 //!   [`GRPC_ADDRESS_ENV`].
 //!
 //! In production a TLS-terminating reverse proxy fronts both on a single public
@@ -12,7 +12,7 @@
 
 use std::sync::Arc;
 
-use forge_server::proto::forge::mnethos_service_server::MnethosServiceServer;
+use forge_server::proto::mnethos::mnethos_service_server::MnethosServiceServer;
 use forge_server::workspace::InMemoryWorkspaceStore;
 use forge_server::{
     AiGatewayEmbedder, ContextEngineService, InMemoryUserStore, Server, SharedWorkspaceStore,

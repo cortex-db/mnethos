@@ -5,9 +5,9 @@
 //! descriptive names so the rest of the crate does not reference the raw
 //! `include_proto!` macro output.
 
-/// `forge.v1` — the context-engine service implemented by this server.
-pub mod forge {
-    tonic::include_proto!("forge.v1");
+/// `mnethos.v1` — the context-engine service implemented by this server.
+pub mod mnethos {
+    tonic::include_proto!("mnethos.v1");
 }
 
 /// `ai_gateway.v1` — the embedding gateway this server calls for embeddings.

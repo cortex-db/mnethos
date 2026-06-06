@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-package forge.v1;
+package mnethos.v1;
 
 // Main service for interacting with Mnethos's context engine
 service MnethosService {

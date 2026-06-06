@@ -1,4 +1,4 @@
-//! `forge.v1.MnethosService` gRPC implementation — the context engine.
+//! `mnethos.v1.MnethosService` gRPC implementation — the context engine.
 //!
 //! This service is what the Mnethos CLI's `services_url` gRPC channel talks to.
 //! It implements the nine RPCs the client actually calls (workspace lifecycle,
@@ -16,9 +16,9 @@ use tonic::{Request, Response, Status};
 
 use crate::chunk::{chunk_file, ChunkConfig};
 use crate::embedding::Embedder;
-use crate::proto::forge::mnethos_service_server::MnethosService;
-use crate::proto::forge::node_data::Kind as NodeKindData;
-use crate::proto::forge::{
+use crate::proto::mnethos::mnethos_service_server::MnethosService;
+use crate::proto::mnethos::node_data::Kind as NodeKindData;
+use crate::proto::mnethos::{
     BuildTextPatchRequest, BuildTextPatchResponse, ChunkFilesRequest, ChunkFilesResponse,
     CreateApiKeyRequest, CreateApiKeyResponse, CreateWorkspaceRequest, CreateWorkspaceResponse,
     DeleteFilesRequest, DeleteFilesResponse, DeleteWorkspaceRequest, DeleteWorkspaceResponse,
@@ -391,7 +391,7 @@ mod tests {
 
     use super::*;
     use crate::embedding::tests::FakeEmbedder;
-    use crate::proto::forge::{FileUploadContent, Query};
+    use crate::proto::mnethos::{FileUploadContent, Query};
     use crate::workspace::InMemoryWorkspaceStore;
 
     fn fixture() -> ContextEngineService<FakeEmbedder> {
@@ -403,7 +403,7 @@ mod tests {
     async fn make_workspace(service: &ContextEngineService<FakeEmbedder>) -> String {
         let response = service
             .create_workspace(Request::new(CreateWorkspaceRequest {
-                workspace: Some(crate::proto::forge::WorkspaceDefinition {
+                workspace: Some(crate::proto::mnethos::WorkspaceDefinition {
                     working_dir: "/repo".to_string(),
                     min_chunk_size: 0,
                     max_chunk_size: 0,
@@ -436,12 +436,12 @@ mod tests {
                 workspace_id: Some(WorkspaceId { id: id.clone() }),
                 content: Some(FileUploadContent {
                     files: vec![
-                        crate::proto::forge::File {
+                        crate::proto::mnethos::File {
                             path: "auth.rs".to_string(),
                             content: "fn authenticate_user(token: &str) -> bool { true }"
                                 .to_string(),
                         },
-                        crate::proto::forge::File {
+                        crate::proto::mnethos::File {
                             path: "math.rs".to_string(),
                             content: "fn add(a: i32, b: i32) -> i32 { a + b }".to_string(),
                         },
@@ -483,7 +483,7 @@ mod tests {
             .upload_files(Request::new(UploadFilesRequest {
                 workspace_id: Some(WorkspaceId { id: id.clone() }),
                 content: Some(FileUploadContent {
-                    files: vec![crate::proto::forge::File {
+                    files: vec![crate::proto::mnethos::File {
                         path: "a.rs".to_string(),
                         content: "fn main() {}".to_string(),
                     }],

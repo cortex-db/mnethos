@@ -178,7 +178,6 @@ fn is_gemini3_model(req: &Request) -> bool {
 /// function checks if provider supports open-router parameters.
 fn supports_open_router_params(provider: &Provider<Url>) -> bool {
     provider.id == ProviderId::OPEN_ROUTER
-        || provider.id == ProviderId::FORGE
         || provider.id == ProviderId::ZAI
         || provider.id == ProviderId::ZAI_CODING
 }
@@ -203,22 +202,6 @@ mod tests {
             )),
             url_params: HashMap::new(),
         })
-    }
-
-    fn forge(key: &str) -> Provider<Url> {
-        Provider {
-            id: ProviderId::FORGE,
-            provider_type: Default::default(),
-            response: Some(ProviderResponse::OpenAI),
-            url: Url::parse("https://antinomy.ai/api/v1/chat/completions").unwrap(),
-            auth_methods: vec![forge_domain::AuthMethod::ApiKey],
-            url_params: vec![],
-            credential: make_credential(ProviderId::FORGE, key),
-            custom_headers: None,
-            models: Some(ModelSource::Url(
-                Url::parse("https://antinomy.ai/api/v1/models").unwrap(),
-            )),
-        }
     }
 
     fn zai(key: &str) -> Provider<Url> {
@@ -424,7 +407,6 @@ mod tests {
 
     #[test]
     fn test_supports_open_router_params() {
-        assert!(supports_open_router_params(&forge("forge")));
         assert!(supports_open_router_params(&open_router("open-router")));
 
         assert!(!supports_open_router_params(&requesty("requesty")));

@@ -305,11 +305,6 @@ impl<
 
         let mut providers: Vec<AnyProvider> = Vec::new();
         for config in configs {
-            // Skip Forge provider as it's handled specially
-            if config.id == ProviderId::FORGE {
-                continue;
-            }
-
             // Try to create configured template provider, fallback to unconfigured
             let provider_entry = if let Ok(provider) = self.create_provider(&config).await {
                 Some(provider.into())
@@ -350,11 +345,10 @@ impl<
         let has_anthropic_url = self.infra.get_env_var("ANTHROPIC_URL").is_some();
 
         for config in configs {
-            // Skip Forge provider and non-LLM providers (ContextEngine, Memory) —
-            // they're not configurable via env like other providers and must not
-            // receive an empty-key credential during migration.
-            if config.id == ProviderId::FORGE
-                || config.provider_type == ProviderType::ContextEngine
+            // Skip non-LLM providers (ContextEngine, Memory) — they're not
+            // configurable via env like other providers and must not receive an
+            // empty-key credential during migration.
+            if config.provider_type == ProviderType::ContextEngine
                 || config.provider_type == ProviderType::Memory
             {
                 continue;
@@ -553,12 +547,6 @@ impl<
         &self,
         id: ProviderId,
     ) -> anyhow::Result<forge_domain::ProviderTemplate> {
-        // Handle special cases first
-        if id == ProviderId::FORGE {
-            // Forge provider isn't typically configured via env vars in the registry
-            return Err(Error::provider_not_available(ProviderId::FORGE).into());
-        }
-
         // Look up provider from cached providers - return configured template providers
         self.get_providers()
             .await

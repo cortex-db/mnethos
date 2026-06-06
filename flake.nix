@@ -1,5 +1,5 @@
 {
-  description = "forge: AI enabled pair programmer for Claude, GPT, O Series, Grok, Deepseek, Gemini and 300+ models";
+  description = "mnethos: AI enabled pair programmer for Claude, GPT, O Series, Grok, Deepseek, Gemini and 300+ models";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -34,8 +34,8 @@
               && baseNameOf path != "target"
               && baseNameOf path != "result";
           };
-          forge = pkgs.rustPlatform.buildRustPackage {
-            pname = "forge";
+          mnethos = pkgs.rustPlatform.buildRustPackage {
+            pname = "mnethos";
             version = "0.1.0-dev";
             inherit src;
 
@@ -48,13 +48,13 @@
               "-p"
               "forge_main"
               "--bin"
-              "forge"
+              "mnethos"
             ];
             cargoInstallFlags = [
               "-p"
               "forge_main"
               "--bin"
-              "forge"
+              "mnethos"
             ];
 
             nativeBuildInputs = [
@@ -87,28 +87,28 @@
             doCheck = false;
 
             meta = {
-              description = "forge: AI enabled pair programmer for Claude, GPT, O Series, Grok, Deepseek, Gemini and 300+ models";
+              description = "mnethos: AI enabled pair programmer for Claude, GPT, O Series, Grok, Deepseek, Gemini and 300+ models";
               homepage = "https://mnethos.com";
               license = lib.licenses.mit;
-              mainProgram = "forge";
+              mainProgram = "mnethos";
               platforms = lib.platforms.unix;
             };
           };
         in
         {
-          default = forge;
-          forge = forge;
+          default = mnethos;
+          mnethos = mnethos;
         }
       );
 
       apps = forAllSystems (system: {
         default = {
           type = "app";
-          program = "${self.packages.${system}.default}/bin/forge";
+          program = "${self.packages.${system}.default}/bin/mnethos";
         };
-        forge = {
+        mnethos = {
           type = "app";
-          program = "${self.packages.${system}.forge}/bin/forge";
+          program = "${self.packages.${system}.mnethos}/bin/mnethos";
         };
       });
 

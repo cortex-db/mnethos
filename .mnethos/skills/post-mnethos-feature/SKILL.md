@@ -1,11 +1,11 @@
 ---
-name: post-forge-feature
-description: Generate a Twitter/X post highlighting a Forge feature. Use when the user asks to write a tweet, create a Twitter post, or promote a ForgeCode feature on social media. The post always accompanies an attached video demonstrating the feature.
+name: post-mnethos-feature
+description: Generate a Twitter/X post highlighting a Mnethos feature. Use when the user asks to write a tweet, create a Twitter post, or promote a Mnethos feature on social media. The post always accompanies an attached video demonstrating the feature.
 ---
 
-# Post ForgeCode Feature
+# Post Mnethos Feature
 
-Generate a punchy, developer-friendly Twitter/X post for a ForgeCode feature. The post always accompanies a video, so no need to describe every detail; the video does the showing.
+Generate a punchy, developer-friendly Twitter/X post for a Mnethos feature. The post always accompanies a video, so no need to describe every detail; the video does the showing.
 
 ## Workflow
 
@@ -22,7 +22,7 @@ Generate a punchy, developer-friendly Twitter/X post for a ForgeCode feature. Th
 
 - 2-3 sentences max (fits ~280 chars).
 - No filler phrases ("excited to announce", "game changer", "introducing").
-- Always refer to the product as "ForgeCode", never "Forge" alone.
+- Always refer to the product as "Mnethos".
 - No em dashes anywhere in the post.
 - Lead with the developer benefit or the problem solved, not the feature name.
 - The video is attached. Do not say "watch the video" or describe what is in it.

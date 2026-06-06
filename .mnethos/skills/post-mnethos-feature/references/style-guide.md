@@ -1,4 +1,4 @@
-# Twitter Post Style Guide - ForgeCode Features
+# Twitter Post Style Guide - Mnethos Features
 
 ## Tone
 
@@ -9,12 +9,11 @@
 ## Vocabulary
 
 **Prefer:**
-- "ForgeCode", "agent", "task", "context", "codebase", "workflow"
+- "Mnethos", "agent", "task", "context", "codebase", "workflow"
 - Short, active-voice sentences.
 - Concrete nouns over abstract ones ("file watcher" not "intelligent monitoring capability").
 
 **Avoid:**
-- "Forge" alone as the product name. Always use "ForgeCode".
 - Em dashes (--) anywhere in the post. Use commas, colons, or periods instead.
 - "excited to announce", "thrilled", "proud to share"
 - "game changer", "revolutionary", "supercharge", "unlock", "seamlessly"
@@ -28,12 +27,12 @@
 [What the feature does / how it works, 1 sentence]
 [Optional: when to use it or a concrete example, 1 sentence]
 
-#ForgeCode #[FeatureTag] #AICode
+#Mnethos #[FeatureTag] #AICode
 ```
 
 ## Approved Hashtags
 
-Always end with `#ForgeCode`. Add 1-2 from the list below that best fit:
+Always end with `#Mnethos`. Add 1-2 from the list below that best fit:
 
 - `#AICode` - general AI-assisted coding posts
 - `#DevTools` - tooling and workflow improvements
@@ -47,31 +46,31 @@ Always end with `#ForgeCode`. Add 1-2 from the list below that best fit:
 ## Example Posts
 
 **Custom agents:**
-> ForgeCode lets you define custom agents for specific tasks: code review, refactoring, docs. Each agent gets its own system prompt and tool set. Less context noise, better results.
+> Mnethos lets you define custom agents for specific tasks: code review, refactoring, docs. Each agent gets its own system prompt and tool set. Less context noise, better results.
 >
-> #ForgeCode #Agents #DevTools
+> #Mnethos #Agents #DevTools
 
 **Shell integration:**
-> ForgeCode's shell plugin tracks your terminal history and feeds relevant context to the agent. No more copy-pasting commands to explain what went wrong.
+> Mnethos's shell plugin tracks your terminal history and feeds relevant context to the agent. No more copy-pasting commands to explain what went wrong.
 >
-> #ForgeCode #CLI #DevTools
+> #Mnethos #CLI #DevTools
 
 **Multi-file edits:**
-> ForgeCode can plan and apply changes across multiple files in a single task. Rename a type, update all call sites, fix the tests, done in one pass.
+> Mnethos can plan and apply changes across multiple files in a single task. Rename a type, update all call sites, fix the tests, done in one pass.
 >
-> #ForgeCode #AICode #DevTools
+> #Mnethos #AICode #DevTools
 
 **Context compaction:**
-> Long tasks no longer blow up the context window. ForgeCode automatically compacts older turns while keeping the essential state. Tasks that used to fail mid-way now run to completion.
+> Long tasks no longer blow up the context window. Mnethos automatically compacts older turns while keeping the essential state. Tasks that used to fail mid-way now run to completion.
 >
-> #ForgeCode #ContextWindow #AICode
+> #Mnethos #ContextWindow #AICode
 
 ## Checklist Before Finalizing
 
 - [ ] 2-3 sentences, fits ~280 characters
 - [ ] No banned phrases
 - [ ] No em dashes
-- [ ] Product is referred to as "ForgeCode" throughout
+- [ ] Product is referred to as "Mnethos" throughout
 - [ ] Leads with benefit or problem, not feature name
 - [ ] Does not reference the attached video
-- [ ] Ends with `#ForgeCode` and 1-2 relevant hashtags
+- [ ] Ends with `#Mnethos` and 1-2 relevant hashtags

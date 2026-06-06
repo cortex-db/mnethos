@@ -640,17 +640,7 @@ impl From<&UserUsage> for Info {
 
         let mut info = Info::new().add_title("REQUEST QUOTA");
 
-        if plan.is_upgradeable() {
-            info = info.add_key_value(
-                "Subscription",
-                format!(
-                    "{} [Upgrade https://app.mnethos.com/app/billing]",
-                    plan.r#type.to_uppercase()
-                ),
-            );
-        } else {
-            info = info.add_key_value("Subscription", plan.r#type.to_uppercase());
-        }
+        info = info.add_key_value("Subscription", plan.r#type.to_uppercase());
 
         info = info.add_key_value(
             "Usage",

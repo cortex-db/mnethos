@@ -25,12 +25,6 @@ pub struct Plan {
     pub r#type: String,
 }
 
-impl Plan {
-    pub fn is_upgradeable(&self) -> bool {
-        matches!(self.r#type.to_lowercase().as_str(), "free" | "pro")
-    }
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UsageInfo {

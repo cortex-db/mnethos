@@ -129,28 +129,27 @@ fn render_prompt(prompt: &ForgePrompt) -> ResponsivePrompt {
     let left = prompt.render_prompt_left();
     let indicator = prompt.render_prompt_indicator();
     let right = prompt.render_prompt_right();
-    let right = right.trim_start();
+    let right = right.trim();
 
-    if right.trim().is_empty() {
-        let styled = format!("{left}{indicator}");
-        return ResponsivePrompt { raw: raw_prompt(&styled), styled };
-    }
-
+    // The left prompt is multi-line: the first line carries the dir/branch and
+    // is where the right prompt is aligned, while the editable input sits after
+    // the chevron on the last line. Keep `raw` (rustyline's width/cursor model)
+    // as the left prompt only — the right prompt is padded onto the first line
+    // in `styled`, which is not the line the cursor rests on, so the layout
+    // model stays correct on every platform.
     if let Some((first_line, remaining)) = left.split_once('\n') {
         let raw = raw_prompt(&format!("{first_line}\n{remaining}{indicator}"));
-        let right = render_right_prompt(right);
-        return ResponsivePrompt {
-            raw,
-            styled: format!("{first_line}{right}\n{remaining}{indicator}"),
+        let styled = match align_right(first_line, right) {
+            Some(aligned) => format!("{first_line}{aligned}\n{remaining}{indicator}"),
+            None => format!("{first_line}\n{remaining}{indicator}"),
         };
+        return ResponsivePrompt { raw, styled };
     }
 
-    let raw = raw_prompt(&format!("{left}{indicator}"));
-    let right = render_right_prompt(right);
-    ResponsivePrompt {
-        raw,
-        styled: format!("{left}{right}{indicator}"),
-    }
+    // Degenerate single-line prompt: there is no separate line to host a right
+    // prompt without colliding with the input, so render the left prompt only.
+    let styled = format!("{left}{indicator}");
+    ResponsivePrompt { raw: raw_prompt(&styled), styled }
 }
 
 /// Builds the raw (layout) form of a prompt by stripping every ANSI escape
@@ -166,9 +165,45 @@ fn raw_prompt(styled: &str) -> String {
     strip_ansi_codes(styled).into_owned()
 }
 
-fn render_right_prompt(right: &str) -> String {
-    let width = measure_text_width(strip_ansi_codes(right).as_ref());
-    format!("\x1b[s\x1b[999C\x1b[{width}D{right}\x1b[K\x1b[u")
+/// Right-aligns the styled `right` prompt on the same line as `left_line` using
+/// plain padding spaces.
+///
+/// Earlier versions positioned the right prompt with absolute cursor escapes
+/// (save `\x1b[s`, jump to the far right `\x1b[999C`, restore `\x1b[u`). Those
+/// are honored inconsistently by Windows consoles and IDE-embedded terminals,
+/// where they desynced rustyline's cursor model and made the whole first prompt
+/// line duplicate and slide right on every redraw. Padding with spaces moves no
+/// cursor and keeps `raw`/`styled` in sync everywhere.
+///
+/// Returns `None` when the terminal width is unknown or too narrow to fit both
+/// the left content and the right prompt with at least one space of separation
+/// and a one-column trailing margin (so the line never reaches the right edge
+/// and wraps); the caller then omits the right prompt.
+fn align_right(left_line: &str, right: &str) -> Option<String> {
+    let cols = terminal_size::terminal_size().map(|(w, _)| w.0 as usize)?;
+    align_right_in(left_line, right, cols)
+}
+
+/// Right-aligns `right` after `left_line` within a `cols`-wide terminal.
+///
+/// Split out from [`align_right`] so the padding math is testable without a real
+/// terminal. Returns `None` when `right` is empty or the two cannot coexist on
+/// one line with a separating space and a one-column trailing margin.
+fn align_right_in(left_line: &str, right: &str, cols: usize) -> Option<String> {
+    if right.is_empty() {
+        return None;
+    }
+    let left_w = measure_text_width(strip_ansi_codes(left_line).as_ref());
+    let right_w = measure_text_width(strip_ansi_codes(right).as_ref());
+    // Reserve one trailing column as a margin so a slight width miscount of the
+    // nerd-font glyphs cannot push the line past the right edge into a wrap.
+    let margin = 1;
+    // Require at least one space of separation between left and right content.
+    if cols < left_w + right_w + margin + 1 {
+        return None;
+    }
+    let pad = cols - left_w - right_w - margin;
+    Some(format!("{}{right}", " ".repeat(pad)))
 }
 
 struct ResponsivePrompt {
@@ -324,5 +359,44 @@ mod tests {
             actual.styled.contains('\x1b'),
             "styled prompt should retain ANSI color codes"
         );
+    }
+
+    #[test]
+    fn test_align_right_in_pads_to_right_edge() {
+        // Plain left + right within a wide terminal: padding fills the gap and
+        // leaves a one-column trailing margin (so total width == cols - 1).
+        let actual = align_right_in("left", "RIGHT", 20);
+
+        let expected = Some(format!("{}RIGHT", " ".repeat(20 - 4 - 5 - 1)));
+        assert_eq!(actual, expected);
+        // Visible width never reaches the terminal edge (avoids a wrap).
+        let line = format!("left{}", actual.unwrap());
+        assert_eq!(line.chars().count(), 20 - 1);
+    }
+
+    #[test]
+    fn test_align_right_in_uses_no_cursor_escapes() {
+        // Regression: the right prompt must be padded with spaces only, never
+        // absolute cursor moves (\x1b[s / \x1b[999C / \x1b[u), which slid and
+        // duplicated the prompt on Windows/IDE terminals.
+        let actual = align_right_in("left", "RIGHT", 40).unwrap();
+
+        assert!(!actual.contains('\x1b'));
+        assert!(!actual.contains("999C"));
+    }
+
+    #[test]
+    fn test_align_right_in_too_narrow_returns_none() {
+        // No room for both with a separating space + margin → omit right prompt.
+        let actual = align_right_in("aaaaaa", "bbbbb", 10);
+
+        assert_eq!(actual, None);
+    }
+
+    #[test]
+    fn test_align_right_in_empty_right_returns_none() {
+        let actual = align_right_in("left", "", 80);
+
+        assert_eq!(actual, None);
     }
 }

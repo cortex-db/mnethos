@@ -53,3 +53,6 @@ testbench/**/__pycache__/
 testbench/**/.pytest_cache/
 # Local isolated test config (carries a real awm token + LLM creds) — never commit
 testbench/.mnethos-test/
+
+# Prebuilt Windows binary copied locally for distribution (45MB+, do not commit)
+/mnethos.exe

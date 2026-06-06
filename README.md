@@ -5,7 +5,6 @@
 
 [![CI Status](https://img.shields.io/github/actions/workflow/status/cortex-db/mnethos/ci.yml?style=for-the-badge)](https://github.com/cortex-db/mnethos/actions)
 [![GitHub Release](https://img.shields.io/github/v/release/cortex-db/mnethos?style=for-the-badge)](https://github.com/cortex-db/mnethos/releases)
-[![Discord](https://img.shields.io/discord/1044859667798568962?style=for-the-badge&cacheSeconds=120&logo=discord)](https://discord.gg/kRZBPpkgwq)
 [![CLA assistant](https://cla-assistant.io/readme/badge/cortex-db/mnethos?style=for-the-badge)](https://cla-assistant.io/cortex-db/mnethos)
 
 ---
@@ -43,7 +42,6 @@
   - [Example Use Cases](#example-use-cases)
   - [Usage in Multi-Agent Workflows](#usage-in-multi-agent-workflows)
 - [Documentation](#documentation)
-- [Community](#community)
 - [Support Us](#support-us)
 
 </details>
@@ -1085,14 +1083,6 @@ curl -fsSL https://mnethos.com/cli | sh
 # Package managers
 nix run github:cortex-db/mnethos # for latest dev branch
 ```
-
----
-
-## Community
-
-Join our vibrant Discord community to connect with other Mnethos users and contributors, get help with your projects, share ideas, and provide feedback!
-
-[![Discord](https://img.shields.io/discord/1044859667798568962?style=for-the-badge&cacheSeconds=120&logo=discord)](https://discord.gg/kRZBPpkgwq)
 
 ---
 

@@ -43,9 +43,10 @@ token="$(curl -fsS -X POST "$AWM_URL/me/api-keys" \
 [ -n "$token" ] && [ "$token" != "null" ] || { echo "ERROR: api key creation failed"; exit 1; }
 
 # 4) Build the isolated mnethos test config dir: carry over the LLM credential +
-#    model selection from the real config, then write the memory layer's own
-#    config file (forge_memory reads <config>/memory.json — no core provider
-#    coupling).
+#    model selection from the real config, then add the memory backend as a
+#    `mnethos_memory` provider credential (the same credential-based path users
+#    now use — no bespoke memory.json), and override the memory provider URL to
+#    the local AWM gRPC endpoint.
 rm -rf "$CONFIG_DIR"; mkdir -p "$CONFIG_DIR"
 if [ -f "$HOME/.mnethos/.credentials.json" ]; then
   cp "$HOME/.mnethos/.credentials.json" "$CONFIG_DIR/.credentials.json"
@@ -55,10 +56,26 @@ fi
 [ -f "$HOME/.mnethos/.config.json" ] && cp "$HOME/.mnethos/.config.json" "$CONFIG_DIR/.config.json" || true
 [ -f "$HOME/.mnethos/.mnethos.toml" ] && cp "$HOME/.mnethos/.mnethos.toml" "$CONFIG_DIR/.mnethos.toml" || true
 
-# The memory layer's crate-owned config (read by forge_memory::MemoryConfig).
-jq -n --arg url "$MEMORY_GRPC_URL" --arg t "$token" \
-  '{server_url:$url, token:$t}' > "$CONFIG_DIR/memory.json"
-chmod 600 "$CONFIG_DIR/memory.json"
+# Append the mnethos_memory api_key credential (drop any stale one first), so the
+# memory tools (remember + mem_search) are gated ON for this run.
+tmp_creds="$(mktemp)"
+jq --arg t "$token" \
+  '[.[] | select(.id != "mnethos_memory")] + [{id:"mnethos_memory", auth_details:{api_key:$t}}]' \
+  "$CONFIG_DIR/.credentials.json" > "$tmp_creds"
+mv "$tmp_creds" "$CONFIG_DIR/.credentials.json"
+chmod 600 "$CONFIG_DIR/.credentials.json"
+
+# Stash a credentials variant WITHOUT the memory credential for the MEMORY=0
+# baseline (true A/B: memory tools gated OFF).
+jq '[.[] | select(.id != "mnethos_memory")]' \
+  "$CONFIG_DIR/.credentials.json" > "$CONFIG_DIR/.credentials.nomem.json"
+chmod 600 "$CONFIG_DIR/.credentials.nomem.json"
+
+# Override the mnethos_memory provider URL to the local AWM gRPC endpoint
+# (the built-in default points at production awm.mnethos.com).
+jq -n --arg url "$MEMORY_GRPC_URL" \
+  '[{id:"mnethos_memory", provider_type:"memory", url_param_vars:[], url:$url, auth_methods:["api_key"]}]' \
+  > "$CONFIG_DIR/provider.json"
 
 # 5) Persist token + URLs for the runner's pre-run wipe (DELETE /me/data).
 cat > "$CONFIG_DIR/test-memory.env" <<EOF

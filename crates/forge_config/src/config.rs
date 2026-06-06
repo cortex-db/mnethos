@@ -32,6 +32,8 @@ pub enum ProviderTypeEntry {
     Llm,
     /// Context engine provider for code indexing and search.
     ContextEngine,
+    /// Long-term memory provider for the ai-working-memory backend.
+    Memory,
 }
 
 /// Authentication method supported by a provider.

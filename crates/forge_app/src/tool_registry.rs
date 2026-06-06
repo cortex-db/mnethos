@@ -5,7 +5,7 @@ use anyhow::Context;
 use console::style;
 use forge_domain::{
     Agent, AgentId, AgentInput, ChatResponse, ChatResponseContent, Environment, InputModality,
-    Model, SystemContext, TemplateConfig, ToolCallContext, ToolCallFull, ToolCatalog,
+    Model, ProviderId, SystemContext, TemplateConfig, ToolCallContext, ToolCallFull, ToolCatalog,
     ToolDefinition, ToolKind, ToolName, ToolOutput, ToolResult,
 };
 use forge_template::Element;
@@ -277,11 +277,19 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ToolReg
         };
 
         // The memory tools (`remember` + `mem_search`) are offered only when the
-        // memory layer is on (MNETHOS_MEMORY) AND configured (memory.json present).
-        let memory_supported = std::env::var_os("MNETHOS_MEMORY").is_some()
-            && forge_config::ConfigReader::base_path()
-                .join("memory.json")
-                .exists();
+        // `mnethos_memory` provider is configured (i.e. the user has logged in
+        // and a credential is stored). The backend URL and bearer token are then
+        // sourced from that provider, exactly like any other provider.
+        let memory_supported = self
+            .services
+            .get_all_providers()
+            .await
+            .map(|providers| {
+                providers
+                    .iter()
+                    .any(|p| p.id() == ProviderId::MNETHOS_MEMORY && p.is_configured())
+            })
+            .unwrap_or(false);
 
         Ok(ToolsOverview::new()
             .system(Self::get_system_tools(
@@ -731,6 +739,40 @@ mod tests {
             &template_config,
         );
         assert!(actual.iter().all(|t| t.name.as_str() != "sem_search"));
+    }
+
+    #[test]
+    fn test_memory_tools_included_when_supported() {
+        use fake::{Fake, Faker};
+        let env: Environment = Faker.fake();
+        let template_config = TemplateConfig::default();
+        let actual = ToolRegistry::<()>::get_system_tools(
+            false,
+            true,
+            &env,
+            None,
+            create_test_agents(),
+            &template_config,
+        );
+        assert!(actual.iter().any(|t| t.name.as_str() == "remember"));
+        assert!(actual.iter().any(|t| t.name.as_str() == "mem_search"));
+    }
+
+    #[test]
+    fn test_memory_tools_filtered_when_not_supported() {
+        use fake::{Fake, Faker};
+        let env: Environment = Faker.fake();
+        let template_config = TemplateConfig::default();
+        let actual = ToolRegistry::<()>::get_system_tools(
+            false,
+            false,
+            &env,
+            None,
+            create_test_agents(),
+            &template_config,
+        );
+        assert!(actual.iter().all(|t| t.name.as_str() != "remember"));
+        assert!(actual.iter().all(|t| t.name.as_str() != "mem_search"));
     }
 
     #[test]

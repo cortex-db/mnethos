@@ -4,15 +4,15 @@
 # Copies a pristine fixture project into a fresh, ISOLATED git repo and runs the
 # mnethos agent on a task INSIDE that copy — the fixture itself is never touched.
 #
-# ONE memory switch: MEMORY=1 (default) turns memory ON (the single MNETHOS_MEMORY
-# flag → the agent is offered the remember + mem_search tools and uses them inside
-# its own loop). MEMORY=0 runs a PURE agent with no memory tools at all — the true
-# A/B baseline. Either way the agent-task token usage is read back from the
-# persisted conversation (DB), so metrics work in both modes.
+# ONE memory switch: MEMORY=1 (default) turns memory ON — the agent is offered the
+# remember + mem_search tools (gated by the `mnethos_memory` provider credential)
+# and uses them inside its own loop. MEMORY=0 runs a PURE agent with no memory
+# tools at all — the true A/B baseline. Either way the agent-task token usage is
+# read back from the persisted conversation (DB), so metrics work in both modes.
 #
 # The memory tools need the isolated test config (run setup-memory-user.sh first →
-# testbench/.mnethos-test, a dedicated awm user). Without it, the remember/mem_search
-# tools are still offered but their reads/writes are no-ops.
+# testbench/.mnethos-test, a dedicated awm user with a `mnethos_memory` credential).
+# Without that credential the remember/mem_search tools are not offered at all.
 #
 # Usage:
 #   bash testbench/run-test.sh [TASK_FILE]
@@ -71,22 +71,25 @@ git init -q
 git add -A
 git -c user.email="test@mnethos.dev" -c user.name="mnethos-test" commit -q -m "fixture baseline"
 
-# 2.5) Decide the memory switch. Always point mnethos at the isolated test
-#      config when it exists (own DB + creds + memory provider). MEMORY=1 offers
-#      the memory tools (MNETHOS_MEMORY) and wipes the graph first (unless
-#      KEEP_MEMORY=1, so a run can recall prior runs). MEMORY=0 is the pure-agent
-#      baseline: no memory tools, no recall, no wipe.
+# 2.5) Decide the memory switch. When the isolated test config exists (own creds +
+#      memory provider URL override), run against a PER-RUN COPY of it so the
+#      shared config stays pristine and each run gets its own token-accounting DB.
+#      Memory is gated purely by the presence of the `mnethos_memory` credential:
+#      MEMORY=1 keeps it (tools ON) and wipes the graph first (unless KEEP_MEMORY=1);
+#      MEMORY=0 swaps in the no-memory credentials (tools OFF) for a true A/B baseline.
 TEST_CONFIG_DIR="$SCRIPT_DIR/.mnethos-test"
 if [ -f "$TEST_CONFIG_DIR/test-memory.env" ]; then
     # shellcheck disable=SC1090
     source "$TEST_CONFIG_DIR/test-memory.env"
-    export MNETHOS_CONFIG="$TEST_CONFIG_DIR"
+    RUN_CONFIG="$RUN_DIR/.mnethos-config"
+    mkdir -p "$RUN_CONFIG"
+    cp -R "$TEST_CONFIG_DIR/." "$RUN_CONFIG/"
+    export MNETHOS_CONFIG="$RUN_CONFIG"
 fi
 
 if [ "$MEMORY" = "1" ]; then
-    export MNETHOS_MEMORY=1   # single switch: offers the remember + mem_search tools
     if [ -f "$TEST_CONFIG_DIR/test-memory.env" ]; then
-        echo ">>> memory: ON  (full flow; config=$MNETHOS_CONFIG  awm=$AWM_URL)"
+        echo ">>> memory: ON  (mnethos_memory credential present; config=$MNETHOS_CONFIG  awm=$AWM_URL)"
         if [ "${KEEP_MEMORY:-0}" = "1" ]; then
             echo ">>> KEEP_MEMORY=1 — NOT wiping; this run can recall existing memory"
         else
@@ -100,15 +103,20 @@ if [ "$MEMORY" = "1" ]; then
             fi
         fi
     else
-        echo ">>> memory: ON but NO test config — recall/write are no-ops (run setup-memory-user.sh)"
+        echo ">>> memory: ON requested but NO test config — memory tools will NOT be offered (run setup-memory-user.sh)"
     fi
 else
-    echo ">>> memory: OFF  (pure-agent baseline — no memory tools)"
+    # Pure-agent baseline: drop the memory credential so the tools are gated OFF.
+    if [ -n "${MNETHOS_CONFIG:-}" ] && [ -f "$MNETHOS_CONFIG/.credentials.nomem.json" ]; then
+        cp "$MNETHOS_CONFIG/.credentials.nomem.json" "$MNETHOS_CONFIG/.credentials.json"
+    fi
+    echo ">>> memory: OFF  (pure-agent baseline — mnethos_memory credential removed, no memory tools)"
 fi
 echo
 
-# 3) Run the agent one-shot (timed wall-clock). MNETHOS_MEMORY is exported above
-#    only when MEMORY=1; otherwise the agent runs with no memory flow at all.
+# 3) Run the agent one-shot (timed wall-clock). Memory is gated by the
+#    `mnethos_memory` credential in $MNETHOS_CONFIG (present for MEMORY=1, removed
+#    for MEMORY=0), so the agent runs with or without the memory tools accordingly.
 echo ">>> running agent (memory=$MEMORY)..."
 echo "----------------------------------------------------------------"
 SECONDS=0

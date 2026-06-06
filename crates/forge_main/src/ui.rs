@@ -1151,6 +1151,17 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
             None => return Ok(()),
         };
 
+        // Non-LLM providers (e.g. the memory backend) have no models and must not
+        // become the default chat provider, so skip model selection / default
+        // activation. Configuring (the credential is already stored) is the whole
+        // job for them.
+        if provider.provider_type != forge_domain::ProviderType::Llm {
+            self.writeln_title(
+                TitleFormat::action(format!("{}", provider.id)).sub_title("is now configured"),
+            )?;
+            return Ok(());
+        }
+
         // Set as default and handle model selection
         self.finalize_provider_activation(provider, None).await
     }

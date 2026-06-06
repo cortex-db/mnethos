@@ -844,6 +844,11 @@
           "description": "Context engine provider for code indexing and search.",
           "type": "string",
           "const": "context_engine"
+        },
+        {
+          "description": "Long-term memory provider for the ai-working-memory backend.",
+          "type": "string",
+          "const": "memory"
         }
       ]
     },

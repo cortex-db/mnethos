@@ -526,14 +526,58 @@ impl<F: StrategyFactory> StrategyFactory for ForgeRepo<F> {
     }
 }
 
+impl<
+    F: EnvironmentInfra<Config = forge_config::ForgeConfig>
+        + FileReaderInfra
+        + FileWriterInfra
+        + HttpInfra
+        + Send
+        + Sync,
+> ForgeRepo<F>
+{
+    /// Resolves the memory backend connection from the `mnethos_memory`
+    /// provider: the bearer token from its stored credential and the server URL
+    /// from its (parameter-free) provider URL template.
+    ///
+    /// Returns `None` when the provider is not configured (no stored
+    /// credential), which makes every memory operation a silent no-op.
+    async fn resolve_memory_conn(&self) -> Option<crate::memory::MemoryConn> {
+        let provider = self
+            .provider_repository
+            .get_provider(ProviderId::MNETHOS_MEMORY)
+            .await
+            .ok()?;
+        let token = provider.credential.as_ref()?.auth_details.api_key()?;
+        Some(crate::memory::MemoryConn::new(
+            provider.url.template.clone(),
+            token.as_ref().to_string(),
+        ))
+    }
+}
+
 #[async_trait::async_trait]
-impl<F: Send + Sync> forge_domain::MemoryRepository for ForgeRepo<F> {
+impl<
+    F: EnvironmentInfra<Config = forge_config::ForgeConfig>
+        + FileReaderInfra
+        + FileWriterInfra
+        + HttpInfra
+        + Send
+        + Sync,
+> forge_domain::MemoryRepository for ForgeRepo<F>
+{
     async fn create_episode(
         &self,
         session_key: &str,
         episode: forge_domain::MemoryEpisode,
     ) -> anyhow::Result<Option<forge_domain::MemoryWriteResult>> {
-        self.memory_repo.create_episode(session_key, episode).await
+        let Some(conn) = self.resolve_memory_conn().await else {
+            return Ok(None);
+        };
+        Ok(Some(
+            self.memory_repo
+                .create_episode(&conn, session_key, episode)
+                .await?,
+        ))
     }
 
     async fn retrieve(
@@ -541,7 +585,10 @@ impl<F: Send + Sync> forge_domain::MemoryRepository for ForgeRepo<F> {
         session_key: &str,
         anchors: Vec<String>,
     ) -> anyhow::Result<Vec<forge_domain::MemoryRecallItem>> {
-        self.memory_repo.retrieve(session_key, anchors).await
+        let Some(conn) = self.resolve_memory_conn().await else {
+            return Ok(Vec::new());
+        };
+        self.memory_repo.retrieve(&conn, session_key, anchors).await
     }
 }
 

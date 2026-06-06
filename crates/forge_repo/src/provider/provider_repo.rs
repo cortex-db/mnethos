@@ -171,6 +171,7 @@ impl From<forge_config::ProviderEntry> for ProviderConfig {
             Some(forge_config::ProviderTypeEntry::ContextEngine) => {
                 forge_domain::ProviderType::ContextEngine
             }
+            Some(forge_config::ProviderTypeEntry::Memory) => forge_domain::ProviderType::Memory,
             Some(forge_config::ProviderTypeEntry::Llm) | None => forge_domain::ProviderType::Llm,
         };
 
@@ -349,9 +350,12 @@ impl<
         let has_anthropic_url = self.infra.get_env_var("ANTHROPIC_URL").is_some();
 
         for config in configs {
-            // Skip Forge provider and ContextEngine providers - they're not configurable
-            // via env like other providers
-            if config.id == ProviderId::FORGE || config.provider_type == ProviderType::ContextEngine
+            // Skip Forge provider and non-LLM providers (ContextEngine, Memory) —
+            // they're not configurable via env like other providers and must not
+            // receive an empty-key credential during migration.
+            if config.id == ProviderId::FORGE
+                || config.provider_type == ProviderType::ContextEngine
+                || config.provider_type == ProviderType::Memory
             {
                 continue;
             }

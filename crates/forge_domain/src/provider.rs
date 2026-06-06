@@ -20,6 +20,8 @@ pub enum ProviderType {
     Llm,
     /// Context engine providers for code indexing and search
     ContextEngine,
+    /// Long-term memory providers for the ai-working-memory backend
+    Memory,
 }
 
 /// --- IMPORTANT ---
@@ -65,6 +67,7 @@ impl ProviderId {
         ProviderId(Cow::Borrowed("openai_responses_compatible"));
     pub const ANTHROPIC_COMPATIBLE: ProviderId = ProviderId(Cow::Borrowed("anthropic_compatible"));
     pub const MNETHOS_SERVICES: ProviderId = ProviderId(Cow::Borrowed("mnethos_services"));
+    pub const MNETHOS_MEMORY: ProviderId = ProviderId(Cow::Borrowed("mnethos_memory"));
     pub const IO_INTELLIGENCE: ProviderId = ProviderId(Cow::Borrowed("io_intelligence"));
     pub const BEDROCK: ProviderId = ProviderId(Cow::Borrowed("bedrock"));
     pub const MINIMAX: ProviderId = ProviderId(Cow::Borrowed("minimax"));
@@ -106,6 +109,7 @@ impl ProviderId {
             ProviderId::OPENAI_RESPONSES_COMPATIBLE,
             ProviderId::ANTHROPIC_COMPATIBLE,
             ProviderId::MNETHOS_SERVICES,
+            ProviderId::MNETHOS_MEMORY,
             ProviderId::IO_INTELLIGENCE,
             ProviderId::BEDROCK,
             ProviderId::MINIMAX,
@@ -143,6 +147,7 @@ impl ProviderId {
             "openai_responses_compatible" => "OpenAIResponsesCompatible".to_string(),
             "io_intelligence" => "IOIntelligence".to_string(),
             "mnethos_services" => "Mnethos Services".to_string(),
+            "mnethos_memory" => "Mnethos Memory Service".to_string(),
             "minimax" => "MiniMax".to_string(),
             "codex" => "Codex".to_string(),
             "opencode_zen" => "OpenCode Zen".to_string(),
@@ -195,6 +200,7 @@ impl std::str::FromStr for ProviderId {
             "openai_responses_compatible" => ProviderId::OPENAI_RESPONSES_COMPATIBLE,
             "anthropic_compatible" => ProviderId::ANTHROPIC_COMPATIBLE,
             "mnethos_services" => ProviderId::MNETHOS_SERVICES,
+            "mnethos_memory" => ProviderId::MNETHOS_MEMORY,
             "io_intelligence" => ProviderId::IO_INTELLIGENCE,
             "minimax" => ProviderId::MINIMAX,
             "codex" => ProviderId::CODEX,
@@ -621,6 +627,51 @@ mod tests {
     fn test_mnethos_services_in_built_in_providers() {
         let built_in = ProviderId::built_in_providers();
         assert!(built_in.contains(&ProviderId::MNETHOS_SERVICES));
+    }
+
+    #[test]
+    fn test_mnethos_memory_canonical_id() {
+        let actual = ProviderId::MNETHOS_MEMORY.as_ref();
+        let expected = "mnethos_memory";
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_mnethos_memory_from_str() {
+        let actual = ProviderId::from_str("mnethos_memory").unwrap();
+        let expected = ProviderId::MNETHOS_MEMORY;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_mnethos_memory_display_name() {
+        let actual = ProviderId::MNETHOS_MEMORY.to_string();
+        let expected = "Mnethos Memory Service".to_string();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_mnethos_memory_in_built_in_providers() {
+        let built_in = ProviderId::built_in_providers();
+        assert!(built_in.contains(&ProviderId::MNETHOS_MEMORY));
+    }
+
+    #[test]
+    fn test_provider_type_memory_display() {
+        let actual = ProviderType::Memory.to_string();
+        let expected = "memory".to_string();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_provider_type_memory_serde_roundtrip() {
+        let actual = serde_json::to_string(&ProviderType::Memory).unwrap();
+        let expected = "\"memory\"".to_string();
+        assert_eq!(actual, expected);
+
+        let actual: ProviderType = serde_json::from_str("\"memory\"").unwrap();
+        let expected = ProviderType::Memory;
+        assert_eq!(actual, expected);
     }
 
     #[test]

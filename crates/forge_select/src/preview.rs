@@ -8,8 +8,8 @@ use std::{cmp, fmt};
 use bstr::ByteSlice;
 use crossterm::cursor::{Hide, MoveTo, MoveToColumn, MoveUp, Show};
 use crossterm::event::{
-    self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEvent, KeyModifiers,
-    MouseEventKind,
+    self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEvent, KeyEventKind,
+    KeyModifiers, MouseEventKind,
 };
 use crossterm::style::{
     Attribute, Color, Print, ResetColor, SetAttribute, SetBackgroundColor, SetForegroundColor,
@@ -446,6 +446,7 @@ fn run_select_ui_values(options: SelectUiOptions) -> anyhow::Result<Option<Vec<S
                         PickerAction::Continue => {
                             needs_render = true;
                         }
+                        PickerAction::Ignore => {}
                         PickerAction::PreviewScrollUp => {
                             preview_scroll_offset = preview_scroll_offset.saturating_sub(1);
                             needs_render = true;
@@ -611,6 +612,9 @@ enum PickerAction {
     PreviewScrollDown,
     PreviewPageUp,
     PreviewPageDown,
+    /// No-op for events that must never affect picker state, such as key
+    /// release events emitted by Windows in addition to key presses.
+    Ignore,
 }
 
 fn handle_key_event(
@@ -620,6 +624,16 @@ fn handle_key_event(
     selected_index: &mut usize,
     has_preview: bool,
 ) -> PickerAction {
+    // Windows emits both a press and a release event for every keystroke, while
+    // Unix emits only the press. Without this guard each physical key would be
+    // handled twice: arrow keys would move the cursor two rows per press, and
+    // the Enter used to launch the picker would be re-delivered as a release
+    // that accepts the highlighted row. Releases never carry an action, so
+    // react only to presses (and auto-repeats).
+    if key.kind == KeyEventKind::Release {
+        return PickerAction::Ignore;
+    }
+
     match key {
         KeyEvent {
             code: KeyCode::Char('c'), modifiers: KeyModifiers::CONTROL, ..
@@ -1363,6 +1377,48 @@ mod tests {
         let fixture = (28, 28, 50);
         let actual = bottom_preview_height(fixture.0, fixture.1, fixture.2);
         let expected = 20;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_key_press_up_moves_selection_up_once() {
+        let mut query = String::new();
+        let mut selected_index = 3usize;
+        let fixture = KeyEvent::new(KeyCode::Up, KeyModifiers::NONE);
+        let actual = handle_key_event(fixture, &mut query, 5, &mut selected_index, false);
+        let expected = (PickerAction::Continue, 2usize);
+        assert_eq!((actual, selected_index), expected);
+    }
+
+    #[test]
+    fn test_key_release_up_is_ignored() {
+        let mut query = String::new();
+        let mut selected_index = 3usize;
+        let fixture =
+            KeyEvent::new_with_kind(KeyCode::Up, KeyModifiers::NONE, KeyEventKind::Release);
+        let actual = handle_key_event(fixture, &mut query, 5, &mut selected_index, false);
+        let expected = (PickerAction::Ignore, 3usize);
+        assert_eq!((actual, selected_index), expected);
+    }
+
+    #[test]
+    fn test_key_press_enter_accepts() {
+        let mut query = String::new();
+        let mut selected_index = 0usize;
+        let fixture = KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE);
+        let actual = handle_key_event(fixture, &mut query, 5, &mut selected_index, false);
+        let expected = PickerAction::Accept;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_key_release_enter_is_ignored_not_accepted() {
+        let mut query = String::new();
+        let mut selected_index = 0usize;
+        let fixture =
+            KeyEvent::new_with_kind(KeyCode::Enter, KeyModifiers::NONE, KeyEventKind::Release);
+        let actual = handle_key_event(fixture, &mut query, 5, &mut selected_index, false);
+        let expected = PickerAction::Ignore;
         assert_eq!(actual, expected);
     }
 }

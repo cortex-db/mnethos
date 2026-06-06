@@ -132,23 +132,38 @@ fn render_prompt(prompt: &ForgePrompt) -> ResponsivePrompt {
     let right = right.trim_start();
 
     if right.trim().is_empty() {
-        let prompt = format!("{left}{indicator}");
-        return ResponsivePrompt { raw: prompt.clone(), styled: prompt };
+        let styled = format!("{left}{indicator}");
+        return ResponsivePrompt { raw: raw_prompt(&styled), styled };
     }
 
     if let Some((first_line, remaining)) = left.split_once('\n') {
+        let raw = raw_prompt(&format!("{first_line}\n{remaining}{indicator}"));
         let right = render_right_prompt(right);
         return ResponsivePrompt {
-            raw: format!("{first_line}\n{remaining}{indicator}"),
+            raw,
             styled: format!("{first_line}{right}\n{remaining}{indicator}"),
         };
     }
 
+    let raw = raw_prompt(&format!("{left}{indicator}"));
     let right = render_right_prompt(right);
     ResponsivePrompt {
-        raw: format!("{left}{indicator}"),
+        raw,
         styled: format!("{left}{right}{indicator}"),
     }
+}
+
+/// Builds the raw (layout) form of a prompt by stripping every ANSI escape
+/// sequence from its styled form.
+///
+/// rustyline's [`Prompt::raw`] contract requires a string with no style and no
+/// ANSI escape sequence: it is the reference used to compute the prompt's
+/// display width and cursor placement. Embedding color codes here makes
+/// Windows consoles count the escape bytes as visible columns, producing a
+/// large spurious indent before the editor. Stripping the codes keeps the raw
+/// width correct on every platform while the styled form retains the colors.
+fn raw_prompt(styled: &str) -> String {
+    strip_ansi_codes(styled).into_owned()
 }
 
 fn render_right_prompt(right: &str) -> String {
@@ -259,6 +274,7 @@ impl Validator for ForgeHelper {}
 
 #[cfg(test)]
 mod tests {
+    use forge_api::AgentId;
     use pretty_assertions::assert_eq;
 
     use super::*;
@@ -271,5 +287,42 @@ mod tests {
 
         let expected = ReadResult::Success("@[/usr/bin/env]".to_string());
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_raw_prompt_strips_ansi_escape_sequences() {
+        let fixture = "\x1b[1m\x1b[92m\u{f013e}\x1b[0m test";
+
+        let actual = raw_prompt(fixture);
+
+        let expected = "\u{f013e} test".to_string();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_render_prompt_raw_has_no_ansi_but_styled_keeps_color() {
+        let fixture = ForgePrompt {
+            cwd: PathBuf::from("/tmp/project"),
+            usage: None,
+            agent_id: AgentId::default(),
+            model: None,
+            reasoning_effort: None,
+            git_branch: Some("main".to_string()),
+        };
+
+        let actual = render_prompt(&fixture);
+
+        // rustyline uses `raw` for width/cursor layout: it must be free of ANSI
+        // escape sequences, otherwise Windows consoles count the escape bytes as
+        // visible columns and indent the editor. `styled` keeps the colors.
+        assert!(
+            !actual.raw.contains('\x1b'),
+            "raw prompt must not contain ANSI escapes, got: {:?}",
+            actual.raw
+        );
+        assert!(
+            actual.styled.contains('\x1b'),
+            "styled prompt should retain ANSI color codes"
+        );
     }
 }

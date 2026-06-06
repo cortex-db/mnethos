@@ -98,11 +98,11 @@ body:
     id: installation
     attributes:
       label: Installation Method
-      description: How did you install Forge?
+      description: How did you install Mnethos?
       options:
-        - npx forgecode@latest
-        - npm install -g forgecode
         - curl -fsSL https://mnethos.com/cli | sh
+        - npm install -g mnethos
+        - brew install cortex-db/mnethos/mnethos
         - Built from source
         - Other
     validations:

@@ -121,7 +121,7 @@ pub trait WorkspaceStore: Send + Sync {
 
     /// Returns the most relevant chunks in a workspace for the query embedding.
     async fn search(&self, id: &str, params: SearchParams)
-        -> Result<Vec<ScoredChunk>, ServerError>;
+    -> Result<Vec<ScoredChunk>, ServerError>;
 }
 
 /// Cosine similarity between two vectors. Returns 0 for empty/zero vectors or
@@ -180,9 +180,11 @@ impl InMemoryWorkspaceStore {
     pub async fn open(path: impl Into<PathBuf>) -> Result<Self, ServerError> {
         let path = path.into();
         let state = if tokio::fs::try_exists(&path).await.unwrap_or(false) {
-            let bytes = tokio::fs::read(&path).await.map_err(|error| ServerError::Store {
-                message: format!("failed to read snapshot {}: {error}", path.display()),
-            })?;
+            let bytes = tokio::fs::read(&path)
+                .await
+                .map_err(|error| ServerError::Store {
+                    message: format!("failed to read snapshot {}: {error}", path.display()),
+                })?;
             serde_json::from_slice(&bytes).map_err(|error| ServerError::Store {
                 message: format!("failed to parse snapshot {}: {error}", path.display()),
             })?
@@ -202,12 +204,16 @@ impl InMemoryWorkspaceStore {
         })?;
         // Write to a temp file then rename for atomic, crash-safe replacement.
         let tmp = path.with_extension("tmp");
-        tokio::fs::write(&tmp, &bytes).await.map_err(|error| ServerError::Store {
-            message: format!("failed to write snapshot {}: {error}", tmp.display()),
-        })?;
-        tokio::fs::rename(&tmp, path).await.map_err(|error| ServerError::Store {
-            message: format!("failed to commit snapshot {}: {error}", path.display()),
-        })?;
+        tokio::fs::write(&tmp, &bytes)
+            .await
+            .map_err(|error| ServerError::Store {
+                message: format!("failed to write snapshot {}: {error}", tmp.display()),
+            })?;
+        tokio::fs::rename(&tmp, path)
+            .await
+            .map_err(|error| ServerError::Store {
+                message: format!("failed to commit snapshot {}: {error}", path.display()),
+            })?;
         Ok(())
     }
 }
@@ -219,7 +225,10 @@ impl WorkspaceStore for InMemoryWorkspaceStore {
 
         // Reuse an existing workspace for the same working dir so repeated
         // client sessions converge on one index instead of accumulating.
-        if let Some(existing) = state.workspaces.values().find(|w| w.info.working_dir == working_dir)
+        if let Some(existing) = state
+            .workspaces
+            .values()
+            .find(|w| w.info.working_dir == working_dir)
         {
             return Ok(existing.info.id.clone());
         }
@@ -273,14 +282,17 @@ impl WorkspaceStore for InMemoryWorkspaceStore {
         chunks: Vec<StoredChunk>,
     ) -> Result<UploadOutcome, ServerError> {
         let mut state = self.state.write().await;
-        let workspace = state.workspaces.get_mut(id).ok_or_else(|| ServerError::Store {
-            message: format!("workspace {id} not found"),
-        })?;
+        let workspace = state
+            .workspaces
+            .get_mut(id)
+            .ok_or_else(|| ServerError::Store { message: format!("workspace {id} not found") })?;
 
         // Replace chunks belonging to the uploaded paths.
         let uploaded_paths: std::collections::HashSet<&str> =
             files.iter().map(|f| f.path.as_str()).collect();
-        workspace.chunks.retain(|c| !uploaded_paths.contains(c.path.as_str()));
+        workspace
+            .chunks
+            .retain(|c| !uploaded_paths.contains(c.path.as_str()));
 
         let node_count = chunks.len();
         workspace.chunks.extend(chunks);
@@ -301,7 +313,9 @@ impl WorkspaceStore for InMemoryWorkspaceStore {
         if let Some(workspace) = state.workspaces.get_mut(id) {
             let drop: std::collections::HashSet<&str> = paths.iter().map(|p| p.as_str()).collect();
             workspace.chunks.retain(|c| !drop.contains(c.path.as_str()));
-            workspace.files.retain(|path, _| !drop.contains(path.as_str()));
+            workspace
+                .files
+                .retain(|path, _| !drop.contains(path.as_str()));
             workspace.info.last_updated = Some(Utc::now());
             self.persist(&state).await?;
         }
@@ -329,7 +343,9 @@ impl WorkspaceStore for InMemoryWorkspaceStore {
             .collect();
 
         scored.sort_by(|a, b| {
-            b.relevance.partial_cmp(&a.relevance).unwrap_or(std::cmp::Ordering::Equal)
+            b.relevance
+                .partial_cmp(&a.relevance)
+                .unwrap_or(std::cmp::Ordering::Equal)
         });
         scored.truncate(params.limit.max(1));
         Ok(scored)
@@ -418,7 +434,11 @@ mod tests {
         let results = store
             .search(
                 &id,
-                SearchParams { query_embedding: vec![0.0, 1.0], limit: 10, ..Default::default() },
+                SearchParams {
+                    query_embedding: vec![0.0, 1.0],
+                    limit: 10,
+                    ..Default::default()
+                },
             )
             .await
             .unwrap();
@@ -448,7 +468,11 @@ mod tests {
         let results = store
             .search(
                 &id,
-                SearchParams { query_embedding: vec![1.0, 0.0], limit: 10, ..Default::default() },
+                SearchParams {
+                    query_embedding: vec![1.0, 0.0],
+                    limit: 10,
+                    ..Default::default()
+                },
             )
             .await
             .unwrap();
@@ -504,7 +528,10 @@ mod tests {
             .await
             .unwrap();
 
-        store.delete_files(&id, &["a.rs".to_string()]).await.unwrap();
+        store
+            .delete_files(&id, &["a.rs".to_string()])
+            .await
+            .unwrap();
         assert_eq!(store.list_files(&id).await.unwrap(), Vec::new());
     }
 
@@ -530,7 +557,10 @@ mod tests {
 
         let reopened = InMemoryWorkspaceStore::open(&path).await.unwrap();
         let actual = reopened.list_files(&id).await.unwrap();
-        assert_eq!(actual, vec![FileHash { path: "a.rs".to_string(), hash: "h".to_string() }]);
+        assert_eq!(
+            actual,
+            vec![FileHash { path: "a.rs".to_string(), hash: "h".to_string() }]
+        );
 
         tokio::fs::remove_dir_all(&dir).await.ok();
     }

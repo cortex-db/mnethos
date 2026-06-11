@@ -52,10 +52,7 @@ pub struct ForgeApp<S> {
 impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeApp<S> {
     /// Creates a new ForgeApp instance with the provided services.
     pub fn new(services: Arc<S>) -> Self {
-        Self {
-            tool_registry: ToolRegistry::new(services.clone()),
-            services,
-        }
+        Self { tool_registry: ToolRegistry::new(services.clone()), services }
     }
 
     /// Executes a chat request and returns a stream of responses.
@@ -153,15 +150,15 @@ impl<S: Services + EnvironmentInfra<Config = forge_config::ForgeConfig>> ForgeAp
 
         // Build the on_end hook, conditionally adding PendingTodosHandler based on
         // config
-        let on_end_hook: Box<dyn EventHandle<EventData<EndPayload>>> =
-            if forge_config.verify_todos {
-                tracing_handler
-                    .clone()
-                    .and(title_handler.clone())
-                    .and(PendingTodosHandler::new())
-            } else {
-                tracing_handler.clone().and(title_handler.clone())
-            };
+        let on_end_hook: Box<dyn EventHandle<EventData<EndPayload>>> = if forge_config.verify_todos
+        {
+            tracing_handler
+                .clone()
+                .and(title_handler.clone())
+                .and(PendingTodosHandler::new())
+        } else {
+            tracing_handler.clone().and(title_handler.clone())
+        };
 
         let on_start_hook: Box<dyn EventHandle<EventData<StartPayload>>> =
             tracing_handler.clone().and(title_handler);

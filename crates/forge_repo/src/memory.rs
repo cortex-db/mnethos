@@ -28,10 +28,10 @@ impl MemoryConn {
 /// Stateless gRPC client for the ai-working-memory service (MemoryWrite), the
 /// long-term memory backend. Mirrors [`crate::ForgeContextEngineRepository`]:
 /// builds its own lazy channel and attaches `Bearer <token>` metadata. The
-/// connection config ([`MemoryConn`]) is supplied per call by [`crate::ForgeRepo`],
-/// which sources it from the `mnethos_memory` provider credential; when that
-/// provider is unconfigured the repo never calls this client, keeping memory a
-/// no-op.
+/// connection config ([`MemoryConn`]) is supplied per call by
+/// [`crate::ForgeRepo`], which sources it from the `mnethos_memory` provider
+/// credential; when that provider is unconfigured the repo never calls this
+/// client, keeping memory a no-op.
 #[derive(Default)]
 pub struct ForgeMemoryRepository;
 
@@ -61,7 +61,9 @@ impl ForgeMemoryRepository {
             session_key: session_key.to_string(),
             episode: Some(to_pb_episode(episode)),
         });
-        request.metadata_mut().insert("authorization", bearer(&conn.token)?);
+        request
+            .metadata_mut()
+            .insert("authorization", bearer(&conn.token)?);
 
         let resp = client
             .create_episode(request)
@@ -99,7 +101,9 @@ impl ForgeMemoryRepository {
             session_key: session_key.to_string(),
             anchors,
         });
-        request.metadata_mut().insert("authorization", bearer(&conn.token)?);
+        request
+            .metadata_mut()
+            .insert("authorization", bearer(&conn.token)?);
 
         let resp = client
             .retrieve(request)
@@ -168,7 +172,10 @@ mod tests {
     fn test_memory_conn_new_stores_fields() {
         let fixture = MemoryConn::new("https://awm.mnethos.com:8084", "awm_token");
         let actual = (fixture.server_url, fixture.token);
-        let expected = ("https://awm.mnethos.com:8084".to_string(), "awm_token".to_string());
+        let expected = (
+            "https://awm.mnethos.com:8084".to_string(),
+            "awm_token".to_string(),
+        );
         assert_eq!(actual, expected);
     }
 

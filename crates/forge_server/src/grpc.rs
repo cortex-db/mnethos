@@ -6,15 +6,15 @@
 //! locally by the client and are reported as `unimplemented` here.
 //!
 //! Uploads are chunked and embedded via the ai-gateway, then persisted in the
-//! [`WorkspaceStore`]. Search embeds the query and ranks stored chunks by cosine
-//! similarity.
+//! [`WorkspaceStore`]. Search embeds the query and ranks stored chunks by
+//! cosine similarity.
 
 use std::sync::Arc;
 
 use chrono::{DateTime, Utc};
 use tonic::{Request, Response, Status};
 
-use crate::chunk::{chunk_file, ChunkConfig};
+use crate::chunk::{ChunkConfig, chunk_file};
 use crate::embedding::Embedder;
 use crate::proto::mnethos::mnethos_service_server::MnethosService;
 use crate::proto::mnethos::node_data::Kind as NodeKindData;
@@ -54,15 +54,18 @@ impl<E> ContextEngineService<E> {
 impl<E: Embedder + 'static> ContextEngineService<E> {
     /// Extracts a workspace id from an optional proto [`WorkspaceId`].
     fn workspace_id(id: Option<WorkspaceId>) -> Result<String, Status> {
-        id.map(|w| w.id).filter(|s| !s.is_empty()).ok_or_else(|| {
-            Status::invalid_argument("workspace_id is required")
-        })
+        id.map(|w| w.id)
+            .filter(|s| !s.is_empty())
+            .ok_or_else(|| Status::invalid_argument("workspace_id is required"))
     }
 }
 
 /// Converts a chrono timestamp into the protobuf well-known `Timestamp`.
 fn to_timestamp(dt: DateTime<Utc>) -> prost_types::Timestamp {
-    prost_types::Timestamp { seconds: dt.timestamp(), nanos: dt.timestamp_subsec_nanos() as i32 }
+    prost_types::Timestamp {
+        seconds: dt.timestamp(),
+        nanos: dt.timestamp_subsec_nanos() as i32,
+    }
 }
 
 /// Builds the proto [`Workspace`] message from stored workspace metadata.
@@ -89,7 +92,10 @@ impl<E: Embedder + 'static> MnethosService for ContextEngineService<E> {
         // boundary (reverse proxy / private network) is the trust boundary.
         let user_id = uuid::Uuid::new_v4().to_string();
         let key = format!("mnethos-{}", uuid::Uuid::new_v4());
-        Ok(Response::new(CreateApiKeyResponse { user_id: Some(UserId { id: user_id }), key }))
+        Ok(Response::new(CreateApiKeyResponse {
+            user_id: Some(UserId { id: user_id }),
+            key,
+        }))
     }
 
     async fn create_workspace(
@@ -114,7 +120,9 @@ impl<E: Embedder + 'static> MnethosService for ContextEngineService<E> {
             .map_err(|e| Status::internal(e.to_string()))?
             .ok_or_else(|| Status::internal("workspace vanished after creation"))?;
 
-        Ok(Response::new(CreateWorkspaceResponse { workspace: Some(workspace_proto(&info)) }))
+        Ok(Response::new(CreateWorkspaceResponse {
+            workspace: Some(workspace_proto(&info)),
+        }))
     }
 
     async fn list_workspaces(
@@ -151,7 +159,10 @@ impl<E: Embedder + 'static> MnethosService for ContextEngineService<E> {
         request: Request<DeleteWorkspaceRequest>,
     ) -> Result<Response<DeleteWorkspaceResponse>, Status> {
         let id = Self::workspace_id(request.into_inner().workspace_id)?;
-        self.store.delete_workspace(&id).await.map_err(|e| Status::internal(e.to_string()))?;
+        self.store
+            .delete_workspace(&id)
+            .await
+            .map_err(|e| Status::internal(e.to_string()))?;
         Ok(Response::new(DeleteWorkspaceResponse {
             workspace_id: Some(WorkspaceId { id }),
         }))
@@ -198,7 +209,12 @@ impl<E: Embedder + 'static> MnethosService for ContextEngineService<E> {
             let hash = content_hash(&file.content);
             files.push(FileHash { path: file.path.clone(), hash });
             for chunk in chunk_file(&file.path, &file.content, config) {
-                pending.push((chunk.path, chunk.start_line, chunk.end_line, chunk.content.clone()));
+                pending.push((
+                    chunk.path,
+                    chunk.start_line,
+                    chunk.end_line,
+                    chunk.content.clone(),
+                ));
                 chunk_texts.push(chunk.content);
             }
         }
@@ -215,14 +231,16 @@ impl<E: Embedder + 'static> MnethosService for ContextEngineService<E> {
         let stored: Vec<StoredChunk> = pending
             .into_iter()
             .zip(embeddings)
-            .map(|((path, start_line, end_line, text), embedding)| StoredChunk {
-                node_id: uuid::Uuid::new_v4().to_string(),
-                path,
-                content: text,
-                start_line,
-                end_line,
-                embedding,
-            })
+            .map(
+                |((path, start_line, end_line, text), embedding)| StoredChunk {
+                    node_id: uuid::Uuid::new_v4().to_string(),
+                    path,
+                    content: text,
+                    start_line,
+                    end_line,
+                    embedding,
+                },
+            )
             .collect();
 
         let outcome = self
@@ -326,14 +344,18 @@ impl<E: Embedder + 'static> MnethosService for ContextEngineService<E> {
             })
             .collect();
 
-        Ok(Response::new(SearchResponse { result: Some(QueryResult { data }) }))
+        Ok(Response::new(SearchResponse {
+            result: Some(QueryResult { data }),
+        }))
     }
 
     async fn health_check(
         &self,
         _request: Request<HealthCheckRequest>,
     ) -> Result<Response<HealthCheckResponse>, Status> {
-        Ok(Response::new(HealthCheckResponse { status: "ok".to_string() }))
+        Ok(Response::new(HealthCheckResponse {
+            status: "ok".to_string(),
+        }))
     }
 
     // ---- RPCs handled locally by the client; not served here. ----
@@ -349,7 +371,9 @@ impl<E: Embedder + 'static> MnethosService for ContextEngineService<E> {
         &self,
         _request: Request<ValidateFilesRequest>,
     ) -> Result<Response<ValidateFilesResponse>, Status> {
-        Err(Status::unimplemented("ValidateFiles is handled client-side"))
+        Err(Status::unimplemented(
+            "ValidateFiles is handled client-side",
+        ))
     }
 
     async fn select_skill(
@@ -370,7 +394,9 @@ impl<E: Embedder + 'static> MnethosService for ContextEngineService<E> {
         &self,
         _request: Request<BuildTextPatchRequest>,
     ) -> Result<Response<BuildTextPatchResponse>, Status> {
-        Err(Status::unimplemented("BuildTextPatch is handled client-side"))
+        Err(Status::unimplemented(
+            "BuildTextPatch is handled client-side",
+        ))
     }
 }
 
@@ -468,7 +494,15 @@ mod tests {
         let data = response.result.unwrap().data;
         assert!(!data.is_empty());
         // The exact-match chunk must rank first.
-        let top = data.first().unwrap().node.as_ref().unwrap().data.as_ref().unwrap();
+        let top = data
+            .first()
+            .unwrap()
+            .node
+            .as_ref()
+            .unwrap()
+            .data
+            .as_ref()
+            .unwrap();
         match top.kind.as_ref().unwrap() {
             NodeKindData::FileChunk(chunk) => assert_eq!(chunk.path, "auth.rs"),
             _ => panic!("expected a file chunk"),

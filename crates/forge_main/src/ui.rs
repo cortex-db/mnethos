@@ -5068,8 +5068,10 @@ impl<A: API + ConsoleWriter + 'static, F: Fn(ForgeConfig) -> A + Send + Sync> UI
         // Display results based on whether migration occurred
         if let Some(result) = result {
             self.writeln_title(
-                TitleFormat::warning("Mnethos no longer reads API keys from environment variables.")
-                    .sub_title("Learn more: https://mnethos.com/docs/custom-providers/"),
+                TitleFormat::warning(
+                    "Mnethos no longer reads API keys from environment variables.",
+                )
+                .sub_title("Learn more: https://mnethos.com/docs/custom-providers/"),
             )?;
 
             let count = result.migrated_providers.len();

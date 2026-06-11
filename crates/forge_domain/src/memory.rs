@@ -12,10 +12,10 @@ use eserde::Deserialize;
 use schemars::JsonSchema;
 use serde::Serialize;
 
-/// Stable per-project memory session key: the working-directory basename. Shared
-/// by the write path (remember tool) and the read path (mem_search tool) so both
-/// address the same memory-service session. Derived from cwd (available at both
-/// turn start and during tool execution).
+/// Stable per-project memory session key: the working-directory basename.
+/// Shared by the write path (remember tool) and the read path (mem_search tool)
+/// so both address the same memory-service session. Derived from cwd (available
+/// at both turn start and during tool execution).
 pub fn memory_session_key(cwd: &Path) -> String {
     cwd.file_name()
         .and_then(|name| name.to_str())
@@ -69,7 +69,8 @@ pub struct MemoryWriteResult {
 
 /// One recalled item (MemoryWrite.RetrievedItem) — mirrors retrieve.Result 1:1
 /// (the same shape the MCP `retrieve_episodes` tool returns). May contain
-/// contradictory facts by design; `created_at` lets the caller reason on recency.
+/// contradictory facts by design; `created_at` lets the caller reason on
+/// recency.
 #[derive(Debug, Clone)]
 pub struct MemoryRecallItem {
     pub node_id: String,
@@ -86,10 +87,11 @@ pub struct MemoryRecallItem {
 
 /// Port to the external graph-memory service (ai-working-memory) over gRPC.
 ///
-/// The implementor resolves its own connection config (server URL + token) — the
-/// caller passes only domain data, exactly like [`crate::WorkspaceIndexRepository`].
-/// A missing/!configured memory backend yields empty/zeroed results, never an
-/// error, so memory stays a no-op when unconfigured.
+/// The implementor resolves its own connection config (server URL + token) —
+/// the caller passes only domain data, exactly like
+/// [`crate::WorkspaceIndexRepository`]. A missing/!configured memory backend
+/// yields empty/zeroed results, never an error, so memory stays a no-op when
+/// unconfigured.
 #[async_trait]
 pub trait MemoryRepository: Send + Sync {
     /// Persist ONE episode into the caller's session (server get-or-creates the

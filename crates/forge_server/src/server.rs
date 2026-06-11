@@ -79,7 +79,9 @@ impl<S: UserStore + 'static> Server<S> {
         let path = path.trim_end_matches('/');
 
         match (method, path) {
-            ("GET", "" | "/health") => HttpResponse::json(200, &serde_json::json!({"status": "ok"})),
+            ("GET", "" | "/health") => {
+                HttpResponse::json(200, &serde_json::json!({"status": "ok"}))
+            }
             ("GET", "/auth/user") => self.auth_user(authorization),
             ("GET", "/auth/usage") => self.auth_usage(authorization),
             ("GET", _) => HttpResponse::error(404, "not_found"),
@@ -216,23 +218,30 @@ mod tests {
     #[test]
     fn test_auth_user_missing_authorization_is_unauthorized() {
         let actual = fixture().handle("GET", "/auth/user", None);
-        let expected =
-            HttpResponse { status: 401, body: r#"{"error":"missing_bearer_token"}"#.to_string() };
+        let expected = HttpResponse {
+            status: 401,
+            body: r#"{"error":"missing_bearer_token"}"#.to_string(),
+        };
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn test_auth_user_invalid_key_is_unauthorized() {
         let actual = fixture().handle("GET", "/auth/user", Some("Bearer wrong-key"));
-        let expected =
-            HttpResponse { status: 401, body: r#"{"error":"invalid_api_key"}"#.to_string() };
+        let expected = HttpResponse {
+            status: 401,
+            body: r#"{"error":"invalid_api_key"}"#.to_string(),
+        };
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn test_trailing_slash_and_query_are_normalized() {
-        let actual =
-            fixture().handle("GET", "/auth/user/?foo=bar", Some("Bearer mnethos-demo-key"));
+        let actual = fixture().handle(
+            "GET",
+            "/auth/user/?foo=bar",
+            Some("Bearer mnethos-demo-key"),
+        );
         assert_eq!(actual.status, 200);
     }
 
@@ -246,8 +255,10 @@ mod tests {
     #[test]
     fn test_non_get_method_is_rejected() {
         let actual = fixture().handle("POST", "/auth/user", Some("Bearer mnethos-demo-key"));
-        let expected =
-            HttpResponse { status: 405, body: r#"{"error":"method_not_allowed"}"#.to_string() };
+        let expected = HttpResponse {
+            status: 405,
+            body: r#"{"error":"method_not_allowed"}"#.to_string(),
+        };
         assert_eq!(actual, expected);
     }
 

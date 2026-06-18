@@ -667,9 +667,8 @@ impl ToolOperation {
 
                 let mut root = Element::new("recalled_project_memory");
                 if chosen.is_empty() {
-                    root = root.text(
-                        "No relevant knowledge found in long-term memory for these queries.",
-                    );
+                    root = root
+                        .text("No relevant knowledge found in long-term memory for these queries.");
                 } else {
                     root = root.append(Element::new("note").text(
                         "Knowledge recalled from prior work on this project. Background \

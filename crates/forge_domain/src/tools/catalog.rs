@@ -451,10 +451,10 @@ pub struct SemanticSearch {
 
 /// Input for the `remember` tool: durable, reusable knowledge to persist into
 /// long-term project memory. Only call this at the END of a task and ONLY for
-/// genuinely reusable knowledge (conventions, decisions + rationale, non-obvious
-/// rules/gotchas, data shapes) — never trivial narration. Each episode must be
-/// self-contained and open with the project identity. See the tool description
-/// for the two-level episode/concept/anchor rules.
+/// genuinely reusable knowledge (conventions, decisions + rationale,
+/// non-obvious rules/gotchas, data shapes) — never trivial narration. Each
+/// episode must be self-contained and open with the project identity. See the
+/// tool description for the two-level episode/concept/anchor rules.
 #[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, ToolDescription, PartialEq)]
 #[tool_description_file = "crates/forge_domain/src/tools/descriptions/remember.md"]
 pub struct Remember {
@@ -463,9 +463,9 @@ pub struct Remember {
 }
 
 /// Input for the `mem_search` tool: search long-term project memory (the fast
-/// retrieve route) for knowledge stored by past sessions on THIS project. Use it
-/// when you lack project context — before guessing. See the tool description for
-/// how to phrase the queries.
+/// retrieve route) for knowledge stored by past sessions on THIS project. Use
+/// it when you lack project context — before guessing. See the tool description
+/// for how to phrase the queries.
 #[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, ToolDescription, PartialEq)]
 #[tool_description_file = "crates/forge_domain/src/tools/descriptions/mem_search.md"]
 pub struct MemSearch {

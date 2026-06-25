@@ -94,9 +94,11 @@ impl std::fmt::Display for TlsBackend {
 ///
 /// # Environment Variables
 /// All HttpConfig fields can be configured via environment variables:
-/// - `MNETHOS_HTTP_CONNECT_TIMEOUT`: Connection timeout in seconds (default: 30)
+/// - `MNETHOS_HTTP_CONNECT_TIMEOUT`: Connection timeout in seconds (default:
+///   30)
 /// - `MNETHOS_HTTP_READ_TIMEOUT`: Read timeout in seconds (default: 900)
-/// - `MNETHOS_HTTP_POOL_IDLE_TIMEOUT`: Pool idle timeout in seconds (default: 90)
+/// - `MNETHOS_HTTP_POOL_IDLE_TIMEOUT`: Pool idle timeout in seconds (default:
+///   90)
 /// - `MNETHOS_HTTP_POOL_MAX_IDLE_PER_HOST`: Max idle connections per host
 ///   (default: 5)
 /// - `MNETHOS_HTTP_MAX_REDIRECTS`: Maximum redirects to follow (default: 10)
@@ -109,11 +111,12 @@ impl std::fmt::Display for TlsBackend {
 ///   "1.3")
 /// - `MNETHOS_HTTP_ADAPTIVE_WINDOW`: Enable HTTP/2 adaptive window (default:
 ///   true)
-/// - `MNETHOS_HTTP_KEEP_ALIVE_INTERVAL`: Keep-alive interval in seconds (default:
-///   60, use "none"/"disabled" to disable)
+/// - `MNETHOS_HTTP_KEEP_ALIVE_INTERVAL`: Keep-alive interval in seconds
+///   (default: 60, use "none"/"disabled" to disable)
 /// - `MNETHOS_HTTP_KEEP_ALIVE_TIMEOUT`: Keep-alive timeout in seconds (default:
 ///   10)
-/// - `MNETHOS_HTTP_KEEP_ALIVE_WHILE_IDLE`: Keep-alive while idle (default: true)
+/// - `MNETHOS_HTTP_KEEP_ALIVE_WHILE_IDLE`: Keep-alive while idle (default:
+///   true)
 /// - `MNETHOS_HTTP_ACCEPT_INVALID_CERTS`: Accept invalid certificates (default:
 ///   false) - USE WITH CAUTION
 /// - `MNETHOS_HTTP_ROOT_CERT_PATHS`: Paths to root certificate files (PEM, CRT,

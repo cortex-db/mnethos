@@ -81,7 +81,12 @@ impl UsageInfo {
     /// Creates usage information from the consumed and total request counts,
     /// deriving `remaining` as `limit.saturating_sub(current)`.
     pub fn new(current: u32, limit: u32) -> Self {
-        Self { current, limit, remaining: limit.saturating_sub(current), reset_in: None }
+        Self {
+            current,
+            limit,
+            remaining: limit.saturating_sub(current),
+            reset_in: None,
+        }
     }
 }
 
@@ -120,8 +125,7 @@ mod tests {
 
     #[test]
     fn test_user_usage_serializes_to_client_contract() {
-        let fixture =
-            UserUsage::new(Plan::new("pro"), UsageInfo::new(10, 100).reset_in(3600u64));
+        let fixture = UserUsage::new(Plan::new("pro"), UsageInfo::new(10, 100).reset_in(3600u64));
         let actual = serde_json::to_value(&fixture).unwrap();
         let expected = json!({
             "plan": { "type": "pro" },

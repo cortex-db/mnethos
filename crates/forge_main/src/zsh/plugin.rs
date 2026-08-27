@@ -290,7 +290,8 @@ pub fn setup_zsh_integration(
     if let Some(editor) = forge_editor {
         forge_config.push(String::new()); // Add blank line before comment
         forge_config.push("# Editor for editing prompts (set during setup)".to_string());
-        forge_config.push("# To change: update MNETHOS_EDITOR or remove to use $EDITOR".to_string());
+        forge_config
+            .push("# To change: update MNETHOS_EDITOR or remove to use $EDITOR".to_string());
         forge_config.push(format!("export MNETHOS_EDITOR=\"{}\"", editor));
     }
 

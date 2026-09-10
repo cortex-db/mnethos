@@ -99,7 +99,10 @@ pub enum Error {
     #[error("Workspace already initialized with id: {0}")]
     WorkspaceAlreadyInitialized(WorkspaceId),
 
-    #[error("Failed to sync {count} file(s){}", format_sync_failure_reasons(reasons))]
+    #[error(
+        "Failed to sync {count} file(s){}",
+        format_sync_failure_reasons(reasons)
+    )]
     #[from(skip)]
     SyncFailed {
         /// Number of files that failed to sync.

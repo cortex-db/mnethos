@@ -62,9 +62,10 @@ impl ForgeMcpClient {
         env_vars: &BTreeMap<String, String>,
         environment: Environment,
     ) -> Self {
-        // Try to resolve config early so we can extract headers for the HTTP client.
-        // If resolution fails, fall back to a plain client (headers will be missing
-        // but the error will surface when create_connection is called).
+        // Try to resolve config early so we can extract headers for the HTTP
+        // client. If resolution fails, fall back to a plain client
+        // (headers will be missing but the error will surface when
+        // create_connection is called).
         let resolved = resolve_http_templates(
             match &config {
                 McpServerConfig::Http(http) => http.clone(),
@@ -182,7 +183,8 @@ impl ForgeMcpClient {
                     self.create_oauth_connection(http, oauth_config, false)
                         .await?
                 } else {
-                    // Auto-detect: try standard first, fall back to OAuth on auth errors
+                    // Auto-detect: try standard first, fall back to OAuth on
+                    // auth errors
                     match self.create_standard_http_connection(http).await {
                         Ok(client) => Arc::new(client),
                         Err(e) => {
@@ -197,8 +199,10 @@ impl ForgeMcpClient {
                                     "Standard connection failed with auth error for: {}, trying stored credentials",
                                     http.url
                                 );
-                                // Try OAuth with stored credentials (non-interactive)
-                                // If stored credentials exist, use them; otherwise error
+                                // Try OAuth with stored credentials
+                                // (non-interactive)
+                                // If stored credentials exist, use them;
+                                // otherwise error
                                 let default_config = forge_domain::McpOAuthConfig::default();
                                 self.create_oauth_connection(http, &default_config, false)
                                     .await?
@@ -277,7 +281,8 @@ impl ForgeMcpClient {
         match auth_manager.initialize_from_store().await {
             Ok(true) => {
                 // Stored credentials loaded. Try to get a valid access token
-                // (this auto-refreshes if expired and refresh_token is available)
+                // (this auto-refreshes if expired and refresh_token is
+                // available)
                 match auth_manager.get_access_token().await {
                     Ok(token) => {
                         tracing::debug!("Using stored/refreshed OAuth token for: {}", http.url);
@@ -322,8 +327,8 @@ impl ForgeMcpClient {
 
         let scopes: Vec<&str> = oauth_config.scopes.iter().map(|s| s.as_str()).collect();
 
-        // start_authorization discovers metadata, registers client, generates PKCE +
-        // CSRF state
+        // start_authorization discovers metadata, registers client, generates
+        // PKCE + CSRF state
         oauth_state
             .start_authorization(&scopes, &redirect_uri, Some("Forge"))
             .await
@@ -346,8 +351,9 @@ impl ForgeMcpClient {
         // Start local callback server, open browser, wait for redirect
         let (code, state) = self.run_oauth_callback_server(port, &auth_url).await?;
 
-        // Exchange authorization code for tokens (validates CSRF state internally)
-        // rmcp's OAuthState handles PKCE verifier inclusion in the token request
+        // Exchange authorization code for tokens (validates CSRF state
+        // internally) rmcp's OAuthState handles PKCE verifier inclusion
+        // in the token request
         oauth_state
             .handle_callback(&code, &state)
             .await

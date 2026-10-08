@@ -25,11 +25,9 @@ pub mod store;
 pub mod workspace;
 
 pub use dto::{AuthProviderId, Plan, UsageInfo, User, UserUsage};
-pub use embedding::{AiGatewayEmbedder, Embedder, EMBEDDING_DIMENSION, EMBEDDING_MODEL};
+pub use embedding::{AiGatewayEmbedder, EMBEDDING_DIMENSION, EMBEDDING_MODEL, Embedder};
 pub use error::ServerError;
 pub use grpc::ContextEngineService;
 pub use server::{HttpResponse, Server};
 pub use store::{InMemoryUserStore, UserStore};
-pub use workspace::{
-    InMemoryWorkspaceStore, SharedWorkspaceStore, WorkspaceInfo, WorkspaceStore,
-};
+pub use workspace::{InMemoryWorkspaceStore, SharedWorkspaceStore, WorkspaceInfo, WorkspaceStore};

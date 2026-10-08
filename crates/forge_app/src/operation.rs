@@ -366,7 +366,8 @@ impl ToolOperation {
                     );
 
                     let display_lines = if truncated_output.start < truncated_output.end {
-                        // Use 1-based indexing for display (humans count from 1)
+                        // Use 1-based indexing for display (humans count from
+                        // 1)
                         format!("{}-{}", truncated_output.start + 1, truncated_output.end)
                     } else {
                         // No matches or empty result
@@ -553,8 +554,8 @@ impl ToolOperation {
                         forge_domain::ToolOutput::text(elm)
                     }
                     (Some(before), Some(after)) => {
-                        // This diff is between modified state (before_undo) and snapshot
-                        // state (after_undo)
+                        // This diff is between modified state (before_undo) and
+                        // snapshot state (after_undo)
                         let diff = DiffFormat::format(before, after);
 
                         let elm = Element::new("file_undo")
@@ -651,8 +652,9 @@ impl ToolOperation {
                 forge_domain::ToolOutput::text(elm)
             }
             ToolOperation::MemSearch { items } => {
-                // Prefer L2 episodes (the self-contained recall unit); fall back to
-                // L1 concepts. Rank by activation, cap at 8, and surface with dates.
+                // Prefer L2 episodes (the self-contained recall unit); fall
+                // back to L1 concepts. Rank by activation, cap
+                // at 8, and surface with dates.
                 let mut chosen: Vec<&MemoryRecallItem> =
                     items.iter().filter(|item| item.level == 2).collect();
                 if chosen.is_empty() {
@@ -667,9 +669,8 @@ impl ToolOperation {
 
                 let mut root = Element::new("recalled_project_memory");
                 if chosen.is_empty() {
-                    root = root.text(
-                        "No relevant knowledge found in long-term memory for these queries.",
-                    );
+                    root = root
+                        .text("No relevant knowledge found in long-term memory for these queries.");
                 } else {
                     root = root.append(Element::new("note").text(
                         "Knowledge recalled from prior work on this project. Background \
@@ -1197,7 +1198,8 @@ mod tests {
 
     #[test]
     fn test_shell_output_both_stdout_stderr_truncation() {
-        // Create both stdout and stderr with more lines than the truncation limit
+        // Create both stdout and stderr with more lines than the truncation
+        // limit
         let mut stdout_lines = Vec::new();
         for i in 1..=25 {
             stdout_lines.push(format!("stdout line {}", i));
@@ -1241,7 +1243,8 @@ mod tests {
 
     #[test]
     fn test_shell_output_exact_boundary_stdout() {
-        // Create stdout with exactly the truncation limit (prefix + suffix = 20 lines)
+        // Create stdout with exactly the truncation limit (prefix + suffix = 20
+        // lines)
         let mut stdout_lines = Vec::new();
         for i in 1..=20 {
             stdout_lines.push(format!("stdout line {}", i));

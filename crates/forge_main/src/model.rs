@@ -171,7 +171,8 @@ impl ForgeCommandManager {
     pub fn register_all(&self, commands: Vec<forge_domain::Command>) {
         let mut guard = self.commands.lock().unwrap();
 
-        // Remove existing workflow commands (those with ⚙ prefix in description)
+        // Remove existing workflow commands (those with ⚙ prefix in
+        // description)
         guard.retain(|cmd| !cmd.description.starts_with("⚙ "));
 
         // Add new workflow commands
@@ -322,7 +323,8 @@ impl ForgeCommandManager {
 
         match ClapCmd::try_parse_from(&argv) {
             Ok(mut cmd) => {
-                // Post-process variants that need Vec<String> → concrete type fixup
+                // Post-process variants that need Vec<String> → concrete type
+                // fixup
                 match &mut cmd.sub {
                     AppCommand::Commit { args, max_diff_size } => {
                         *max_diff_size = args.iter().find_map(|p| p.parse::<usize>().ok());
@@ -342,10 +344,12 @@ impl ForgeCommandManager {
             }
             Err(clap_err) => {
                 // Clap failed — check whether this is an agent command or a
-                // registered custom workflow command before surfacing the error.
+                // registered custom workflow command before surfacing the
+                // error.
                 let command_name = bare;
 
-                // Give a domain-specific error for rename with no name argument.
+                // Give a domain-specific error for rename with no name
+                // argument.
                 if (command_name == "rename" || command_name == "rn") && rest.is_empty() {
                     return Err(anyhow::anyhow!(
                         "Usage: :rename <name>. Please provide a name for the conversation."
@@ -385,7 +389,8 @@ impl ForgeCommandManager {
                     ));
                 }
 
-                // Surface a clean error from Clap (strips ANSI + internal parser name).
+                // Surface a clean error from Clap (strips ANSI + internal
+                // parser name).
                 let rendered = clap_err.render().to_string();
                 let cleaned = rendered.replace("forge_cmd", "mnethos");
                 Err(anyhow::anyhow!("{}", cleaned.trim()))

@@ -49,7 +49,8 @@ impl InMemoryUserStore {
         user: User,
         usage: UserUsage,
     ) -> Self {
-        self.accounts.insert(api_key.into(), Account { user, usage });
+        self.accounts
+            .insert(api_key.into(), Account { user, usage });
         self
     }
 
@@ -70,11 +71,15 @@ impl InMemoryUserStore {
 
 impl UserStore for InMemoryUserStore {
     fn user(&self, api_key: &str) -> Option<User> {
-        self.accounts.get(api_key).map(|account| account.user.clone())
+        self.accounts
+            .get(api_key)
+            .map(|account| account.user.clone())
     }
 
     fn usage(&self, api_key: &str) -> Option<UserUsage> {
-        self.accounts.get(api_key).map(|account| account.usage.clone())
+        self.accounts
+            .get(api_key)
+            .map(|account| account.usage.clone())
     }
 }
 

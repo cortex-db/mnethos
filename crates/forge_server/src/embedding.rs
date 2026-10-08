@@ -9,8 +9,8 @@ use async_trait::async_trait;
 use tonic::transport::Channel;
 
 use crate::error::ServerError;
-use crate::proto::ai_gateway::ai_gateway_client::AiGatewayClient;
 use crate::proto::ai_gateway::EmbedRequest;
+use crate::proto::ai_gateway::ai_gateway_client::AiGatewayClient;
 
 /// The embedding model served by the gateway. 3072-dimensional vectors.
 pub const EMBEDDING_MODEL: &str = "text-embedding-3-large";
@@ -36,11 +36,12 @@ const MAX_MESSAGE_SIZE: usize = 128 * 1024 * 1024;
 /// Produces embedding vectors for input text.
 #[async_trait]
 pub trait Embedder: Send + Sync {
-    /// Embeds a batch of input strings, returning one vector per input in order.
+    /// Embeds a batch of input strings, returning one vector per input in
+    /// order.
     ///
     /// # Errors
-    /// Returns [`ServerError::Embedding`] when the backend call fails or returns
-    /// a vector count that does not match the number of inputs.
+    /// Returns [`ServerError::Embedding`] when the backend call fails or
+    /// returns a vector count that does not match the number of inputs.
     async fn embed(&self, inputs: &[String]) -> Result<Vec<Vec<f32>>, ServerError>;
 }
 
@@ -55,7 +56,10 @@ impl AiGatewayEmbedder {
     /// Creates an embedder targeting the gateway at `endpoint`
     /// (e.g. `http://ai-gateway:50054`), using [`EMBEDDING_MODEL`].
     pub fn new(endpoint: impl Into<String>) -> Self {
-        Self { endpoint: endpoint.into(), model: EMBEDDING_MODEL.to_string() }
+        Self {
+            endpoint: endpoint.into(),
+            model: EMBEDDING_MODEL.to_string(),
+        }
     }
 
     /// Overrides the embedding model name sent to the gateway.
@@ -64,12 +68,16 @@ impl AiGatewayEmbedder {
         self
     }
 
-    /// Opens a fresh gRPC channel to the gateway with raised message-size limits.
+    /// Opens a fresh gRPC channel to the gateway with raised message-size
+    /// limits.
     async fn connect(&self) -> Result<AiGatewayClient<Channel>, ServerError> {
         let client = AiGatewayClient::connect(self.endpoint.clone())
             .await
             .map_err(|error| ServerError::Embedding {
-                message: format!("failed to connect to ai-gateway at {}: {error}", self.endpoint),
+                message: format!(
+                    "failed to connect to ai-gateway at {}: {error}",
+                    self.endpoint
+                ),
             })?;
 
         Ok(client
@@ -99,9 +107,12 @@ impl Embedder for AiGatewayEmbedder {
             });
 
             let response =
-                client.embed(request).await.map_err(|status| ServerError::Embedding {
-                    message: format!("ai-gateway Embed failed: {status}"),
-                })?;
+                client
+                    .embed(request)
+                    .await
+                    .map_err(|status| ServerError::Embedding {
+                        message: format!("ai-gateway Embed failed: {status}"),
+                    })?;
 
             let batch_vectors = response.into_inner().vectors;
             if batch_vectors.len() != batch.len() {
@@ -161,7 +172,10 @@ pub mod tests {
             Ok(inputs
                 .iter()
                 .map(|input| {
-                    cache.entry(input.clone()).or_insert_with(|| self.vector_for(input)).clone()
+                    cache
+                        .entry(input.clone())
+                        .or_insert_with(|| self.vector_for(input))
+                        .clone()
                 })
                 .collect())
         }

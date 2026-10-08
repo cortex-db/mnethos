@@ -126,15 +126,17 @@ impl<H: HttpInfra> OpenAIProvider<H> {
             );
         }
 
-        // Add GitHub Copilot optimization headers only for github_copilot provider
+        // Add GitHub Copilot optimization headers only for github_copilot
+        // provider
         if self.provider.id == ProviderId::GITHUB_COPILOT {
-            // Determine initiator: use request.initiator if available, otherwise detect
-            // from messages
+            // Determine initiator: use request.initiator if available,
+            // otherwise detect from messages
             let initiator = request.initiator.as_deref().unwrap_or_else(|| {
                 // Fall back to detecting from last message role
                 let is_agent_initiated = request.messages.as_ref().is_some_and(|messages| {
                     messages.last().is_some_and(|msg| {
-                        // If last message role is not User, it's agent-initiated
+                        // If last message role is not User, it's
+                        // agent-initiated
                         !matches!(msg.role, forge_app::dto::openai::Role::User)
                     })
                 });
@@ -165,7 +167,8 @@ impl<H: HttpInfra> OpenAIProvider<H> {
                 headers.push(("Copilot-Vision-Request".to_string(), "true".to_string()));
             }
 
-            // When Copilot proxies an Anthropic Claude model, inject the beta flag
+            // When Copilot proxies an Anthropic Claude model, inject the beta
+            // flag
             let is_anthropic_model = request
                 .model
                 .as_ref()
@@ -228,7 +231,8 @@ impl<H: HttpInfra> OpenAIProvider<H> {
     }
 
     async fn inner_models(&self) -> Result<Vec<forge_app::domain::Model>> {
-        // For Vertex AI, load models from static JSON file using VertexProvider logic
+        // For Vertex AI, load models from static JSON file using VertexProvider
+        // logic
         if self.provider.id == ProviderId::VERTEX_AI {
             debug!("Loading Vertex AI models from static JSON file");
             Ok(self.inner_vertex_models())
@@ -739,7 +743,8 @@ mod tests {
 
         let headers = openai_provider.get_headers_with_request(&request);
 
-        // Should only have Authorization header (no Session-Id for non-zai providers)
+        // Should only have Authorization header (no Session-Id for non-zai
+        // providers)
         assert_eq!(headers.len(), 1);
         assert!(
             headers
@@ -761,7 +766,8 @@ mod tests {
 
         let headers = openai_provider.get_headers_with_request(&request);
 
-        // Should only have Authorization header (no Session-Id when session_id is None)
+        // Should only have Authorization header (no Session-Id when session_id
+        // is None)
         assert_eq!(headers.len(), 1);
         assert!(
             headers
@@ -786,7 +792,8 @@ mod tests {
 
         let headers = openai_provider.get_headers_with_request(&request);
 
-        // Should only have Authorization header (no Session-Id for Anthropic providers)
+        // Should only have Authorization header (no Session-Id for Anthropic
+        // providers)
         assert_eq!(headers.len(), 1);
         assert!(
             headers
@@ -918,7 +925,8 @@ mod tests {
 
         let headers = openai_provider.get_headers_with_request(&request);
 
-        // Should have Authorization, x-initiator (user), and Openai-Intent headers
+        // Should have Authorization, x-initiator (user), and Openai-Intent
+        // headers
         assert!(
             headers
                 .iter()
@@ -1055,7 +1063,8 @@ mod tests {
     #[tokio::test]
     async fn test_get_headers_with_request_non_github_copilot_no_extra_headers()
     -> anyhow::Result<()> {
-        // Verify that non-GitHub Copilot providers don't get the optimization headers
+        // Verify that non-GitHub Copilot providers don't get the optimization
+        // headers
         let provider = openai("test-key");
         let http_client = Arc::new(MockHttpClient::new());
         let openai_provider = OpenAIProvider::new(provider, http_client);

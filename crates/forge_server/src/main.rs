@@ -33,7 +33,8 @@ const AI_GATEWAY_ENV: &str = "MNETHOS_AI_GATEWAY_ADDR";
 /// Default ai-gateway endpoint (matches the `pag-prod` compose network).
 const DEFAULT_AI_GATEWAY: &str = "http://ai-gateway:50054";
 
-/// Filesystem path for the workspace snapshot (default `/data/workspaces.json`).
+/// Filesystem path for the workspace snapshot (default
+/// `/data/workspaces.json`).
 const SNAPSHOT_ENV: &str = "MNETHOS_SNAPSHOT_PATH";
 /// Default snapshot path (mount a volume here to persist embeddings).
 const DEFAULT_SNAPSHOT: &str = "/data/workspaces.json";

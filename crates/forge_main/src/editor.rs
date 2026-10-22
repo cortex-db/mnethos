@@ -186,9 +186,10 @@ fn align_right(left_line: &str, right: &str) -> Option<String> {
 
 /// Right-aligns `right` after `left_line` within a `cols`-wide terminal.
 ///
-/// Split out from [`align_right`] so the padding math is testable without a real
-/// terminal. Returns `None` when `right` is empty or the two cannot coexist on
-/// one line with a separating space and a one-column trailing margin.
+/// Split out from [`align_right`] so the padding math is testable without a
+/// real terminal. Returns `None` when `right` is empty or the two cannot
+/// coexist on one line with a separating space and a one-column trailing
+/// margin.
 fn align_right_in(left_line: &str, right: &str, cols: usize) -> Option<String> {
     if right.is_empty() {
         return None;
@@ -348,8 +349,9 @@ mod tests {
         let actual = render_prompt(&fixture);
 
         // rustyline uses `raw` for width/cursor layout: it must be free of ANSI
-        // escape sequences, otherwise Windows consoles count the escape bytes as
-        // visible columns and indent the editor. `styled` keeps the colors.
+        // escape sequences, otherwise Windows consoles count the escape bytes
+        // as visible columns and indent the editor. `styled` keeps the
+        // colors.
         assert!(
             !actual.raw.contains('\x1b'),
             "raw prompt must not contain ANSI escapes, got: {:?}",
@@ -387,7 +389,8 @@ mod tests {
 
     #[test]
     fn test_align_right_in_too_narrow_returns_none() {
-        // No room for both with a separating space + margin → omit right prompt.
+        // No room for both with a separating space + margin → omit right
+        // prompt.
         let actual = align_right_in("aaaaaa", "bbbbb", 10);
 
         assert_eq!(actual, None);

@@ -38,7 +38,10 @@ pub struct ChunkConfig {
 
 impl Default for ChunkConfig {
     fn default() -> Self {
-        Self { min_chunk_size: DEFAULT_MIN_CHUNK_SIZE, max_chunk_size: DEFAULT_MAX_CHUNK_SIZE }
+        Self {
+            min_chunk_size: DEFAULT_MIN_CHUNK_SIZE,
+            max_chunk_size: DEFAULT_MAX_CHUNK_SIZE,
+        }
     }
 }
 
@@ -47,10 +50,16 @@ impl ChunkConfig {
     /// `0` (the proto default for unset `uint32` fields), and guaranteeing
     /// `min <= max`.
     pub fn new(min_chunk_size: u32, max_chunk_size: u32) -> Self {
-        let min =
-            if min_chunk_size == 0 { DEFAULT_MIN_CHUNK_SIZE } else { min_chunk_size as usize };
-        let max =
-            if max_chunk_size == 0 { DEFAULT_MAX_CHUNK_SIZE } else { max_chunk_size as usize };
+        let min = if min_chunk_size == 0 {
+            DEFAULT_MIN_CHUNK_SIZE
+        } else {
+            min_chunk_size as usize
+        };
+        let max = if max_chunk_size == 0 {
+            DEFAULT_MAX_CHUNK_SIZE
+        } else {
+            max_chunk_size as usize
+        };
         Self { min_chunk_size: min, max_chunk_size: max.max(min) }
     }
 }
@@ -143,7 +152,8 @@ mod tests {
         let content = "aaaaa\nbbbbb\nccccc\nddddd\neeeee\nfffff";
         let actual = chunk_file("f.txt", content, config);
 
-        // Every line must be covered exactly once and ranges must be contiguous.
+        // Every line must be covered exactly once and ranges must be
+        // contiguous.
         assert_eq!(actual.first().unwrap().start_line, 1);
         assert_eq!(actual.last().unwrap().end_line, 6);
         for pair in actual.windows(2) {

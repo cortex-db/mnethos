@@ -388,8 +388,8 @@ mod tests {
     #[test]
     fn test_legacy_no_effort_drops_effort_for_all_pre_4_5_ids() {
         // All pre-Opus-4.5 Claude ids (plus the newer non-effort family members
-        // Sonnet 4.5 and Haiku 4.5) should land in LegacyNoEffort and have their
-        // effort stripped.
+        // Sonnet 4.5 and Haiku 4.5) should land in LegacyNoEffort and have
+        // their effort stripped.
         for model in [
             "claude-sonnet-4-5-20250929",
             "claude-haiku-4-5-20251001",

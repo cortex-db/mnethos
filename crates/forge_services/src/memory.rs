@@ -5,7 +5,8 @@ use forge_domain::{MemoryEpisode, MemoryRecallItem, MemoryRepository};
 
 /// [`MemoryService`] impl bridging to the repo-layer [`MemoryRepository`] (the
 /// gRPC client). Mirrors `ForgeWorkspaceService` for the context engine. No-op
-/// (0 written / empty recall) when memory is unconfigured — the repo handles that.
+/// (0 written / empty recall) when memory is unconfigured — the repo handles
+/// that.
 pub struct ForgeMemoryService<F> {
     infra: Arc<F>,
 }
@@ -25,12 +26,18 @@ impl<F: MemoryRepository> MemoryService for ForgeMemoryService<F> {
     ) -> anyhow::Result<usize> {
         let mut written = 0usize;
         for episode in episodes {
-            // Skip degenerate episodes (no statement) so we never silently report
-            // a write for empty content the graph would drop.
+            // Skip degenerate episodes (no statement) so we never silently
+            // report a write for empty content the graph would
+            // drop.
             if episode.text.trim().is_empty() {
                 continue;
             }
-            if self.infra.create_episode(session_key, episode).await?.is_some() {
+            if self
+                .infra
+                .create_episode(session_key, episode)
+                .await?
+                .is_some()
+            {
                 written += 1;
             }
         }

@@ -541,9 +541,10 @@ pub trait ProviderAuthService: Send + Sync {
 }
 
 /// Long-term memory capability (backs the `remember` tool's write path and the
-/// `mem_search` tool's read path). Mirrors [`WorkspaceService`]: a sub-service on
-/// [`Services`] that bridges to the repo-layer [`forge_domain::MemoryRepository`].
-/// No-op (0 written / empty recall) when memory is not configured.
+/// `mem_search` tool's read path). Mirrors [`WorkspaceService`]: a sub-service
+/// on [`Services`] that bridges to the repo-layer
+/// [`forge_domain::MemoryRepository`]. No-op (0 written / empty recall) when
+/// memory is not configured.
 #[async_trait::async_trait]
 pub trait MemoryService: Send + Sync {
     /// Persist episodes scoped by `session_key`. Returns the count written.
